@@ -1,0 +1,23 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+.idea/
+.vscode/
+*.g.dart.bak
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+**/ios/Flutter/.last_build_id
+**/android/.gradle/
+**/android/local.properties
+
+# Obsidian: no versionar estado de sesión local, sí versionar config compartida
+vault/.obsidian/workspace*
+vault/.obsidian/cache
+
+# macOS
+.DS_Store
