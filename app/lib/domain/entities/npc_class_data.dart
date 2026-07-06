@@ -48,10 +48,6 @@ class INpcClassStats {
 
 /// Sección 15.1 del modelo de dominio.
 ///
-/// Entidad de catálogo: el GM selecciona/instancia NPCs a partir de clases
-/// existentes; el estado de un NPC concreto en partida es responsabilidad
-/// de COMP/CON, no de este modelo de LCP.
-///
 /// `optionalClassPerTier` — cálculo aditivo con min/max, ver vault MdD §15.1.
 class INpcClassData {
   final String id; // único globalmente

@@ -1,9 +1,5 @@
-/// Sección 6 del modelo de dominio.
-///
-/// Entidad de catálogo: `id` identifica una entrada única y persistente del
-/// catálogo de tags (core data o `tags.json` de un LCP), no una instancia de
-/// uso — eso es [ITagInstance] (en value_objects.dart). Un LCP puede añadir
-/// (y en teoría versionar) sus propias entradas de tag.
+/// Sección 6 del modelo de dominio. Distinto de [ITagInstance]
+/// (value_objects.dart): esto es el catálogo, no la instancia de uso.
 class ITagData {
   final String id;
   final String name;

@@ -1,6 +1,6 @@
 import '../enums/enums.dart';
 
-/// Sección 11.5 del modelo de dominio. Entidad de catálogo.
+/// Sección 11.5 del modelo de dominio.
 class ISkillData {
   final String id; // único globalmente
   final String name;

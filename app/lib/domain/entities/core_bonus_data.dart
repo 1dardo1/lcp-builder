@@ -3,9 +3,6 @@ import 'counter_data.dart';
 
 /// Sección 11.2 del modelo de dominio.
 ///
-/// Entidad de catálogo: el piloto elige una entrada de un catálogo fijo al
-/// subir de nivel, no crea una instancia con estado propio.
-///
 /// Riesgo conocido: COMP/CON no valida referencias circulares en
 /// `integrated` (puede crashear la app) — responsabilidad del formulario
 /// de creación evitarlo. Ver vault MdD §11.2.

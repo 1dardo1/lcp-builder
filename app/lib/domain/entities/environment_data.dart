@@ -1,4 +1,4 @@
-/// Sección 17.2 del modelo de dominio. Entidad de catálogo.
+/// Sección 17.2 del modelo de dominio.
 class IEnvironmentData {
   final String id; // único globalmente
   final String name;

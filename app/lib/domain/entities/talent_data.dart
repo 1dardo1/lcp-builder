@@ -1,9 +1,7 @@
 import '../value_objects/value_objects.dart';
 
-/// Sección 11.6 del modelo de dominio.
-///
-/// Entidad de catálogo. Restricción de 3 ranks (COMP/CON) no forzada aquí
-/// como invariante bloqueante — ver vault MdD §11.6.
+/// Sección 11.6 del modelo de dominio. Restricción de 3 ranks (COMP/CON)
+/// no forzada aquí como invariante bloqueante — ver vault MdD §11.6.
 class ITalentData {
   final String id; // único globalmente
   final String name;

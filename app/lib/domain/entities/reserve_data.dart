@@ -2,8 +2,8 @@ import '../enums/enums.dart';
 import '../value_objects/value_objects.dart';
 import 'counter_data.dart';
 
-/// Sección 11.4 del modelo de dominio. Entidad de catálogo — comportamiento
-/// de `consumable` y ciclo de vida "Used" en vault MdD §11.4.
+/// Sección 11.4 del modelo de dominio — comportamiento de `consumable` y
+/// ciclo de vida "Used" en vault MdD §11.4.
 class IReserveData {
   final String id;
   final String name;

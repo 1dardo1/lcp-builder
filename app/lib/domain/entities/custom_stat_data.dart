@@ -1,10 +1,7 @@
 /// Sección 15.4 del modelo de dominio. Marcado "WARNING: EXPERIMENTAL" por
 /// la propia fuente — tratar con más cautela que el resto del dominio.
-///
-/// Entidad (no catálogo de selección como [ITagData]): `key` tiene efecto
-/// global dentro del LCP que lo declara, sin identidad compartible entre
-/// LCPs. Ver vault MdD §15.4 (incluye la cuarta forma de variabilidad por
-/// tier de esta spec, en `default`).
+/// Ver vault MdD §15.4 (incluye la cuarta forma de variabilidad por tier
+/// de esta spec, en `default`).
 class ICustomStatData {
   final String key; // único globalmente dentro del alcance del LCP
   final String title;

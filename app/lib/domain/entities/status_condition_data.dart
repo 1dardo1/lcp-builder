@@ -1,6 +1,6 @@
 import '../enums/enums.dart';
 
-/// Sección 17.4 del modelo de dominio. Entidad de catálogo.
+/// Sección 17.4 del modelo de dominio.
 ///
 /// Cierra la referencia pendiente de `IStatusEffectData.id` (sección 2,
 /// value_objects.dart): "debe existir en core data o LCP statuses.json

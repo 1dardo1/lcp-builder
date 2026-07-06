@@ -2,8 +2,8 @@ import '../value_objects/value_objects.dart';
 
 /// Sección 11.7 del modelo de dominio.
 ///
-/// Entidad de catálogo. Contenido condicionado a un suplemento (Karrakin
-/// Trade Baronies) — ver vault MdD §11.7 y ADR-003.
+/// Contenido condicionado a un suplemento (Karrakin Trade Baronies) — ver
+/// vault MdD §11.7 y ADR-003.
 class IBondData {
   final String id; // único globalmente
   final String name;

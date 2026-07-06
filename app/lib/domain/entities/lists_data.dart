@@ -1,9 +1,4 @@
 /// Sección 17.5 del modelo de dominio.
-///
-/// Entidad: único objeto por LCP (no un array de instancias como el resto
-/// de catálogos). Cada campo amplía las opciones ya presentes en COMP/CON
-/// sin sustituirlas. Confirma la fusión ya anotada en el vault:
-/// `tables.json` (v2) se renombró a `lists.json` (v3), mismo contenido.
 class IListsData {
   final List<String>? pilotNames; // rolleable en Create New Pilot
   final List<String>? callsigns; // rolleable en Create New Pilot

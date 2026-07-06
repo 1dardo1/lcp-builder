@@ -4,8 +4,6 @@ import 'counter_data.dart';
 
 /// Sección 13.4 del modelo de dominio.
 ///
-/// Entidad de catálogo, mismo patrón que [IWeaponData]/[IFrameData].
-///
 /// Excepción de `source`/`license`/`license_id` por License Collection —
 /// ver vault MdD §13.4. Riesgo conocido: COMP/CON no detecta referencias
 /// circulares en `integrated` (puede crashear).

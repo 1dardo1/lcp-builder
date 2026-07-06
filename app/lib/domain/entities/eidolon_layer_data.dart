@@ -1,11 +1,10 @@
 import '../value_objects/value_objects.dart';
 import 'npc_feature_data.dart';
 
-/// Sección 15.3 del modelo de dominio. Entidad de catálogo (varias layers
-/// por Eidolon). Contenido condicionado a un suplemento (mismo caso que
-/// Bonds, §11.7). `rules` admite sintaxis `{X/Y/Z}` — tercera forma de
-/// variabilidad por tier de esta spec, distinta de [TierValue]/[NpcSize].
-/// Ver vault MdD §15.3.
+/// Sección 15.3 del modelo de dominio. Contenido condicionado a un
+/// suplemento (mismo caso que Bonds, §11.7). `rules` admite sintaxis
+/// `{X/Y/Z}` — tercera forma de variabilidad por tier de esta spec,
+/// distinta de [TierValue]/[NpcSize]. Ver vault MdD §15.3.
 class IEidolonLayerData {
   final String id; // único globalmente
   final String name;

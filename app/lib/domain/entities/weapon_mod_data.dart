@@ -2,9 +2,8 @@ import '../enums/enums.dart';
 import '../value_objects/value_objects.dart';
 import 'mech_system_data.dart';
 
-/// Sección 13.5 del modelo de dominio.
-///
-/// Entidad de catálogo: extiende todos los campos de [IMechSystemData].
+/// Sección 13.5 del modelo de dominio. Extiende todos los campos de
+/// [IMechSystemData].
 ///
 /// ⚠️ `addedDamage`/`addedRange` NO son simple concatenación de arrays —
 /// regla de fusión por tipo, ver vault MdD §13.5 antes de implementar el

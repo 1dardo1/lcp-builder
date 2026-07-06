@@ -4,11 +4,8 @@ import 'counter_data.dart';
 
 /// Sección 13.3 del modelo de dominio.
 ///
-/// Entidad de catálogo: el piloto selecciona/equipa armas existentes de
-/// licencias desbloqueadas, no crea instancias con estado propio.
-///
-/// Nota — `mount` singular vs. `mounts` plural de Frames: aquí el arma
-/// ocupa exactamente un tipo de mount concreto, no varios alternativos.
+/// `mount` (singular) vs. `mounts` (plural, Frames): aquí el arma ocupa
+/// exactamente un tipo de mount concreto, no varios alternativos.
 class IWeaponData {
   final String id; // único globalmente
   final String name;

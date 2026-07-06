@@ -2,10 +2,9 @@ import '../value_objects/value_objects.dart';
 
 /// Sección 15.2 del modelo de dominio.
 ///
-/// Entidad de catálogo, union discriminada por `type` con 5 variantes que
-/// comparten una base común. Igual que [IPilotGearData], el discriminador
-/// vive en el tipo Dart (jerarquía sellada), no como campo redundante.
-/// Default en la spec si se omite `type`: `trait`.
+/// Union discriminada por `type` (5 variantes). Igual que [IPilotGearData],
+/// el discriminador vive en el tipo Dart (jerarquía sellada), no como campo
+/// redundante.
 sealed class INpcFeatureData {
   final String id; // único globalmente
   final String name;

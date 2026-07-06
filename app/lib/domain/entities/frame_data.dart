@@ -38,10 +38,6 @@ class IFrameStats {
 }
 
 /// Sección 13.2 del modelo de dominio.
-///
-/// Entidad de catálogo: el piloto/cliente selecciona y desbloquea licencias
-/// existentes, no crea instancias de frame con estado propio (el estado de
-/// un mech concreto en partida es responsabilidad de COMP/CON).
 class IFrameData {
   final String id; // único globalmente
   final String name;

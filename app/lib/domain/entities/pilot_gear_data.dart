@@ -3,10 +3,9 @@ import 'counter_data.dart';
 
 /// Sección 11.3 del modelo de dominio.
 ///
-/// Entidad de catálogo, union discriminada por `type` en la spec
-/// (`'Weapon' | 'Armor' | 'Gear'`). Se modela como jerarquía sellada: el
-/// discriminador vive en el tipo Dart en tiempo de compilación, no como
-/// campo `type` redundante — `infrastructure/lcp` reconstruye ese campo al
+/// Union discriminada por `type` en la spec (`'Weapon' | 'Armor' | 'Gear'`).
+/// Se modela como jerarquía sellada: el discriminador vive en el tipo Dart,
+/// no como campo redundante — `infrastructure/lcp` lo reconstruye al
 /// serializar, a partir del tipo runtime concreto.
 sealed class IPilotGearData {
   final String id;

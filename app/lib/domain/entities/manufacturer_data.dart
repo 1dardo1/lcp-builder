@@ -1,9 +1,5 @@
 /// Sección 13.1 del modelo de dominio.
 ///
-/// Entidad de catálogo: referenciado por `source` desde Core Bonuses,
-/// Frames y todo el equipo licenciado. `id` debe ser único globalmente —
-/// es la clave por la que se referencia desde el resto del LCP.
-///
 /// Excepciones de `source` (Special/Integrated/Exotic Equipment) — ver
 /// vault MdD §13.6.
 class IManufacturerData {

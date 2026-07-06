@@ -1,6 +1,6 @@
 import '../value_objects/value_objects.dart';
 
-/// Sección 17.3 del modelo de dominio. Entidad de catálogo.
+/// Sección 17.3 del modelo de dominio.
 ///
 /// `pcVictory`/`enemyVictory`/`noVictory` confirmados oficiales contra
 /// fuentes independientes (la Wiki los omite) — no quitarlos por parecer

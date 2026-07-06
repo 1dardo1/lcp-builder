@@ -1,11 +1,6 @@
 import '../value_objects/value_objects.dart';
 
 /// Sección 17.1 del modelo de dominio.
-///
-/// Entidad: un único manifest por LCP, identificado de facto por la
-/// combinación `name` + `version` (sin campo `id` explícito, a diferencia
-/// del resto de catálogos). Obligatorio en todo LCP — sin él, COMP/CON no
-/// puede cargar el contenido.
 class ILcpManifestData {
   final String name;
   final String author;
