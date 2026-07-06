@@ -39,7 +39,8 @@ Implementado completo (27 archivos: `enums/enums.dart`, `value_objects/value_obj
 
 `dart analyze lib/domain` verificado (Dart SDK 3.12.2 instalado en este entorno remoto): **"No issues found!"** — el dominio compila limpio.
 
-**Pendiente:**
+## Proyecto Flutter
 
-1. Generar el proyecto Flutter real con `flutter create .` (pubspec.yaml, carpetas `android/`, `ios/`, `linux/`, `macos/`, `windows/` y demás boilerplate) — Flutter (el SDK completo, no solo Dart) sigue sin instalar en este entorno remoto. Esta estructura de `lib/`/`test/` se preparó a mano, antes de correr `flutter create`; conviene revisar que no choque con lo que genere el comando (debería convivir sin problema, ya que `flutter create` no toca `lib/` si ya existe contenido).
-2. A partir de ahí, seguir con el flujo Crear según el plan de fases (`vault/ADRs/ADR-003 - Plan de fases.md`), que empezará a consumir estas entidades desde `application/use_cases/`.
+`flutter create --project-name lcp_builder --platforms=android,ios,linux,macos,windows .` ejecutado (Flutter 3.44.4 stable instalado en este entorno remoto), generando `pubspec.yaml`, las carpetas de plataforma (`android/`, `ios/`, `linux/`, `macos/`, `windows/` — sin `web/`, fuera del alcance del ADR-001), `lib/main.dart` (demo por defecto, pendiente de sustituir por el flujo Crear) y `test/widget_test.dart` (test de ejemplo). No tocó nada dentro de `lib/domain/` ni el resto de la estructura ya preparada. `flutter analyze` sobre el proyecto completo: **"No issues found!"**.
+
+**Pendiente:** seguir con el flujo Crear según el plan de fases (`vault/ADRs/ADR-003 - Plan de fases.md`) — sustituirá `lib/main.dart` y empezará a consumir las entidades del dominio desde `application/use_cases/`.
