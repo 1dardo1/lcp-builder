@@ -14,8 +14,8 @@ sealed class IPilotGearData {
   const IPilotGearData({required this.id, required this.name});
 }
 
-/// Nota — disponibilidad por estado de montura: `actions`/`deployables`
-/// solo están disponibles cuando el piloto está UNMOUNTED (desmontado).
+/// `actions`/`deployables` solo disponibles con el piloto UNMOUNTED — ver
+/// vault MdD §11.3.
 class IPilotWeaponData extends IPilotGearData {
   final String? description;
   final String? effect;

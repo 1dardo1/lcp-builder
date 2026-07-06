@@ -19,6 +19,7 @@ Notas de método acumuladas durante el proyecto. Relacionado: [[ADR-001 - Selecc
 - El diseño en Figma puede ir por delante del código Dart porque depende del modelo de dominio (documento), no del dominio compilado.
 - La investigación de plugins de plataforma debe preceder a la implementación de adapters, para no invalidar trabajo si el dominio revela nuevas necesidades.
 - Objetos de valor grandes con muchos campos de tipo lista omiten intencionadamente la igualdad estructural completa — decisión pendiente de revisar con `equatable` o `package:collection`.
+- **Comentarios de código vs. vault**: el vault es la única fuente de verdad para lógica de negocio (reglas del dominio Lancer/COMP-CON) — el código no la duplica, solo referencia la sección (`// Ver vault MdD §X`). Los comentarios en código se reservan para decisiones técnicas de la implementación Dart (por qué esta estructura de tipos, correcciones verificadas contra JSON real que protegen contra una regresión futura tipo "esto no es un typo"). Motivo: evitar que ambas fuentes diverjan con el tiempo — solo el vault se actualiza cuando cambia una regla.
 
 ## Sobre priorización y feedback
 

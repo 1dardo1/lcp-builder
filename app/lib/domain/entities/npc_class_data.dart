@@ -52,9 +52,7 @@ class INpcClassStats {
 /// existentes; el estado de un NPC concreto en partida es responsabilidad
 /// de COMP/CON, no de este modelo de LCP.
 ///
-/// Nota — cálculo aditivo de `optionalClassPerTier`: si está presente junto
-/// con `optionalClassMin`/`optionalClassMax`, se multiplica por el tier
-/// actual y se SUMA a min/max, no los sustituye.
+/// `optionalClassPerTier` — cálculo aditivo con min/max, ver vault MdD §15.1.
 class INpcClassData {
   final String id; // único globalmente
   final String name;

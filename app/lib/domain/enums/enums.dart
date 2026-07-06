@@ -89,8 +89,8 @@ enum ActivationType {
 
 // --- Sección 4: Bonuses ---
 
-/// Filtros propios de Bonuses — distintos de los enums "reales" de arma
-/// (sección 1). Incluyen el comodín `any`, ausente en los enums reales.
+/// Filtros propios de Bonuses, distintos de los enums "reales" de arma
+/// (sección 1) — incluyen el comodín `any`. Ver vault MdD §4.
 enum BonusWeaponTypeFilter {
   rifle('Rifle'),
   cannon('Cannon'),

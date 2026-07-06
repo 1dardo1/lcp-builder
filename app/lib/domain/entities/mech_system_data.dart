@@ -6,13 +6,9 @@ import 'counter_data.dart';
 ///
 /// Entidad de catálogo, mismo patrón que [IWeaponData]/[IFrameData].
 ///
-/// Nota — excepción de `source`/`license`/`license_id` por License
-/// Collection: si el item se distribuye dentro de un "License Collection"
-/// (formato aún no definido en el vault), estos tres campos se vuelven
-/// opcionales porque el contexto del collection ya los implica.
-///
-/// Riesgo conocido reafirmado por la fuente: COMP/CON no detecta
-/// referencias circulares en `integrated` — puede provocar un crash.
+/// Excepción de `source`/`license`/`license_id` por License Collection —
+/// ver vault MdD §13.4. Riesgo conocido: COMP/CON no detecta referencias
+/// circulares en `integrated` (puede crashear).
 class IMechSystemData {
   final String id; // único globalmente
   final String name;

@@ -4,9 +4,8 @@
 /// Frames y todo el equipo licenciado. `id` debe ser único globalmente —
 /// es la clave por la que se referencia desde el resto del LCP.
 ///
-/// Nota — excepciones de `source`: Special Equipment, Integrated Equipment
-/// y Exotic Equipment no requieren manufacturer asociado (ver sección 13.6
-/// del vault — no son tipos de dato propios, son mecanismos de instalación).
+/// Excepciones de `source` (Special/Integrated/Exotic Equipment) — ver
+/// vault MdD §13.6.
 class IManufacturerData {
   final String id; // forma acrónimo/abreviada, ej. GMS
   final String name;

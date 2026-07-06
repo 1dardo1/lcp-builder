@@ -1,19 +1,11 @@
 import '../value_objects/value_objects.dart';
 import 'npc_feature_data.dart';
 
-/// Sección 15.3 del modelo de dominio.
-///
-/// Entidad de catálogo: cada Eidolon se compone de varias layers; la
-/// primera ("Core Layer") se asigna automáticamente a cualquier Eidolon.
-///
-/// Contenido condicionado a un suplemento: solo disponible si el LCP GM
-/// "No Room For a Wallflower" está instalado y activado (mismo caso que
-/// Bonds, sección 11.7).
-///
-/// Nota — sintaxis `{X/Y/Z}` en `rules`: tercera forma de variabilidad por
-/// tier de esta spec (distinta de [TierValue] y de [NpcSize]) — la
-/// interpolación ocurre dentro de un bloque de texto en prosa, sustituyendo
-/// por X/Y/Z según el tier 1/2/3 del contexto.
+/// Sección 15.3 del modelo de dominio. Entidad de catálogo (varias layers
+/// por Eidolon). Contenido condicionado a un suplemento (mismo caso que
+/// Bonds, §11.7). `rules` admite sintaxis `{X/Y/Z}` — tercera forma de
+/// variabilidad por tier de esta spec, distinta de [TierValue]/[NpcSize].
+/// Ver vault MdD §15.3.
 class IEidolonLayerData {
   final String id; // único globalmente
   final String name;

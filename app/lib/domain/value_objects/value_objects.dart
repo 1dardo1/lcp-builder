@@ -1,14 +1,10 @@
 /// Value objects del dominio LCP Builder.
 ///
-/// Transcripción directa de `vault/Modelo de Dominio/` (secciones 1-17).
-/// Ningún tipo se define antes de que sus dependencias ya estén resueltas
-/// (mismo orden topológico estricto que el documento fuente).
-///
-/// Nota de alcance ya documentada en el vault: los value objects grandes con
-/// muchos campos de tipo lista omiten intencionadamente la igualdad
-/// estructural completa (`==`/`hashCode` por defecto) — decisión pendiente
-/// de revisar con `equatable`/`package:collection`, no una omisión de esta
-/// implementación.
+/// Transcripción directa de `vault/Modelo de Dominio/` (secciones 1-17),
+/// mismo orden topológico estricto que el documento fuente. Sobre la
+/// igualdad estructural omitida en los VOs con muchos campos de lista, ver
+/// "Principios y decisiones clave" en el vault (decisión ya documentada,
+/// no una omisión de esta implementación).
 library;
 
 import '../enums/enums.dart';
@@ -177,13 +173,11 @@ class ImmunityValue {
   const ImmunityValue.conditionId(this.conditionId) : knownValue = null;
 }
 
-/// Union discriminada por exclusión mutua de campos: exactamente uno de
-/// resist/vulnerability/immunity está presente.
-///
-/// Corrección verificada contra JSON real: el campo es `resist`
-/// (lib/frames.json), no `resistance` (grafía de la prosa de la Wiki).
-/// `vulnerability` no está confirmado contra datos reales — se mantiene
-/// por simetría documental, pendiente de verificación futura.
+/// Union discriminada por exclusión mutua de campos (exactamente uno de
+/// resist/vulnerability/immunity presente). Campo real: `resist`, no
+/// `resistance` — verificado contra lib/frames.json, no "corregir" sin
+/// comprobar. `vulnerability` sin confirmar contra datos reales. Ver vault
+/// MdD §2.
 sealed class IResistanceData {
   final TargetType? target; // default: self
   const IResistanceData({this.target});
@@ -372,13 +366,10 @@ class MountAssignment {
   const MountAssignment({required this.mountType, required this.maxMounts});
 }
 
-/// `id` referencia el Bonus List (catálogo cerrado de IDs de COMP/CON), no
-/// identidad de instancia. El tipo real de `val` depende del id usado (ver
-/// columna "Values" del Bonus List en la fuente): integer ->
-/// [NumericOrFormulaValue], boolean -> `bool`, `DieRoll[]` (solo
-/// "overcharge"), o [MountAssignment] (solo "add_mount"). No se modela como
-/// union porque el catálogo de IDs que decide la forma no es parte de este
-/// documento todavía.
+/// `id` referencia el Bonus List (catálogo COMP/CON) — el tipo real de
+/// `val` depende del id usado. No modelado como union: el catálogo de IDs
+/// que decide la forma no es parte de este documento todavía. Ver vault
+/// MdD §4 (tabla "Values" del Bonus List).
 class IBonusData {
   final String id;
   final Object
@@ -447,9 +438,8 @@ class SynergyLocation {
   int get hashCode => value.hashCode;
 }
 
-/// Mecanismo de último recurso (regla de la fuente, no inferencia propia):
-/// usar solo para reglas contextuales no representables con Actions/Active
-/// Effects/Bonuses.
+/// Mecanismo de último recurso — ver vault MdD §5 (nota de uso: cuándo
+/// preferir Actions/Active Effects/Bonuses en su lugar).
 class ISynergyData {
   final List<SynergyLocation> locations; // requerido — al menos una
   final String detail; // requerido, v-html
@@ -478,9 +468,8 @@ class ITagInstance {
 
 // --- Sección 8 ---
 
-/// A diferencia de otros enums de este documento, admite cualquier string
-/// libre — pero `Drone`/`Mine` activan reglas de negocio especiales
-/// (defaults distintos). No es un enum cerrado.
+/// Enum abierto (string libre), no cerrado — `Drone`/`Mine` activan
+/// defaults especiales. Ver vault MdD §8.
 class DeployableType {
   final String value;
   const DeployableType._(this.value);
@@ -498,16 +487,10 @@ class DeployableType {
   int get hashCode => value.hashCode;
 }
 
-/// La propia fuente indica explícitamente que no tiene campo `id` (se
-/// genera uno único por instancia en tiempo de ejecución).
-///
-/// Defaults condicionales según `type` (ver tabla completa en sección 8 del
-/// vault): `size`=0.5 y `evasion`=10 si Drone; `evasion`=5 y `edef`=8 si
-/// Mine; `hp` según tabla de `size` salvo Drone (fijo en 10).
-///
-/// Nota de anidación: `deployables` no crea jerarquías reales — un
-/// deployable emitido por otro se inyecta en el tracker del PC/NPC
-/// propietario, no en este deployable (mismo patrón que Action/ActiveEffect).
+/// Sin campo `id` (se genera uno por instancia en tiempo de ejecución).
+/// Defaults condicionales según `type` y regla de anidación de
+/// `deployables` (no crea jerarquías reales, mismo patrón que
+/// Action/ActiveEffect) — ver vault MdD §8.
 class IDeployableData {
   final String name; // requerido
   final DeployableType? type; // default "Deployable"
@@ -594,10 +577,9 @@ class IDeployableData {
 
 // --- Sección 9 ---
 
-/// `restricted_types`/`restricted_sizes` tienen precedencia sobre
-/// `allowed_types`/`allowed_sizes`. Vigentes aquí (a diferencia de
-/// `IWeaponModData`, sección 13.5, donde los mismos nombres están
-/// deprecados — dos contextos distintos de la spec).
+/// `restricted_*` con precedencia sobre `allowed_*` — vigentes aquí (a
+/// diferencia de `IWeaponModData`, §13.5, donde están deprecados). Ver
+/// vault MdD §9.
 class IAmmoData {
   final String name;
   final String description;
@@ -626,11 +608,8 @@ class IQuestionData {
   const IQuestionData({required this.question, required this.options});
 }
 
-/// El poder en sí no tiene `id` propio, solo el Bond contenedor lo tiene.
-///
-/// `origin` solo se usa si `IBondPowerData` vive en `bond_powers.json`
-/// separado (en vez de anidado en `IBondData.powers`) — debe coincidir
-/// exactamente con el `id` de un [IBondData] existente.
+/// Sin `id` propio (solo el Bond contenedor lo tiene). `origin` — regla de
+/// integridad referencial entre archivos — ver vault MdD §11.7.
 class IBondPowerData {
   final String name;
   final String description;
@@ -653,13 +632,9 @@ class IBondPowerData {
 
 // --- Sección 11.6 (Talents) ---
 
-/// Agrupa el contenido mecánico de un rank concreto; no tiene `id` propio
-/// (el talento entero tiene `id`, no cada rank).
-///
-/// `exclusive` es una propiedad relacional entre los ranks de un mismo
-/// talento, no del rank aislado: si `true`, solo el equipo del rank más
-/// alto desbloqueado está activo; si `false` (default), el de todos los
-/// ranks desbloqueados lo está simultáneamente.
+/// Sin `id` propio (el talento entero lo tiene). `exclusive` es relacional
+/// entre los ranks de un mismo talento, no del rank aislado — ver vault
+/// MdD §11.6.
 class IRankData {
   final String name;
   final String description;
@@ -783,12 +758,8 @@ class ICoreSystemData {
 
 // --- Sección 13.3 (Weapons) ---
 
-/// Todos los campos salvo `name` son opcionales; si se omite, hereda el
-/// valor del arma contenedora. No se puede anidar (máximo 1 nivel).
-///
-/// Para un arma con varios profiles, el default es el de índice 0 del
-/// array. Actions/Effects/Synergies de un profile solo disponibles
-/// mientras ese profile esté activo.
+/// Máximo 1 nivel de anidación; campos ausentes heredan el arma
+/// contenedora. Ver vault MdD §13.3 (default = profile de índice 0).
 class IWeaponProfile {
   final String name; // único campo realmente obligatorio
   final TextOrActiveEffect? effect;

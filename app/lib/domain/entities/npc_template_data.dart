@@ -4,9 +4,8 @@ import '../value_objects/value_objects.dart';
 /// Sección 15.1 del modelo de dominio. Entidad de catálogo, mismo patrón
 /// que [INpcClassData].
 ///
-/// Nota — cálculo aditivo de `optionalPerTier`: mismo mecanismo que
-/// `optionalClassPerTier` en [INpcClassData] — se multiplica por el tier
-/// actual y se suma a `optionalMin`/`optionalMax`, no los sustituye.
+/// `optionalPerTier` — mismo mecanismo aditivo que `optionalClassPerTier`
+/// en [INpcClassData], ver vault MdD §15.1.
 class INpcTemplateData {
   final String id; // único globalmente
   final bool

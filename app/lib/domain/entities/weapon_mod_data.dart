@@ -4,19 +4,14 @@ import 'mech_system_data.dart';
 
 /// Sección 13.5 del modelo de dominio.
 ///
-/// Entidad de catálogo: extiende todos los campos de [IMechSystemData],
-/// añadiendo los propios de mod.
+/// Entidad de catálogo: extiende todos los campos de [IMechSystemData].
 ///
-/// Regla de composición no trivial (no solo concatenación de arrays):
-/// `addedDamage`/`addedRange` se SUMAN al daño/rango existente si el tipo
-/// coincide con uno ya presente en el arma base; si no coincide, se añaden
-/// como entrada separada. Debe implementarse explícitamente en el caso de
-/// uso que aplique un mod, no asumirse como simple append.
+/// ⚠️ `addedDamage`/`addedRange` NO son simple concatenación de arrays —
+/// regla de fusión por tipo, ver vault MdD §13.5 antes de implementar el
+/// caso de uso que aplique un mod.
 ///
-/// `restrictedTypes`/`restrictedSizes` DEPRECADOS aquí — mantenidos solo
-/// por compatibilidad con LCPs v2 (a diferencia de `Ammo`, sección 9, donde
-/// los mismos nombres de campo están vigentes). COMP/CON los transforma
-/// internamente a `allowed_*`; no se recomienda su uso en contenido nuevo.
+/// `restrictedTypes`/`restrictedSizes` DEPRECADOS aquí (vigentes en
+/// `Ammo`, §9 — dos contextos distintos de la spec).
 class IWeaponModData extends IMechSystemData {
   final IActiveEffectData? onMiss;
   final IActiveEffectData? onAttack;

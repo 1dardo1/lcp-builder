@@ -2,12 +2,8 @@ import '../enums/enums.dart';
 import '../value_objects/value_objects.dart';
 import 'counter_data.dart';
 
-/// Sección 11.4 del modelo de dominio.
-///
-/// Entidad de catálogo. Mientras la reserva esté equipada, sus elementos
-/// asociados están disponibles hasta que el jugador la marque manualmente
-/// como "Used" o la elimine. Si `consumable` es `true`, se desactiva
-/// automáticamente al usar cualquier action/deployable asociado en Active Mode.
+/// Sección 11.4 del modelo de dominio. Entidad de catálogo — comportamiento
+/// de `consumable` y ciclo de vida "Used" en vault MdD §11.4.
 class IReserveData {
   final String id;
   final String name;

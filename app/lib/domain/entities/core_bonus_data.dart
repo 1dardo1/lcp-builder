@@ -6,9 +6,9 @@ import 'counter_data.dart';
 /// Entidad de catálogo: el piloto elige una entrada de un catálogo fijo al
 /// subir de nivel, no crea una instancia con estado propio.
 ///
-/// Riesgo conocido de la propia fuente: COMP/CON no valida referencias
-/// circulares en `integrated` — una referencia recursiva provoca un fallo
-/// de la aplicación. Responsabilidad del formulario de creación evitarlo.
+/// Riesgo conocido: COMP/CON no valida referencias circulares en
+/// `integrated` (puede crashear la app) — responsabilidad del formulario
+/// de creación evitarlo. Ver vault MdD §11.2.
 class ICoreBonusData {
   final String id; // único globalmente
   final String name;

@@ -2,10 +2,8 @@ import '../value_objects/value_objects.dart';
 
 /// Sección 11.6 del modelo de dominio.
 ///
-/// Entidad de catálogo. La fuente advierte que COMP/CON solo soporta
-/// actualmente talentos con exactamente 3 ranks, pero indica que un número
-/// distinto "debería" funcionar aunque no está probado — no se fuerza esa
-/// restricción aquí como invariante bloqueante, queda documentada.
+/// Entidad de catálogo. Restricción de 3 ranks (COMP/CON) no forzada aquí
+/// como invariante bloqueante — ver vault MdD §11.6.
 class ITalentData {
   final String id; // único globalmente
   final String name;
