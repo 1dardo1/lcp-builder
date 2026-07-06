@@ -26,7 +26,8 @@ class IWeaponData {
   final bool? skirmish; // default true salvo Superheavy
   final bool? noAttack; // suprime generación de acciones Skirmish/Barrage
   final bool? noMods; // impide añadir mods a este arma
-  final bool? noCoreBonus; // suprime bonificadores de mount-sensitive core bonuses
+  final bool?
+  noCoreBonus; // suprime bonificadores de mount-sensitive core bonuses
   final List<IDamageData>? damage;
   final List<IRangeData>? range;
   final List<ITagInstance>? tags;

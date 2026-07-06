@@ -10,17 +10,22 @@ sealed class INpcFeatureData {
   final String id; // único globalmente
   final String name;
   final String? origin; // id de NPC Class/Template de origen — ver nota
-  final bool? base; // default false — si true, asignado automáticamente vía clase/template
+  final bool?
+  base; // default false — si true, asignado automáticamente vía clase/template
   final bool? deprecated;
   final TextOrActiveEffect? effect;
   final bool? hideActive;
-  final bool? buildFeature; // sin efecto en combate; siempre oculto en Active Mode
-  final String? mod; // id de otra INpcFeatureData a la que esta feature modifica — ver nota
+  final bool?
+  buildFeature; // sin efecto en combate; siempre oculto en Active Mode
+  final String?
+  mod; // id de otra INpcFeatureData a la que esta feature modifica — ver nota
   final List<ITagInstance>? tags;
-  final List<IActionData>? actions; // NPCs ignoran cost/pilot/synergy_locations/tech_attack/log
+  final List<IActionData>?
+  actions; // NPCs ignoran cost/pilot/synergy_locations/tech_attack/log
   final List<IBonusData>? bonuses;
   final List<ISynergyData>? synergies;
-  final List<IDeployableData>? deployables; // NPCs ignoran varios campos, ver IDeployableData
+  final List<IDeployableData>?
+  deployables; // NPCs ignoran varios campos, ver IDeployableData
 
   const INpcFeatureData({
     required this.id,

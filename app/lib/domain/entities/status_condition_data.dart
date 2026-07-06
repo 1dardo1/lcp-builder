@@ -13,7 +13,8 @@ class IStatusConditionData {
   final String? terse; // preferir el menor número de caracteres posible
   final String? iconSvg;
   final String? iconUrl;
-  final ExclusiveTarget? exclusive; // si está presente, restringe a quién puede aplicarse
+  final ExclusiveTarget?
+  exclusive; // si está presente, restringe a quién puede aplicarse
 
   const IStatusConditionData({
     required this.id,

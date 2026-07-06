@@ -12,7 +12,8 @@ class ILcpManifestData {
   final String description; // v-html
   final String version; // semver estricto X.Y.Z
   final String? imageUrl;
-  final String? website; // requerido SOLO para envíos al Community Content Directory (itch.io)
+  final String?
+  website; // requerido SOLO para envíos al Community Content Directory (itch.io)
   final List<ILcpDependency>? dependencies;
   final bool? v3; // default false — fuertemente recomendado true en LCPs nuevos
   final List<IChangelogItem>? versionHistory;

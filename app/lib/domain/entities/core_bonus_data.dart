@@ -15,7 +15,8 @@ class ICoreBonusData {
   final String source; // debe coincidir con un Manufacturer ID
   final String effect; // v-html
   final String description; // v-html
-  final String? mountedEffect; // texto para el panel de mount al instalar un Core Bonus de mount
+  final String?
+  mountedEffect; // texto para el panel de mount al instalar un Core Bonus de mount
   final List<IActiveEffectData>? activeEffects;
   final List<IActionData>? actions;
   final List<IBonusData>? bonuses;
@@ -23,7 +24,8 @@ class ICoreBonusData {
   final List<IDeployableData>? deployables;
   final List<ICounterData>? counters;
   final List<String>? integrated; // instalado automáticamente, no removible
-  final List<String>? specialEquipment; // disponible en el selector, no instalado automáticamente
+  final List<String>?
+  specialEquipment; // disponible en el selector, no instalado automáticamente
 
   const ICoreBonusData({
     required this.id,

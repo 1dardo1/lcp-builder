@@ -23,8 +23,10 @@ class IWeaponModData extends IMechSystemData {
   final IActiveEffectData? onHit;
   final IActiveEffectData? onCrit;
   final List<WeaponType>? allowedTypes; // omitir = permitido en todos los tipos
-  final List<WeaponSize>? allowedSizes; // omitir = permitido en todos los tamaños
-  final List<ITagInstance>? addedTags; // se eliminan si el mod se quita o destruye
+  final List<WeaponSize>?
+  allowedSizes; // omitir = permitido en todos los tamaños
+  final List<ITagInstance>?
+  addedTags; // se eliminan si el mod se quita o destruye
   final List<IDamageData>? addedDamage; // ver nota de regla de composición
   final List<IRangeData>? addedRange; // ver nota de regla de composición
   final List<WeaponType>? restrictedTypes; // DEPRECADO

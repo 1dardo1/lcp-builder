@@ -54,8 +54,10 @@ class IFrameData {
   final IFrameStats stats;
   final List<IFrameTraitData> traits; // puede ser vacío
   final ICoreSystemData coreSystem; // exactamente uno
-  final Object? specialty; // bool | IPrerequisite — discriminado por la forma del valor, no por campo
-  final String? variant; // id (preferido) o name (legacy) del frame del que es variante
+  final Object?
+  specialty; // bool | IPrerequisite — discriminado por la forma del valor, no por campo
+  final String?
+  variant; // id (preferido) o name (legacy) del frame del que es variante
   final String? imageUrl;
   final num? yPos; // alineación vertical en banners de UI
 

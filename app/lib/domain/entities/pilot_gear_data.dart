@@ -22,12 +22,15 @@ class IPilotWeaponData extends IPilotGearData {
   final List<IRangeData>? range;
   final List<IDamageData>? damage;
   final List<ITagInstance>? tags;
-  final List<IActionData>? actions; // solo disponibles si el piloto está UNMOUNTED
+  final List<IActionData>?
+  actions; // solo disponibles si el piloto está UNMOUNTED
   final List<IBonusData>? bonuses;
   final List<ISynergyData>? synergies;
-  final List<IDeployableData>? deployables; // solo disponibles si el piloto está UNMOUNTED
+  final List<IDeployableData>?
+  deployables; // solo disponibles si el piloto está UNMOUNTED
   final List<ICounterData>? counters;
-  final List<IActiveEffectData>? activeEffects; // se aplican al piloto, no al mech
+  final List<IActiveEffectData>?
+  activeEffects; // se aplican al piloto, no al mech
 
   const IPilotWeaponData({
     required super.id,

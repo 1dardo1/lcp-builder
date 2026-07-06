@@ -58,17 +58,11 @@ class DiceExpression {
 
   const DiceExpression.number(this.numberValue) : formula = null;
 
-  DiceExpression.formula(String value)
-      : numberValue = null,
-        formula = value {
-    assert(
-      _basicPattern.hasMatch(value),
-      'DiceExpression inválida: $value',
-    );
+  DiceExpression.formula(String value) : numberValue = null, formula = value {
+    assert(_basicPattern.hasMatch(value), 'DiceExpression inválida: $value');
   }
 
-  static final RegExp _basicPattern =
-      RegExp(r'^[0-9dD+\-*/(){}A-Za-z_ ]+$');
+  static final RegExp _basicPattern = RegExp(r'^[0-9dD+\-*/(){}A-Za-z_ ]+$');
 }
 
 /// `string | { stat: string, aoe?: boolean }` — forma ad hoc, sin nombre
@@ -312,7 +306,8 @@ class IActiveEffectData {
 }
 
 class IActionData {
-  final String name; // requerido salvo excepción: heredado del item padre en algunos systems
+  final String
+  name; // requerido salvo excepción: heredado del item padre en algunos systems
   final ActivationType activation;
   final String detail;
   final ActionFrequency? frequency;
@@ -363,9 +358,11 @@ class IActionData {
 class DieRoll {
   final String value;
   DieRoll(this.value)
-      : assert(_pattern.hasMatch(value), 'DieRoll inválido: $value');
-  static final RegExp _pattern =
-      RegExp(r'^(\d*d\d+|\d+)([+-](\d*d\d+|\d+))*$', caseSensitive: false);
+    : assert(_pattern.hasMatch(value), 'DieRoll inválido: $value');
+  static final RegExp _pattern = RegExp(
+    r'^(\d*d\d+|\d+)([+-](\d*d\d+|\d+))*$',
+    caseSensitive: false,
+  );
 }
 
 /// Extraído del formato de string `add_mount` (`"mount_type:max_mounts"`).
@@ -384,10 +381,12 @@ class MountAssignment {
 /// documento todavía.
 class IBonusData {
   final String id;
-  final Object val; // NumericOrFormulaValue | bool | List<DieRoll> | MountAssignment
+  final Object
+  val; // NumericOrFormulaValue | bool | List<DieRoll> | MountAssignment
   final num? accuracy;
   final List<DamageType>? damageTypes; // sin filtro "any" — omitir = todos
-  final List<BonusRangeTypeFilter>? rangeTypes; // sin filtro "any" — omitir = todos
+  final List<BonusRangeTypeFilter>?
+  rangeTypes; // sin filtro "any" — omitir = todos
   final List<BonusWeaponTypeFilter>? weaponTypes; // default 'any' si se omite
   final List<BonusWeaponSizeFilter>? weaponSizes; // default 'any' si se omite
   final bool? overwrite;
@@ -738,7 +737,8 @@ class ICoreSystemData {
   final String activeName;
   final String activeEffect;
   final ActivationType activation;
-  final ActivationType? deactivation; // si se omite: activo hasta `use` o fin de misión
+  final ActivationType?
+  deactivation; // si se omite: activo hasta `use` o fin de misión
   final CoreSystemUse? use;
   final List<IActiveEffectData>? activeEffects; // añadidos al mech al activar
   final List<IActionData>? activeActions;
@@ -749,7 +749,8 @@ class ICoreSystemData {
   final List<IActionData>? passiveActions; // siempre disponibles
   final List<IBonusData>? passiveBonuses; // siempre activos
   final List<ISynergyData>? passiveSynergies; // siempre activas
-  final List<IDeployableData>? deployables; // usables desde el panel del Core System
+  final List<IDeployableData>?
+  deployables; // usables desde el panel del Core System
   final List<ICounterData>? counters; // siempre presentes
   final List<String>? integrated; // siempre instalado
   final List<String>? specialEquipment; // siempre instalado
@@ -843,11 +844,11 @@ class TierValue {
 
   const TierValue.single(this.single) : perTier = null;
 
-  TierValue.perTier(List<num> values)
-      : single = null,
-        perTier = values {
-    assert(values.length == 3,
-        'TierValue.perTier requiere exactamente 3 elementos');
+  TierValue.perTier(List<num> values) : single = null, perTier = values {
+    assert(
+      values.length == 3,
+      'TierValue.perTier requiere exactamente 3 elementos',
+    );
   }
 
   num forTier(int tier) {
@@ -864,8 +865,10 @@ class NpcSize {
   final List<List<num>> perTier; // exactamente 3 sub-arrays
 
   NpcSize(this.perTier)
-      : assert(perTier.length == 3,
-            'NpcSize requiere exactamente 3 sub-arrays (uno por tier)');
+    : assert(
+        perTier.length == 3,
+        'NpcSize requiere exactamente 3 sub-arrays (uno por tier)',
+      );
 }
 
 // --- Sección 15.2 (NPC Features) ---
@@ -889,8 +892,10 @@ class INpcDamageData {
     this.saveHalf,
     this.ap,
     this.target,
-  }) : assert(damage.length == 3,
-            'INpcDamageData.damage requiere exactamente 3 valores (uno por tier)');
+  }) : assert(
+         damage.length == 3,
+         'INpcDamageData.damage requiere exactamente 3 valores (uno por tier)',
+       );
 }
 
 // --- Sección 15.3 (Eidolons) ---
@@ -905,20 +910,20 @@ class EidolonShardCount {
   final bool hostileCharacters;
 
   const EidolonShardCount.single(this.single)
-      : perTier = null,
-        hostileCharacters = false;
+    : perTier = null,
+      hostileCharacters = false;
 
   EidolonShardCount.perTier(List<num> values)
-      : single = null,
-        perTier = values,
-        hostileCharacters = false {
+    : single = null,
+      perTier = values,
+      hostileCharacters = false {
     assert(values.length == 3);
   }
 
   const EidolonShardCount.hostileCharacters()
-      : single = null,
-        perTier = null,
-        hostileCharacters = true;
+    : single = null,
+      perTier = null,
+      hostileCharacters = true;
 }
 
 /// No tiene `id` propio; vive anidado dentro de un [IEidolonLayerData].
@@ -945,7 +950,7 @@ class IEidolonShardData {
 class SemverConstraint {
   final String value;
   SemverConstraint(this.value)
-      : assert(_pattern.hasMatch(value), 'SemverConstraint inválida: $value');
+    : assert(_pattern.hasMatch(value), 'SemverConstraint inválida: $value');
   static final RegExp _pattern = RegExp(r'^(\*|=?\d+\.\d+\.\d+)$');
 }
 
@@ -961,14 +966,11 @@ class IChangelogItem {
 }
 
 class ILcpDependency {
-  final String name; // debe coincidir EXACTAMENTE con el `name` del manifest de la dependencia
+  final String
+  name; // debe coincidir EXACTAMENTE con el `name` del manifest de la dependencia
   final SemverConstraint version;
   final String? link;
-  const ILcpDependency({
-    required this.name,
-    required this.version,
-    this.link,
-  });
+  const ILcpDependency({required this.name, required this.version, this.link});
 }
 
 // --- Sección 17.3 (SITREPs) ---

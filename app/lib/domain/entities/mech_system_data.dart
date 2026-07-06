@@ -34,7 +34,8 @@ class IMechSystemData {
   final List<ICounterData>? counters;
   final List<String>? integrated; // ver nota de riesgo
   final List<String>? specialEquipment;
-  final List<IActiveEffectData>? activeEffects; // se aplican al instalar, independientes de activación
+  final List<IActiveEffectData>?
+  activeEffects; // se aplican al instalar, independientes de activación
 
   const IMechSystemData({
     required this.id,

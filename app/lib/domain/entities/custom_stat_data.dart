@@ -16,7 +16,8 @@
 class ICustomStatData {
   final String key; // único globalmente dentro del alcance del LCP
   final String title;
-  final bool trackable; // true: stat current/max (como HP); false: solo-máximo (como Hull)
+  final bool
+  trackable; // true: stat current/max (como HP); false: solo-máximo (como Hull)
   final Object? defaultValue; // num | string "X/Y/Z" — default 0 si se omite
   final String icon; // formato "mdi-ICON_ID"
   final num sort; // puede ser negativo para forzar primera posición
