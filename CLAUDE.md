@@ -44,6 +44,10 @@ En cualquier documento formal (ADRs, documentación de arquitectura): referirse 
 
 Idioma preferido: español, registro informal ("a mi rollo").
 
+## Flujo de trabajo de desarrollo
+
+Ciclo estándar para cualquier tarea de código en este repo: Claude Code genera el cambio, hace commit y abre una PR (draft) contra `main`. El equipo de desarrollo revisa la PR y comunica los cambios necesarios como respuesta; Claude Code no mergea ni marca la PR como lista sin que el equipo de desarrollo lo indique. No repetir esta instrucción salvo que el equipo de desarrollo pida explícitamente un flujo distinto para una tarea puntual.
+
 ## Estado del proyecto
 
 Ver `vault/00 - Inicio.md` como panel de control y `vault/Aprendizajes/Principios y decisiones clave.md` para los criterios de diseño ya validados (orden topológico, verificación contra JSON real, límites dominio/adapter, priorización de feedback).
