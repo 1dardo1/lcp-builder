@@ -23,13 +23,14 @@ Vehículo de aprendizaje de arquitectura de software (Clean/Hexagonal) y pieza d
 ## Estado actual (resumen)
 
 - Modelo de dominio: documento completo (18 secciones numeradas), implementación Dart completa en 27 archivos, ya volcada a `app/lib/domain/` (layer-first, Clean/Hexagonal). `dart analyze lib/domain` verificado sin errores (Dart SDK 3.12.2).
+- Proyecto Flutter real generado (`flutter create`, Flutter 3.44.4 stable) con `pubspec.yaml` y carpetas de plataforma Android/iOS/Linux/macOS/Windows. `flutter analyze` sobre el proyecto completo, sin errores.
 - Home screen: mockup en Figma (`pk5HXmmuqBJiIlFl8lDamm`) y HTML artifact (no migrado a este repo).
-- Pendiente: `flutter create .` (Flutter SDK completo, no solo Dart, sigue sin instalar en el entorno remoto), empezar flujo Crear en Flutter, investigar plugins Linux/Android, diseñar pantallas Crear/Editar/Vista en Figma.
+- Pendiente: empezar flujo Crear en Flutter (sustituyendo el `lib/main.dart` de ejemplo), investigar plugins Linux/Android, diseñar pantallas Crear/Editar/Vista en Figma.
 
 ## Próximos pasos (on the horizon)
 
 - [x] Ejecutar `dart analyze` para confirmar que la capa de dominio compila — sin errores
-- [ ] Ejecutar `flutter create .` en `app/` (pubspec.yaml + carpetas de plataforma) — requiere una máquina con el SDK de Flutter instalado
+- [x] Ejecutar `flutter create .` en `app/` (pubspec.yaml + carpetas de plataforma) — hecho, `flutter analyze` sin errores
 - [ ] Empezar implementación Flutter del flujo Crear
 - [ ] Investigar plugins Flutter para sistema de archivos en Linux/Android
 - [ ] Investigar plugins Flutter para Windows/macOS/iOS (diferido)
