@@ -37,8 +37,9 @@ Las carpetas hoja de `application/`, `infrastructure/`, `presentation/` y `test/
 
 Implementado completo (27 archivos: `enums/enums.dart`, `value_objects/value_objects.dart`, 24 entidades en `entities/`, `domain.dart` como barrel), transcrito directamente de `vault/Modelo de Dominio/` (secciones 1-17) en el mismo orden topológico del documento fuente. `lib/domain/ports/` sigue vacío — las interfaces hexagonales (guardar/leer archivo, capturar imagen) se añadirán cuando `application/use_cases/` las necesite.
 
+`dart analyze lib/domain` verificado (Dart SDK 3.12.2 instalado en este entorno remoto): **"No issues found!"** — el dominio compila limpio.
+
 **Pendiente:**
 
-1. Generar el proyecto Flutter real con `flutter create .` (pubspec.yaml, carpetas `android/`, `ios/`, `linux/`, `macos/`, `windows/` y demás boilerplate) — no se ha creado todavía porque Flutter/Dart no está instalado en este entorno remoto. Esta estructura de `lib/`/`test/` se preparó a mano, antes de correr `flutter create`; conviene revisar que no choque con lo que genere el comando (debería convivir sin problema, ya que `flutter create` no toca `lib/` si ya existe contenido).
-2. Ejecutar `dart analyze` para confirmar que el dominio compila limpio — **no se ha podido ejecutar en este entorno** por el mismo motivo (sin Flutter/Dart instalado). Es la primera verificación pendiente al traer esto a una máquina con el SDK.
-3. A partir de ahí, seguir con el flujo Crear según el plan de fases (`vault/ADRs/ADR-003 - Plan de fases.md`), que empezará a consumir estas entidades desde `application/use_cases/`.
+1. Generar el proyecto Flutter real con `flutter create .` (pubspec.yaml, carpetas `android/`, `ios/`, `linux/`, `macos/`, `windows/` y demás boilerplate) — Flutter (el SDK completo, no solo Dart) sigue sin instalar en este entorno remoto. Esta estructura de `lib/`/`test/` se preparó a mano, antes de correr `flutter create`; conviene revisar que no choque con lo que genere el comando (debería convivir sin problema, ya que `flutter create` no toca `lib/` si ya existe contenido).
+2. A partir de ahí, seguir con el flujo Crear según el plan de fases (`vault/ADRs/ADR-003 - Plan de fases.md`), que empezará a consumir estas entidades desde `application/use_cases/`.
