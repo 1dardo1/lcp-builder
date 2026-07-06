@@ -31,11 +31,14 @@ lib/
 test/                  # misma jerarquía que lib/ (domain/, application/, infrastructure/, presentation/)
 ```
 
-Las carpetas hoja llevan un `.gitkeep` porque están vacías; se elimina en cuanto entre el primer archivo real.
+Las carpetas hoja de `application/`, `infrastructure/`, `presentation/` y `test/` llevan un `.gitkeep` porque siguen vacías; se elimina en cuanto entre el primer archivo real.
 
-**Pendiente de esta migración:**
+## Estado de `lib/domain/`
 
-1. Traer el dominio Dart ya implementado (27 archivos, ~2893 líneas — `enums.dart`, `value_objects.dart`, 24 entidades, `domain.dart`) a `lib/domain/`, repartido entre `entities/`, `value_objects/` y `enums/` (vivía en el entorno de trabajo anterior).
-2. Generar el proyecto Flutter real con `flutter create .` (pubspec.yaml, carpetas `android/`, `ios/`, `linux/`, `macos/`, `windows/` y demás boilerplate) — no se ha creado todavía porque Flutter/Dart no está instalado en este entorno. Esta estructura de `lib/`/`test/` se preparó a mano, antes de correr `flutter create`; conviene revisar que no choque con lo que genere el comando (debería convivir sin problema, ya que `flutter create` no toca `lib/` si ya existe contenido).
-3. Ejecutar `dart analyze` para confirmar que compila limpio (acción pendiente ya identificada en `vault/00 - Inicio.md`).
-4. A partir de ahí, seguir con el flujo Crear según el plan de fases (`vault/ADRs/ADR-003 - Plan de fases.md`).
+Implementado completo (27 archivos: `enums/enums.dart`, `value_objects/value_objects.dart`, 24 entidades en `entities/`, `domain.dart` como barrel), transcrito directamente de `vault/Modelo de Dominio/` (secciones 1-17) en el mismo orden topológico del documento fuente. `lib/domain/ports/` sigue vacío — las interfaces hexagonales (guardar/leer archivo, capturar imagen) se añadirán cuando `application/use_cases/` las necesite.
+
+**Pendiente:**
+
+1. Generar el proyecto Flutter real con `flutter create .` (pubspec.yaml, carpetas `android/`, `ios/`, `linux/`, `macos/`, `windows/` y demás boilerplate) — no se ha creado todavía porque Flutter/Dart no está instalado en este entorno remoto. Esta estructura de `lib/`/`test/` se preparó a mano, antes de correr `flutter create`; conviene revisar que no choque con lo que genere el comando (debería convivir sin problema, ya que `flutter create` no toca `lib/` si ya existe contenido).
+2. Ejecutar `dart analyze` para confirmar que el dominio compila limpio — **no se ha podido ejecutar en este entorno** por el mismo motivo (sin Flutter/Dart instalado). Es la primera verificación pendiente al traer esto a una máquina con el SDK.
+3. A partir de ahí, seguir con el flujo Crear según el plan de fases (`vault/ADRs/ADR-003 - Plan de fases.md`), que empezará a consumir estas entidades desde `application/use_cases/`.
