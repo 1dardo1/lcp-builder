@@ -121,11 +121,56 @@ class ListFieldSpec extends FieldSpec {
   });
 }
 
+/// Selector de un subconjunto de un enum cerrado (ej. `allowedTypes`, una
+/// lista de `WeaponType`) — la versión "multi" de [EnumFieldSpec]. El valor
+/// guardado bajo `key` es directamente la lista seleccionada, sin
+/// envolver en mapas de ítem (a diferencia de [ListFieldSpec], aquí no hay
+/// sub-formulario por elemento, solo pertenencia sí/no a un conjunto fijo).
+class MultiEnumFieldSpec<T> extends FieldSpec {
+  final List<T> options;
+  final String Function(T) displayLabel;
+  const MultiEnumFieldSpec({
+    required super.key,
+    required super.label,
+    super.required,
+    required this.options,
+    required this.displayLabel,
+  });
+
+  /// Mismo motivo que [EnumFieldSpec.labelFor] — evita el problema de
+  /// variance de funciones al invocar desde el motor genérico.
+  String labelFor(dynamic value) => displayLabel(value as T);
+}
+
+/// Sub-formulario de forma fija (ej. `IEffectSaveData` = `stat` + `aoe`):
+/// varios campos agrupados bajo una única `key`, pero a diferencia de
+/// [ListFieldSpec] hay exactamente una instancia, no una lista repetible.
+/// Se apoya en el mismo mecanismo de contexto anidado que los ítems de
+/// lista (ver `_groupContext` en `generic_form_view.dart`), lo que permite
+/// reutilizar la misma lista de [FieldSpec] tanto como `itemFields` de un
+/// [ListFieldSpec] (repetido) como `fields` de un [GroupFieldSpec] (único) —
+/// ej. `IDamageData` de `IActionData` (singular) vs. de `IActiveEffectData`
+/// (lista).
+class GroupFieldSpec extends FieldSpec {
+  final List<FieldSpec> fields;
+  const GroupFieldSpec({
+    required super.key,
+    required super.label,
+    super.required,
+    required this.fields,
+  });
+}
+
 /// Caso 4 del catálogo (el difícil): la forma depende de un catálogo
 /// externo (`BonusId` → `BonusValueKind`). No se puede resolver con las
 /// piezas genéricas anteriores sin más información — el motor necesita que
 /// la propia entidad le diga, para cada id del catálogo, qué [FieldSpec]
 /// mostrar a continuación.
+///
+/// También se reutiliza para uniones discriminadas *cerradas* (ej.
+/// `IResistanceData`: resist/vulnerability/immunity; `IOtherEffectData`:
+/// overshield/hp/repair/cover) usando un enum de UI local en vez de un
+/// catálogo externo — mismo mecanismo, catálogo más pequeño.
 class CatalogFieldSpec<TId> extends FieldSpec {
   final List<TId> catalogIds;
   final String Function(TId) idLabel;

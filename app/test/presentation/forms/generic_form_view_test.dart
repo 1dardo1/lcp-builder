@@ -1,11 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/domain/domain.dart';
+import 'package:lcp_builder/presentation/forms/field_spec.dart';
 import 'package:lcp_builder/presentation/forms/generic_form_controller.dart';
 import 'package:lcp_builder/presentation/forms/generic_form_view.dart';
 import 'package:lcp_builder/presentation/forms/weapon_form_schema.dart';
 
+Future<GenericFormController> _pumpFields(
+  WidgetTester tester,
+  List<FieldSpec> fields,
+) async {
+  final controller = GenericFormController();
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: SingleChildScrollView(
+          child: GenericFormView(fields: fields, controller: controller),
+        ),
+      ),
+    ),
+  );
+  return controller;
+}
+
 void main() {
+  testWidgets(
+    'MultiEnumFieldSpec: cada opción es un FilterChip que alterna en la lista',
+    (tester) async {
+      final controller = await _pumpFields(tester, [
+        MultiEnumFieldSpec<DamageType>(
+          key: 'damageTypes',
+          label: 'Tipos de daño',
+          options: DamageType.values,
+          displayLabel: (d) => d.jsonValue,
+        ),
+      ]);
+
+      expect(find.text('Kinetic'), findsOneWidget);
+      expect(find.text('Energy'), findsOneWidget);
+
+      await tester.tap(find.text('Kinetic'));
+      await tester.pump();
+      expect(controller.values['damageTypes'], [DamageType.kinetic]);
+
+      await tester.tap(find.text('Energy'));
+      await tester.pump();
+      expect(controller.values['damageTypes'], [
+        DamageType.kinetic,
+        DamageType.energy,
+      ]);
+
+      await tester.tap(find.text('Kinetic'));
+      await tester.pump();
+      expect(controller.values['damageTypes'], [DamageType.energy]);
+    },
+  );
+
+  testWidgets(
+    'GroupFieldSpec: sus campos escriben en un único mapa bajo su key, no una lista',
+    (tester) async {
+      final controller = await _pumpFields(tester, [
+        const GroupFieldSpec(
+          key: 'save',
+          label: 'Save',
+          fields: [
+            TextFieldSpec(key: 'stat', label: 'Stat', required: true),
+            BoolFieldSpec(key: 'aoe', label: 'AoE'),
+          ],
+        ),
+      ]);
+
+      await tester.enterText(find.byKey(const ValueKey('stat')), 'hull');
+      await tester.tap(find.byKey(const ValueKey('aoe')));
+      await tester.pump();
+
+      expect(controller.values['save'], {'stat': 'hull', 'aoe': true});
+    },
+  );
+
   testWidgets(
     'un CatalogFieldSpec anidado dentro de un ListFieldSpec renderiza su sub-campo',
     (tester) async {
