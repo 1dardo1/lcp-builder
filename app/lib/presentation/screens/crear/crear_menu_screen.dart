@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../forms/background_form_schema.dart';
 import '../../forms/bond_form_schema.dart';
+import '../../forms/core_bonus_form_schema.dart';
 import '../../forms/entity_crear_config.dart';
 import '../../forms/environment_form_schema.dart';
 import '../../forms/manufacturer_form_schema.dart';
+import '../../forms/reserve_form_schema.dart';
 import '../../forms/sitrep_form_schema.dart';
 import '../../forms/skill_form_schema.dart';
 import '../../forms/status_condition_form_schema.dart';
 import '../../forms/tag_form_schema.dart';
+import '../../forms/talent_form_schema.dart';
 import '../../forms/weapon_form_schema.dart';
 import 'crear_entidad_screen.dart';
 
@@ -26,6 +29,9 @@ final List<EntityCrearConfig> crearEntidadConfigs = [
   environmentCrearConfig,
   backgroundCrearConfig,
   bondCrearConfig,
+  reserveCrearConfig,
+  coreBonusCrearConfig,
+  talentCrearConfig,
 ];
 
 /// Pantalla de inicio del flujo Crear: menú de entidades disponibles. Sin

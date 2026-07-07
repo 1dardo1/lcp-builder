@@ -1,21 +1,22 @@
 // Script de verificación manual: genera un `.lcp` **por entidad** (no uno
-// combinado) con varias instancias de cada una de las 8 entidades
-// "simples" completadas en esta sesión (manufacturer, tag, skill,
-// status_condition, sitrep, environment, background, bond) — mismo
-// objetivo que `generar_lcp_pruebas.dart` para armas: confirmar en
-// COMP/CON que el dominio/mapper produce JSON que el importador acepta,
-// antes de dar por buena cada entidad. Un archivo por tipo, no uno con las
-// 8 mezcladas, para que un rechazo de COMP/CON señale directamente qué
-// entidad falla. Construye los objetos de dominio directamente (no pasa
-// por los ensambladores del formulario) y exporta con
-// `ContentPackExporter.export`.
+// combinado) con varias instancias de cada una de las entidades "simples"
+// (sin mecanismo polimórfico propio) ya completadas: manufacturer, tag,
+// skill, status_condition, sitrep, environment, background, bond, reserve,
+// core_bonus, talent — mismo objetivo que `generar_lcp_pruebas.dart` para
+// armas: confirmar en COMP/CON que el dominio/mapper produce JSON que el
+// importador acepta, antes de dar por buena cada entidad. Un archivo por
+// tipo, no uno con todas mezcladas, para que un rechazo de COMP/CON señale
+// directamente qué entidad falla. Construye los objetos de dominio
+// directamente (no pasa por los ensambladores del formulario) y exporta
+// con `ContentPackExporter.export`.
 //
 // Uso:
 //   dart run bin/generar_lcp_pruebas_entidades.dart [directorio_salida]
 //
 // Directorio por defecto si no se pasa argumento: build/pruebas_entidades/
 // (genera manufacturers.lcp, tags.lcp, skills.lcp, statuses.lcp,
-// sitreps.lcp, environments.lcp, backgrounds.lcp, bonds.lcp)
+// sitreps.lcp, environments.lcp, backgrounds.lcp, bonds.lcp, reserves.lcp,
+// core_bonuses.lcp, talents.lcp)
 
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
@@ -167,6 +168,57 @@ List<IBondData> _bonds() => const [
   ),
 ];
 
+List<IReserveData> _reserves() => [
+  IReserveData(
+    id: 'reserve_test_tactical',
+    name: 'TEST — reserve táctica',
+    type: ReserveType.tactical,
+    description: 'd',
+    consumable: true,
+    bonuses: [
+      IBonusData(id: BonusId.accuracy, val: NumericOrFormulaValue.number(1)),
+    ],
+  ),
+  const IReserveData(
+    id: 'reserve_test_minima',
+    name: 'TEST — reserve mínima',
+    type: ReserveType.resource,
+  ),
+];
+
+List<ICoreBonusData> _coreBonuses() => const [
+  ICoreBonusData(
+    id: 'cb_test_completo',
+    name: 'TEST — core bonus completo',
+    source: 'TEST_MFR',
+    effect: 'e',
+    description: 'd',
+    mountedEffect: 'efecto al instalar en un mount',
+  ),
+];
+
+List<ITalentData> _talents() => [
+  ITalentData(
+    id: 'tal_test_con_ranks',
+    name: 'TEST — talent con ranks',
+    description: 'd',
+    ranks: [
+      IRankData(
+        name: 'Rank 1',
+        description: 'd',
+        bonuses: [
+          IBonusData(
+            id: BonusId.accuracy,
+            val: NumericOrFormulaValue.number(1),
+          ),
+        ],
+      ),
+      const IRankData(name: 'Rank 2', description: 'd'),
+      const IRankData(name: 'Rank 3', description: 'd', exclusive: true),
+    ],
+  ),
+];
+
 /// Un manifest por entidad, con `name` propio — COMP/CON identifica un
 /// content pack por su manifest (nombre/autor/versión), así que 8 `.lcp`
 /// con el mismo manifest se tratan como el mismo pack: cada uno que se
@@ -195,6 +247,9 @@ Future<void> main(List<String> args) async {
     'environments': _environments(),
     'backgrounds': _backgrounds(),
     'bonds': _bonds(),
+    'reserves': _reserves(),
+    'core_bonuses': _coreBonuses(),
+    'talents': _talents(),
   };
 
   final exporter = ZipContentPackExporter();

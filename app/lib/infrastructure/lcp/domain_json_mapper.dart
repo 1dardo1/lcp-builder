@@ -506,3 +506,67 @@ Map<String, dynamic> bondDataToJson(IBondData v) => _clean({
   'questions': _list(v.questions, questionDataToJson),
   'powers': _list(v.powers, bondPowerDataToJson),
 });
+
+// --- Sección 11.4 (Reserves) ---
+
+Map<String, dynamic> reserveDataToJson(IReserveData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'type': v.type.name,
+  'label': v.label,
+  'description': v.description,
+  'consumable': v.consumable,
+  'actions': _list(v.actions, actionDataToJson),
+  'bonuses': _list(v.bonuses, bonusDataToJson),
+  'synergies': _list(v.synergies, synergyDataToJson),
+  'deployables': _list(v.deployables, deployableDataToJson),
+  'counters': _list(v.counters, counterDataToJson),
+  'integrated': v.integrated,
+  'special_equipment': v.specialEquipment,
+  'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+});
+
+// --- Sección 11.2 (Core Bonuses) ---
+
+Map<String, dynamic> coreBonusDataToJson(ICoreBonusData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'source': v.source,
+  'effect': v.effect,
+  'description': v.description,
+  'mounted_effect': v.mountedEffect,
+  'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+  'actions': _list(v.actions, actionDataToJson),
+  'bonuses': _list(v.bonuses, bonusDataToJson),
+  'synergies': _list(v.synergies, synergyDataToJson),
+  'deployables': _list(v.deployables, deployableDataToJson),
+  'counters': _list(v.counters, counterDataToJson),
+  'integrated': v.integrated,
+  'special_equipment': v.specialEquipment,
+});
+
+// --- Sección 11.6 (Talents) ---
+
+Map<String, dynamic> rankDataToJson(IRankData v) => _clean({
+  'name': v.name,
+  'description': v.description,
+  'exclusive': v.exclusive,
+  'actions': _list(v.actions, actionDataToJson),
+  'bonuses': _list(v.bonuses, bonusDataToJson),
+  'synergies': _list(v.synergies, synergyDataToJson),
+  'deployables': _list(v.deployables, deployableDataToJson),
+  'counters': _list(v.counters, counterDataToJson),
+  'integrated': v.integrated,
+  'special_equipment': v.specialEquipment,
+  'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+});
+
+Map<String, dynamic> talentDataToJson(ITalentData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'description': v.description,
+  'ranks': _list(v.ranks, rankDataToJson),
+  'icon_svg': v.iconSvg,
+  'icon_url': v.iconUrl,
+  'terse': v.terse,
+});

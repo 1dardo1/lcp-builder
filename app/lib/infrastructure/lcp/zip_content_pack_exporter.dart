@@ -48,6 +48,9 @@ class ZipContentPackExporter implements ContentPackExporter {
     IEnvironmentData v => environmentDataToJson(v),
     IBackgroundData v => backgroundDataToJson(v),
     IBondData v => bondDataToJson(v),
+    IReserveData v => reserveDataToJson(v),
+    ICoreBonusData v => coreBonusDataToJson(v),
+    ITalentData v => talentDataToJson(v),
     _ => throw ArgumentError(
       'Tipo de contenido sin mapeo JSON: ${item.runtimeType}',
     ),
