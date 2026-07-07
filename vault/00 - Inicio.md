@@ -12,7 +12,7 @@ Vehículo de aprendizaje de arquitectura de software (Clean/Hexagonal) y pieza d
 - [[ADR-003 - Plan de fases]] — Propuesta (falta Trade-off analysis/Consequences). Orden de funcionalidades dentro de Linux/Android (Crear → Mostrar/localizar → Editar/eliminar → mantenimiento), criterios de entrada de funcionalidad nueva, relación plan de fases/feedback de cliente.
 
 ## Modelo de dominio
-- [[00 - Indice|Índice del modelo de dominio]] (27 archivos Dart implementados, ~2893 líneas). 18 secciones en orden topológico: tipos primitivos → active effects → contenedores de efectos → bonuses/synergies/tags/counters/deployables/ammo → tipos compuestos pequeños → Pilot/Licensed/NPC Data (con checklists) → Other → clasificación entidad/value object verificada. Consultar el índice de esa carpeta para saltar directo a la sección concreta sin abrir el resto.
+- [[00 - Indice|Índice del modelo de dominio]] (27 archivos Dart implementados, ~2893 líneas). 19 secciones en orden topológico: tipos primitivos → active effects → contenedores de efectos → bonuses/synergies/tags/counters/deployables/ammo → tipos compuestos pequeños → Pilot/Licensed/NPC Data (con checklists) → Other → clasificación entidad/value object verificada → catálogo de casos polimórficos. Consultar el índice de esa carpeta para saltar directo a la sección concreta sin abrir el resto.
 
 ## Diseño UI
 - [[Referencia visual COMP-CON]] — Capturas de la app oficial usadas de referencia estética (home screen, formulario de piloto, roster) + 2 decisiones de diseño abiertas (color de CTA, formato de etiquetas de botón) + pantallas Crear/Editar/Vista pendientes de diseñar.
@@ -25,13 +25,15 @@ Vehículo de aprendizaje de arquitectura de software (Clean/Hexagonal) y pieza d
 - Modelo de dominio: documento completo (18 secciones numeradas), implementación Dart completa en 27 archivos, ya volcada a `app/lib/domain/` (layer-first, Clean/Hexagonal). `dart analyze lib/domain` verificado sin errores (Dart SDK 3.12.2).
 - Proyecto Flutter real generado (`flutter create`, Flutter 3.44.4 stable) con `pubspec.yaml` y carpetas de plataforma Android/iOS/Linux/macOS/Windows. `flutter analyze` sobre el proyecto completo, sin errores.
 - Home screen: mockup en Figma (`pk5HXmmuqBJiIlFl8lDamm`) y HTML artifact (no migrado a este repo).
-- Pendiente: empezar flujo Crear en Flutter (sustituyendo el `lib/main.dart` de ejemplo), investigar plugins Linux/Android, diseñar pantallas Crear/Editar/Vista en Figma.
+- Flujo Crear (arma) funcionando de principio a fin sin interfaz todavía: dominio → `.lcp` real en disco (`app/bin/crear_arma_ejemplo.dart`), con test de aceptación end-to-end. Ver "Flujo Crear — arma" en `app/README.md`.
+- Pendiente: diseñar pantallas Crear/Editar/Vista en Figma para poder construir el formulario real, investigar plugins Linux/Android.
 
 ## Próximos pasos (on the horizon)
 
 - [x] Ejecutar `dart analyze` para confirmar que la capa de dominio compila — sin errores
 - [x] Ejecutar `flutter create .` en `app/` (pubspec.yaml + carpetas de plataforma) — hecho, `flutter analyze` sin errores
-- [ ] Empezar implementación Flutter del flujo Crear
+- [x] Verificar de principio a fin el flujo Crear con una entidad (arma) — dominio → `.lcp` en disco, sin formulario todavía
+- [ ] Diseñar en Figma las pantallas Crear/Editar/Vista y construir el formulario real en `presentation/`
 - [ ] Investigar plugins Flutter para sistema de archivos en Linux/Android
 - [ ] Investigar plugins Flutter para Windows/macOS/iOS (diferido)
 - [ ] Diseñar en Figma las pantallas Crear, Editar, Vista
