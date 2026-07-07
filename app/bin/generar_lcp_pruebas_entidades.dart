@@ -1,21 +1,22 @@
 // Script de verificación manual: genera un `.lcp` **por entidad** (no uno
-// combinado) con varias instancias de cada una de las 8 entidades
-// "simples" completadas en esta sesión (manufacturer, tag, skill,
-// status_condition, sitrep, environment, background, bond) — mismo
-// objetivo que `generar_lcp_pruebas.dart` para armas: confirmar en
-// COMP/CON que el dominio/mapper produce JSON que el importador acepta,
-// antes de dar por buena cada entidad. Un archivo por tipo, no uno con las
-// 8 mezcladas, para que un rechazo de COMP/CON señale directamente qué
-// entidad falla. Construye los objetos de dominio directamente (no pasa
-// por los ensambladores del formulario) y exporta con
-// `ContentPackExporter.export`.
+// combinado) con varias instancias de cada una de las entidades "simples"
+// (sin mecanismo polimórfico propio) ya completadas: manufacturer, tag,
+// skill, status_condition, sitrep, environment, background, bond, reserve,
+// core_bonus, talent — mismo objetivo que `generar_lcp_pruebas.dart` para
+// armas: confirmar en COMP/CON que el dominio/mapper produce JSON que el
+// importador acepta, antes de dar por buena cada entidad. Un archivo por
+// tipo, no uno con todas mezcladas, para que un rechazo de COMP/CON señale
+// directamente qué entidad falla. Construye los objetos de dominio
+// directamente (no pasa por los ensambladores del formulario) y exporta
+// con `ContentPackExporter.export`.
 //
 // Uso:
 //   dart run bin/generar_lcp_pruebas_entidades.dart [directorio_salida]
 //
 // Directorio por defecto si no se pasa argumento: build/pruebas_entidades/
 // (genera manufacturers.lcp, tags.lcp, skills.lcp, statuses.lcp,
-// sitreps.lcp, environments.lcp, backgrounds.lcp, bonds.lcp)
+// sitreps.lcp, environments.lcp, backgrounds.lcp, bonds.lcp, reserves.lcp,
+// core_bonuses.lcp, talents.lcp)
 
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
@@ -23,9 +24,12 @@ import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
 
 List<IManufacturerData> _manufacturers() => const [
   IManufacturerData(
-    id: 'GMS',
-    name: 'General Manufacturing Systems',
-    description: 'El mayor fabricante de la Union.',
+    // id distinto de los fabricantes reales de core data (GMS, IPS-N,
+    // SSC, HORUS, HA...) — un id que colisione se confunde en COMP/CON
+    // con el fabricante oficial en vez de aparecer como contenido nuevo.
+    id: 'TEST_MFR',
+    name: 'TEST Manufacturing',
+    description: 'Fabricante de prueba, no colisiona con core data.',
     quote: '"Fiable donde otros fallan."',
     light: '#D9D9D9',
     dark: '#1A1A1A',
@@ -43,8 +47,10 @@ List<IManufacturerData> _manufacturers() => const [
 
 List<ITagData> _tags() => const [
   ITagData(
-    id: 'tg_accurate',
-    name: 'Accurate',
+    // id distinto de los tags reales de core data (tg_accurate ya existe
+    // oficialmente) — mismo motivo que el id de manufacturer más abajo.
+    id: 'tg_test_accurate',
+    name: 'TEST — Accurate',
     description: 'Tira el dado de ataque dos veces, queda el mayor.',
   ),
   ITagData(
@@ -69,8 +75,10 @@ List<ISkillData> _skills() => [
 
 List<IStatusConditionData> _statusConditions() => const [
   IStatusConditionData(
-    id: 'st_shredded',
-    name: 'Shredded',
+    // id distinto de los statuses reales de core data (st_shredded ya
+    // existe oficialmente) — mismo motivo que el id de manufacturer.
+    id: 'st_test_shredded',
+    name: 'TEST — Shredded',
     type: StatusConditionType.status,
     effects: 'Vulnerable a Energy.',
     terse: 'Vuln. Energy',
@@ -108,8 +116,10 @@ List<ISitrepData> _sitreps() => const [
 
 List<IEnvironmentData> _environments() => const [
   IEnvironmentData(
-    id: 'env_vacuum',
-    name: 'Vacuum',
+    // id distinto de los entornos reales de core data (env_vacuum podría
+    // colisionar) — mismo motivo que el id de manufacturer.
+    id: 'env_test_vacuum',
+    name: 'TEST — Vacuum',
     description: 'Sin atmósfera. Reglas especiales de movimiento y daño.',
   ),
 ];
@@ -158,13 +168,69 @@ List<IBondData> _bonds() => const [
   ),
 ];
 
-ILcpManifestData _manifestDePruebas() => const ILcpManifestData(
-  name: 'LCP Builder — paquete de pruebas (entidades simples)',
+List<IReserveData> _reserves() => [
+  IReserveData(
+    id: 'reserve_test_tactical',
+    name: 'TEST — reserve táctica',
+    type: ReserveType.tactical,
+    description: 'd',
+    consumable: true,
+    bonuses: [
+      IBonusData(id: BonusId.accuracy, val: NumericOrFormulaValue.number(1)),
+    ],
+  ),
+  const IReserveData(
+    id: 'reserve_test_minima',
+    name: 'TEST — reserve mínima',
+    type: ReserveType.resource,
+  ),
+];
+
+List<ICoreBonusData> _coreBonuses() => const [
+  ICoreBonusData(
+    id: 'cb_test_completo',
+    name: 'TEST — core bonus completo',
+    source: 'TEST_MFR',
+    effect: 'e',
+    description: 'd',
+    mountedEffect: 'efecto al instalar en un mount',
+  ),
+];
+
+List<ITalentData> _talents() => [
+  ITalentData(
+    id: 'tal_test_con_ranks',
+    name: 'TEST — talent con ranks',
+    description: 'd',
+    ranks: [
+      IRankData(
+        name: 'Rank 1',
+        description: 'd',
+        bonuses: [
+          IBonusData(
+            id: BonusId.accuracy,
+            val: NumericOrFormulaValue.number(1),
+          ),
+        ],
+      ),
+      const IRankData(name: 'Rank 2', description: 'd'),
+      const IRankData(name: 'Rank 3', description: 'd', exclusive: true),
+    ],
+  ),
+];
+
+/// Un manifest por entidad, con `name` propio — COMP/CON identifica un
+/// content pack por su manifest (nombre/autor/versión), así que 8 `.lcp`
+/// con el mismo manifest se tratan como el mismo pack: cada uno que se
+/// carga sobrescribe al anterior en vez de sumarse. Ver vault
+/// "Principios y decisiones clave" — mismo tipo de bug que las keys
+/// duplicadas en un `Map`, pero a nivel de content pack.
+ILcpManifestData _manifestDePruebas(String contentKey) => ILcpManifestData(
+  name: 'LCP Builder — paquete de pruebas ($contentKey)',
   author: 'LCP Builder',
   description:
       'Paquete generado por generar_lcp_pruebas_entidades.dart para '
-      'verificar en COMP/CON las 8 entidades simples completadas en esta '
-      'sesión.',
+      'verificar en COMP/CON la entidad "$contentKey".',
   version: '0.1.0',
   v3: true,
 );
@@ -181,6 +247,9 @@ Future<void> main(List<String> args) async {
     'environments': _environments(),
     'backgrounds': _backgrounds(),
     'bonds': _bonds(),
+    'reserves': _reserves(),
+    'core_bonuses': _coreBonuses(),
+    'talents': _talents(),
   };
 
   final exporter = ZipContentPackExporter();
@@ -192,7 +261,7 @@ Future<void> main(List<String> args) async {
   for (final entry in content.entries) {
     final outputPath = '$outputDir/${entry.key}.lcp';
     final bytes = exporter.export(
-      manifest: _manifestDePruebas(),
+      manifest: _manifestDePruebas(entry.key),
       content: {entry.key: entry.value},
     );
     await fileWriter.write(outputPath, bytes);

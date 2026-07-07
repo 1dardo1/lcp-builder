@@ -242,4 +242,77 @@ void main() {
       ]);
     });
   });
+
+  group('reserveDataToJson', () {
+    test('mapea type.name y el paquete de actions/bonuses/etc.', () {
+      final json = reserveDataToJson(
+        IReserveData(
+          id: 'reserve_test',
+          name: 'Test',
+          type: ReserveType.tactical,
+          consumable: true,
+          bonuses: [
+            IBonusData(
+              id: BonusId.accuracy,
+              val: NumericOrFormulaValue.number(1),
+            ),
+          ],
+        ),
+      );
+
+      expect(json['type'], 'tactical');
+      expect(json['consumable'], true);
+      expect((json['bonuses'] as List).first['id'], 'accuracy');
+      expect(json.containsKey('label'), isFalse);
+    });
+  });
+
+  group('coreBonusDataToJson', () {
+    test('mapea mounted_effect en snake_case', () {
+      final json = coreBonusDataToJson(
+        const ICoreBonusData(
+          id: 'cb_test',
+          name: 'Test',
+          source: 'GMS',
+          effect: 'e',
+          description: 'd',
+          mountedEffect: 'me',
+        ),
+      );
+
+      expect(json['mounted_effect'], 'me');
+      expect(json['source'], 'GMS');
+    });
+  });
+
+  group('talentDataToJson', () {
+    test('mapea ranks anidados con su propio paquete', () {
+      final json = talentDataToJson(
+        ITalentData(
+          id: 'tal_test',
+          name: 'Test',
+          description: 'd',
+          ranks: [
+            IRankData(
+              name: 'Rank 1',
+              description: 'd',
+              exclusive: true,
+              bonuses: [
+                IBonusData(
+                  id: BonusId.accuracy,
+                  val: NumericOrFormulaValue.number(1),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+
+      final ranks = json['ranks'] as List;
+      expect(ranks, hasLength(1));
+      expect(ranks.first['name'], 'Rank 1');
+      expect(ranks.first['exclusive'], true);
+      expect((ranks.first['bonuses'] as List).first['id'], 'accuracy');
+    });
+  });
 }

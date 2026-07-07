@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/domain/domain.dart';
+import 'package:lcp_builder/presentation/forms/common_entity_fields.dart';
 import 'package:lcp_builder/presentation/forms/weapon_form_schema.dart';
 
 void main() {
