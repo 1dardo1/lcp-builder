@@ -4,8 +4,15 @@ import '../../forms/background_form_schema.dart';
 import '../../forms/bond_form_schema.dart';
 import '../../forms/core_bonus_form_schema.dart';
 import '../../forms/entity_crear_config.dart';
+import '../../forms/eidolon_layer_form_schema.dart';
 import '../../forms/environment_form_schema.dart';
+import '../../forms/frame_form_schema.dart';
 import '../../forms/manufacturer_form_schema.dart';
+import '../../forms/mech_system_form_schema.dart';
+import '../../forms/npc_class_form_schema.dart';
+import '../../forms/npc_feature_form_schema.dart';
+import '../../forms/npc_template_form_schema.dart';
+import '../../forms/pilot_gear_form_schema.dart';
 import '../../forms/reserve_form_schema.dart';
 import '../../forms/sitrep_form_schema.dart';
 import '../../forms/skill_form_schema.dart';
@@ -13,6 +20,7 @@ import '../../forms/status_condition_form_schema.dart';
 import '../../forms/tag_form_schema.dart';
 import '../../forms/talent_form_schema.dart';
 import '../../forms/weapon_form_schema.dart';
+import '../../forms/weapon_mod_form_schema.dart';
 import 'crear_entidad_screen.dart';
 
 /// Registro de entidades disponibles en el flujo Crear — cada esquema
@@ -32,6 +40,14 @@ final List<EntityCrearConfig> crearEntidadConfigs = [
   reserveCrearConfig,
   coreBonusCrearConfig,
   talentCrearConfig,
+  mechSystemCrearConfig,
+  weaponModCrearConfig,
+  pilotGearCrearConfig,
+  frameCrearConfig,
+  npcFeatureCrearConfig,
+  npcClassCrearConfig,
+  npcTemplateCrearConfig,
+  eidolonLayerCrearConfig,
 ];
 
 /// Pantalla de inicio del flujo Crear: menú de entidades disponibles. Sin

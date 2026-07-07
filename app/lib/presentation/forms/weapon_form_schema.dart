@@ -163,20 +163,28 @@ const _weaponTypeField = ShapeChoiceFieldSpec(
   key: 'type',
   label: 'Tipo de arma',
   required: true,
-  optionALabel: 'Único',
-  optionA: EnumFieldSpec<WeaponType>(
-    key: 'type.a',
-    label: 'Tipo',
-    options: WeaponType.values,
-    displayLabel: _weaponTypeLabel,
-  ),
-  optionBLabel: 'Varios',
-  optionB: MultiEnumFieldSpec<WeaponType>(
-    key: 'type.b',
-    label: 'Tipos',
-    options: WeaponType.values,
-    displayLabel: _weaponTypeLabel,
-  ),
+  options: [
+    ShapeChoiceOption(
+      value: 'A',
+      label: 'Único',
+      field: EnumFieldSpec<WeaponType>(
+        key: 'type.a',
+        label: 'Tipo',
+        options: WeaponType.values,
+        displayLabel: _weaponTypeLabel,
+      ),
+    ),
+    ShapeChoiceOption(
+      value: 'B',
+      label: 'Varios',
+      field: MultiEnumFieldSpec<WeaponType>(
+        key: 'type.b',
+        label: 'Tipos',
+        options: WeaponType.values,
+        displayLabel: _weaponTypeLabel,
+      ),
+    ),
+  ],
 );
 
 String _weaponTypeLabel(WeaponType t) => t.jsonValue;

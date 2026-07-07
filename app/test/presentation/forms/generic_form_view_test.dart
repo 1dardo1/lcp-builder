@@ -79,6 +79,61 @@ void main() {
   );
 
   testWidgets(
+    'ShapeChoiceFieldSpec: admite más de 2 ramas, y una rama sin campo no pinta nada',
+    (tester) async {
+      final controller = await _pumpFields(tester, [
+        const ShapeChoiceFieldSpec(
+          key: 'count',
+          label: 'Count',
+          options: [
+            ShapeChoiceOption(
+              value: 'single',
+              label: 'Único',
+              field: NumberFieldSpec(key: 'count.single', label: 'Número'),
+            ),
+            ShapeChoiceOption(
+              value: 'perTier',
+              label: 'Por tier',
+              field: GroupFieldSpec(
+                key: 'count.perTier',
+                label: 'Por tier',
+                fields: [
+                  NumberFieldSpec(key: 'tier1', label: 'Tier 1'),
+                  NumberFieldSpec(key: 'tier2', label: 'Tier 2'),
+                  NumberFieldSpec(key: 'tier3', label: 'Tier 3'),
+                ],
+              ),
+            ),
+            ShapeChoiceOption(value: 'hostile', label: 'Hostile characters'),
+          ],
+        ),
+      ]);
+
+      // Las 3 ramas están disponibles como segmentos, y por defecto se
+      // muestra la primera (con su campo numérico anidado).
+      expect(find.text('Único'), findsOneWidget);
+      expect(find.text('Por tier'), findsOneWidget);
+      expect(find.text('Hostile characters'), findsOneWidget);
+      expect(find.byKey(const ValueKey('count.single')), findsOneWidget);
+
+      await tester.tap(find.text('Por tier'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('count.single')), findsNothing);
+      expect(find.byKey(const ValueKey('tier1')), findsOneWidget);
+      expect(find.byKey(const ValueKey('tier2')), findsOneWidget);
+      expect(find.byKey(const ValueKey('tier3')), findsOneWidget);
+
+      // La rama "hostile" no tiene `field` — elegirla no debe pintar ningún
+      // sub-campo (ni el de "single" ni el de "perTier").
+      await tester.tap(find.text('Hostile characters'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('count.single')), findsNothing);
+      expect(find.byKey(const ValueKey('tier1')), findsNothing);
+      expect(controller.values['count.choice'], 'hostile');
+    },
+  );
+
+  testWidgets(
     'un CatalogFieldSpec anidado dentro de un ListFieldSpec renderiza su sub-campo',
     (tester) async {
       tester.view.physicalSize = const Size(1080, 4000);

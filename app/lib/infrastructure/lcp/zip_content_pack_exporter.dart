@@ -51,6 +51,17 @@ class ZipContentPackExporter implements ContentPackExporter {
     IReserveData v => reserveDataToJson(v),
     ICoreBonusData v => coreBonusDataToJson(v),
     ITalentData v => talentDataToJson(v),
+    // IWeaponModData extiende IMechSystemData — su case debe ir antes, si
+    // no el switch nunca lo alcanzaría (coincidiría primero con el caso
+    // del tipo base).
+    IWeaponModData v => weaponModDataToJson(v),
+    IMechSystemData v => mechSystemDataToJson(v),
+    IPilotGearData v => pilotGearDataToJson(v),
+    IFrameData v => frameDataToJson(v),
+    INpcFeatureData v => npcFeatureDataToJson(v),
+    INpcClassData v => npcClassDataToJson(v),
+    INpcTemplateData v => npcTemplateDataToJson(v),
+    IEidolonLayerData v => eidolonLayerDataToJson(v),
     _ => throw ArgumentError(
       'Tipo de contenido sin mapeo JSON: ${item.runtimeType}',
     ),

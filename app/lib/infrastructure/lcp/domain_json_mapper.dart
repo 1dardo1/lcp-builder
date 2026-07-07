@@ -570,3 +570,329 @@ Map<String, dynamic> talentDataToJson(ITalentData v) => _clean({
   'icon_url': v.iconUrl,
   'terse': v.terse,
 });
+
+// --- Sección 15 (NPC Data): TierValue / NpcSize / EidolonShardCount ---
+// (caso 6 del catálogo de casos polimórficos, variabilidad por tier).
+
+Object tierValueToJson(TierValue v) => v.single ?? v.perTier!;
+
+Object npcSizeToJson(NpcSize v) => v.perTier;
+
+Object eidolonShardCountToJson(EidolonShardCount v) {
+  if (v.hostileCharacters) return 'hostile_characters';
+  return v.single ?? v.perTier!;
+}
+
+// --- Sección 13.4 (Mech Systems) ---
+
+Map<String, dynamic> mechSystemDataToJson(IMechSystemData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'source': v.source,
+  'license': v.license,
+  'license_id': v.licenseId,
+  'license_level': v.licenseLevel,
+  'type': v.type?.jsonValue,
+  'effect': v.effect,
+  'description': v.description,
+  'sp': v.sp,
+  'tags': _list(v.tags, tagInstanceToJson),
+  'actions': _list(v.actions, actionDataToJson),
+  'bonuses': _list(v.bonuses, bonusDataToJson),
+  'no_bonus': v.noBonus,
+  'synergies': _list(v.synergies, synergyDataToJson),
+  'no_synergy': v.noSynergy,
+  'deployables': _list(v.deployables, deployableDataToJson),
+  'counters': _list(v.counters, counterDataToJson),
+  'integrated': v.integrated,
+  'special_equipment': v.specialEquipment,
+  'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+});
+
+// --- Sección 13.5 (Mech Weapon Mods) ---
+
+Map<String, dynamic> weaponModDataToJson(IWeaponModData v) => _clean({
+  ...mechSystemDataToJson(v),
+  'on_miss': v.onMiss == null ? null : activeEffectDataToJson(v.onMiss!),
+  'on_attack': v.onAttack == null ? null : activeEffectDataToJson(v.onAttack!),
+  'on_hit': v.onHit == null ? null : activeEffectDataToJson(v.onHit!),
+  'on_crit': v.onCrit == null ? null : activeEffectDataToJson(v.onCrit!),
+  'allowed_types': v.allowedTypes?.map((e) => e.jsonValue).toList(),
+  'allowed_sizes': v.allowedSizes?.map((e) => e.jsonValue).toList(),
+  'added_tags': _list(v.addedTags, tagInstanceToJson),
+  'added_damage': _list(v.addedDamage, damageDataToJson),
+  'added_range': _list(v.addedRange, rangeDataToJson),
+  'restricted_types': v.restrictedTypes?.map((e) => e.jsonValue).toList(),
+  'restricted_sizes': v.restrictedSizes?.map((e) => e.jsonValue).toList(),
+});
+
+// --- Sección 11.3 (Pilot Gear) ---
+
+Map<String, dynamic> pilotGearDataToJson(IPilotGearData v) => switch (v) {
+  IPilotWeaponData v => _clean({
+    'id': v.id,
+    'name': v.name,
+    'type': 'Weapon',
+    'description': v.description,
+    'effect': v.effect,
+    'range': _list(v.range, rangeDataToJson),
+    'damage': _list(v.damage, damageDataToJson),
+    'tags': _list(v.tags, tagInstanceToJson),
+    'actions': _list(v.actions, actionDataToJson),
+    'bonuses': _list(v.bonuses, bonusDataToJson),
+    'synergies': _list(v.synergies, synergyDataToJson),
+    'deployables': _list(v.deployables, deployableDataToJson),
+    'counters': _list(v.counters, counterDataToJson),
+    'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+  }),
+  IPilotArmorData v => _clean({
+    'id': v.id,
+    'name': v.name,
+    'type': 'Armor',
+    'description': v.description,
+    'tags': _list(v.tags, tagInstanceToJson),
+    'actions': _list(v.actions, actionDataToJson),
+    'bonuses': _list(v.bonuses, bonusDataToJson),
+    'synergies': _list(v.synergies, synergyDataToJson),
+    'deployables': _list(v.deployables, deployableDataToJson),
+    'counters': _list(v.counters, counterDataToJson),
+  }),
+  IPilotGearItemData v => _clean({
+    'id': v.id,
+    'name': v.name,
+    'type': 'Gear',
+    'description': v.description,
+    'tags': _list(v.tags, tagInstanceToJson),
+    'actions': _list(v.actions, actionDataToJson),
+    'bonuses': _list(v.bonuses, bonusDataToJson),
+    'synergies': _list(v.synergies, synergyDataToJson),
+    'deployables': _list(v.deployables, deployableDataToJson),
+    'counters': _list(v.counters, counterDataToJson),
+  }),
+};
+
+// --- Sección 13.2 (Frames) ---
+
+Map<String, dynamic> frameTraitDataToJson(IFrameTraitData v) => _clean({
+  'name': v.name,
+  'description': v.description,
+  'actions': _list(v.actions, actionDataToJson),
+  'bonuses': _list(v.bonuses, bonusDataToJson),
+  'synergies': _list(v.synergies, synergyDataToJson),
+  'deployables': _list(v.deployables, deployableDataToJson),
+  'counters': _list(v.counters, counterDataToJson),
+  'integrated': v.integrated,
+  'special_equipment': v.specialEquipment,
+  'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+});
+
+Map<String, dynamic> coreSystemDataToJson(ICoreSystemData v) => _clean({
+  'name': v.name,
+  'description': v.description,
+  'active_name': v.activeName,
+  'active_effect': v.activeEffect,
+  'activation': v.activation.jsonValue,
+  'deactivation': v.deactivation?.jsonValue,
+  'use': v.use?.jsonValue,
+  'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+  'active_actions': _list(v.activeActions, actionDataToJson),
+  'active_bonuses': _list(v.activeBonuses, bonusDataToJson),
+  'active_synergies': _list(v.activeSynergies, synergyDataToJson),
+  'passive_name': v.passiveName,
+  'passive_effect': v.passiveEffect,
+  'passive_actions': _list(v.passiveActions, actionDataToJson),
+  'passive_bonuses': _list(v.passiveBonuses, bonusDataToJson),
+  'passive_synergies': _list(v.passiveSynergies, synergyDataToJson),
+  'deployables': _list(v.deployables, deployableDataToJson),
+  'counters': _list(v.counters, counterDataToJson),
+  'integrated': v.integrated,
+  'special_equipment': v.specialEquipment,
+  'tags': _list(v.tags, tagInstanceToJson),
+});
+
+Map<String, dynamic> prerequisiteToJson(IPrerequisite v) => _clean({
+  'source': v.source,
+  'min_rank': v.minRank,
+  'cumulative': v.cumulative,
+});
+
+Map<String, dynamic> frameStatsToJson(IFrameStats v) => {
+  'size': v.size,
+  'structure': v.structure,
+  'stress': v.stress,
+  'armor': v.armor,
+  'hp': v.hp,
+  'evasion': v.evasion,
+  'edef': v.edef,
+  'heatcap': v.heatcap,
+  'repcap': v.repcap,
+  'sensor_range': v.sensorRange,
+  'tech_attack': v.techAttack,
+  'save': v.save,
+  'speed': v.speed,
+  'sp': v.sp,
+};
+
+Object? _frameSpecialtyToJson(Object? v) {
+  if (v == null) return null;
+  if (v is bool) return v;
+  if (v is IPrerequisite) return prerequisiteToJson(v);
+  throw ArgumentError('IFrameData.specialty no reconocido: $v');
+}
+
+Map<String, dynamic> frameDataToJson(IFrameData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'source': v.source,
+  'license_id': v.licenseId,
+  'license_level': v.licenseLevel,
+  'mechtype': v.mechtype,
+  'description': v.description,
+  'mounts': v.mounts.map((e) => e.jsonValue).toList(),
+  'stats': frameStatsToJson(v.stats),
+  'traits': _list(v.traits, frameTraitDataToJson),
+  'core_system': coreSystemDataToJson(v.coreSystem),
+  'specialty': _frameSpecialtyToJson(v.specialty),
+  'variant': v.variant,
+  'image_url': v.imageUrl,
+  'y_pos': v.yPos,
+});
+
+// --- Sección 15.2 (NPC Features) ---
+
+Map<String, dynamic> npcDamageDataToJson(INpcDamageData v) => _clean({
+  'type': v.type.jsonValue,
+  'damage': v.damage,
+  'aoe': v.aoe == null ? null : stringOrBoolToJson(v.aoe!),
+  'save': _damageSaveObjectToJson(v.save),
+  'save_half': v.saveHalf,
+  'ap': v.ap,
+  'target': v.target?.name,
+});
+
+Map<String, dynamic> _npcFeatureBaseToJson(INpcFeatureData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'origin': v.origin,
+  'base': v.base,
+  'deprecated': v.deprecated,
+  'effect': v.effect == null ? null : textOrActiveEffectToJson(v.effect!),
+  'hide_active': v.hideActive,
+  'build_feature': v.buildFeature,
+  'mod': v.mod,
+  'tags': _list(v.tags, tagInstanceToJson),
+  'actions': _list(v.actions, actionDataToJson),
+  'bonuses': _list(v.bonuses, bonusDataToJson),
+  'synergies': _list(v.synergies, synergyDataToJson),
+  'deployables': _list(v.deployables, deployableDataToJson),
+});
+
+Map<String, dynamic> npcFeatureDataToJson(INpcFeatureData v) => switch (v) {
+  INpcTraitFeatureData v => {..._npcFeatureBaseToJson(v), 'type': 'trait'},
+  INpcSystemFeatureData v => {..._npcFeatureBaseToJson(v), 'type': 'system'},
+  INpcReactionFeatureData v => _clean({
+    ..._npcFeatureBaseToJson(v),
+    'type': 'reaction',
+    'trigger': v.trigger,
+  }),
+  INpcTechFeatureData v => _clean({
+    ..._npcFeatureBaseToJson(v),
+    'type': 'tech',
+    'attack_bonus': v.attackBonus == null
+        ? null
+        : tierValueToJson(v.attackBonus!),
+    'accuracy': v.accuracy == null ? null : tierValueToJson(v.accuracy!),
+  }),
+  INpcWeaponFeatureData v => _clean({
+    ..._npcFeatureBaseToJson(v),
+    'type': 'weapon',
+    'weapon_type': v.weaponType,
+    'damage': _list(v.damage, npcDamageDataToJson),
+    'range': _list(v.range, rangeDataToJson),
+    'attacks': tierValueToJson(v.attacks),
+    'attack_bonus': v.attackBonus == null
+        ? null
+        : tierValueToJson(v.attackBonus!),
+    'accuracy': v.accuracy == null ? null : tierValueToJson(v.accuracy!),
+    'on_attack': v.onAttack == null
+        ? null
+        : activeEffectDataToJson(v.onAttack!),
+    'on_hit': v.onHit == null ? null : activeEffectDataToJson(v.onHit!),
+    'on_crit': v.onCrit == null ? null : activeEffectDataToJson(v.onCrit!),
+    'on_miss': v.onMiss == null ? null : activeEffectDataToJson(v.onMiss!),
+  }),
+};
+
+// --- Sección 15.1 (NPC Classes and Templates) ---
+
+Map<String, dynamic> npcClassInfoToJson(INpcClassInfo v) => {
+  'flavor': v.flavor,
+  'tactics': v.tactics,
+  'terse': v.terse,
+};
+
+Map<String, dynamic> npcClassStatsToJson(INpcClassStats v) => {
+  'armor': tierValueToJson(v.armor),
+  'hp': tierValueToJson(v.hp),
+  'evade': tierValueToJson(v.evade),
+  'edef': tierValueToJson(v.edef),
+  'heatcap': tierValueToJson(v.heatcap),
+  'speed': tierValueToJson(v.speed),
+  'sensor': tierValueToJson(v.sensor),
+  'save': tierValueToJson(v.save),
+  'hull': tierValueToJson(v.hull),
+  'agility': tierValueToJson(v.agility),
+  'systems': tierValueToJson(v.systems),
+  'engineering': tierValueToJson(v.engineering),
+  'size': npcSizeToJson(v.size),
+  'activations': tierValueToJson(v.activations),
+};
+
+Map<String, dynamic> npcClassDataToJson(INpcClassData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'role': v.role.name,
+  'info': npcClassInfoToJson(v.info),
+  'stats': npcClassStatsToJson(v.stats),
+  'optionalClassMin': v.optionalClassMin,
+  'optionalClassMax': v.optionalClassMax,
+  'optionalClassPerTier': v.optionalClassPerTier,
+  'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+});
+
+Map<String, dynamic> npcTemplateDataToJson(INpcTemplateData v) => _clean({
+  'id': v.id,
+  'template': v.template,
+  'name': v.name,
+  'description': v.description,
+  'forceTag': v.forceTag?.jsonValue,
+  'prohibitTemplates': v.prohibitTemplates,
+  'optionalMin': v.optionalMin,
+  'optionalMax': v.optionalMax,
+  'optionalPerTier': v.optionalPerTier,
+  'optionalClassMin': v.optionalClassMin,
+  'optionalClassMax': v.optionalClassMax,
+  'optionalClassPerTier': v.optionalClassPerTier,
+  'caveat': v.caveat,
+  'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+});
+
+// --- Sección 15.3 (Eidolons) ---
+
+Map<String, dynamic> eidolonShardDataToJson(IEidolonShardData v) => _clean({
+  'count': eidolonShardCountToJson(v.count),
+  'detail': v.detail,
+  'features': _list(v.features, npcFeatureDataToJson),
+  'tier': v.tier,
+});
+
+Map<String, dynamic> eidolonLayerDataToJson(IEidolonLayerData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'appearance': v.appearance,
+  'hints': v.hints,
+  'rules': v.rules,
+  'features': _list(v.features, npcFeatureDataToJson),
+  'shards': v.shards == null ? null : eidolonShardDataToJson(v.shards!),
+  'active_effects': _list(v.activeEffects, activeEffectDataToJson),
+});

@@ -1,8 +1,10 @@
 // Script de verificación manual: genera un `.lcp` **por entidad** (no uno
-// combinado) con varias instancias de cada una de las entidades "simples"
-// (sin mecanismo polimórfico propio) ya completadas: manufacturer, tag,
-// skill, status_condition, sitrep, environment, background, bond, reserve,
-// core_bonus, talent — mismo objetivo que `generar_lcp_pruebas.dart` para
+// combinado) con varias instancias de cada una de las 19 entidades de
+// contenido ya completadas — las 11 "simples" (manufacturer, tag, skill,
+// status_condition, sitrep, environment, background, bond, reserve,
+// core_bonus, talent) y las 8 con casos polimórficos propios (mech_system,
+// weapon_mod, pilot_gear, frame, npc_feature, npc_class, npc_template,
+// eidolon_layer) — mismo objetivo que `generar_lcp_pruebas.dart` para
 // armas: confirmar en COMP/CON que el dominio/mapper produce JSON que el
 // importador acepta, antes de dar por buena cada entidad. Un archivo por
 // tipo, no uno con todas mezcladas, para que un rechazo de COMP/CON señale
@@ -14,9 +16,8 @@
 //   dart run bin/generar_lcp_pruebas_entidades.dart [directorio_salida]
 //
 // Directorio por defecto si no se pasa argumento: build/pruebas_entidades/
-// (genera manufacturers.lcp, tags.lcp, skills.lcp, statuses.lcp,
-// sitreps.lcp, environments.lcp, backgrounds.lcp, bonds.lcp, reserves.lcp,
-// core_bonuses.lcp, talents.lcp)
+// (un .lcp por contentKey — ver el mapa `content` en `main()` para la
+// lista completa de archivos generados)
 
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
@@ -219,6 +220,163 @@ List<ITalentData> _talents() => [
   ),
 ];
 
+List<IMechSystemData> _mechSystems() => const [
+  IMechSystemData(
+    id: 'ms_test_shield',
+    name: 'TEST — Shield system',
+    source: 'TEST_MFR',
+    license: 'TEST License',
+    licenseId: 'mf_test',
+    licenseLevel: 1,
+    type: SystemType.shield,
+    effect: 'e',
+    description: 'd',
+    sp: 2,
+  ),
+];
+
+List<IWeaponModData> _weaponMods() => const [
+  IWeaponModData(
+    id: 'wm_test',
+    name: 'TEST — Weapon mod',
+    source: 'TEST_MFR',
+    license: 'TEST License',
+    licenseId: 'mf_test',
+    licenseLevel: 1,
+    effect: 'e',
+    description: 'd',
+    allowedTypes: [WeaponType.rifle],
+  ),
+];
+
+List<IPilotGearData> _pilotGear() => const [
+  IPilotWeaponData(
+    id: 'pg_test_weapon',
+    name: 'TEST — Pilot weapon',
+    description: 'd',
+  ),
+  IPilotArmorData(
+    id: 'pg_test_armor',
+    name: 'TEST — Pilot armor',
+    description: 'd',
+  ),
+  IPilotGearItemData(
+    id: 'pg_test_item',
+    name: 'TEST — Pilot gear item',
+    description: 'd',
+  ),
+];
+
+List<IFrameData> _frames() => [
+  IFrameData(
+    id: 'mf_test',
+    name: 'TEST — Frame',
+    source: 'TEST_MFR',
+    licenseLevel: 0,
+    mechtype: const ['Striker'],
+    description: 'd',
+    mounts: const [MountType.main, MountType.flex],
+    stats: const IFrameStats(
+      size: 1,
+      structure: 4,
+      stress: 4,
+      armor: 0,
+      hp: 8,
+      evasion: 8,
+      edef: 8,
+      heatcap: 5,
+      repcap: 5,
+      sensorRange: 10,
+      techAttack: 0,
+      save: 10,
+      speed: 5,
+      sp: 5,
+    ),
+    traits: const [],
+    coreSystem: const ICoreSystemData(
+      name: 'Core',
+      activeName: 'Active',
+      activeEffect: 'e',
+      activation: ActivationType.quick,
+    ),
+    specialty: true,
+  ),
+];
+
+List<INpcFeatureData> _npcFeatures() => [
+  const INpcTraitFeatureData(id: 'nf_test_trait', name: 'TEST — Trait'),
+  INpcTechFeatureData(
+    id: 'nf_test_tech',
+    name: 'TEST — Tech',
+    attackBonus: TierValue.perTier([1, 2, 3]),
+  ),
+  INpcWeaponFeatureData(
+    id: 'nf_test_weapon',
+    name: 'TEST — Weapon feature',
+    weaponType: 'Main Rifle',
+    damage: [
+      INpcDamageData(type: DamageType.kinetic, damage: const [2, 3, 4]),
+    ],
+    range: const [],
+    attacks: TierValue.single(1),
+  ),
+];
+
+List<INpcClassData> _npcClasses() => [
+  INpcClassData(
+    id: 'npcc_test',
+    name: 'TEST — NPC class',
+    role: NpcRole.striker,
+    info: const INpcClassInfo(flavor: 'f', tactics: 't', terse: 'te'),
+    stats: INpcClassStats(
+      armor: TierValue.single(0),
+      hp: TierValue.perTier([5, 10, 15]),
+      evade: TierValue.single(5),
+      edef: TierValue.single(5),
+      heatcap: TierValue.single(5),
+      speed: TierValue.single(5),
+      sensor: TierValue.single(5),
+      save: TierValue.single(5),
+      hull: TierValue.single(0),
+      agility: TierValue.single(0),
+      systems: TierValue.single(0),
+      engineering: TierValue.single(0),
+      size: NpcSize(const [
+        [1],
+        [1],
+        [2],
+      ]),
+      activations: TierValue.single(1),
+    ),
+  ),
+];
+
+List<INpcTemplateData> _npcTemplates() => const [
+  INpcTemplateData(
+    id: 'npct_test',
+    name: 'TEST — NPC template',
+    description: 'd',
+    forceTag: NpcForceTag.vehicle,
+  ),
+];
+
+List<IEidolonLayerData> _eidolonLayers() => [
+  IEidolonLayerData(
+    id: 'el_test',
+    name: 'TEST — Eidolon layer',
+    appearance: 'a',
+    hints: 'h',
+    rules: 'r {1/2/3}',
+    shards: IEidolonShardData(
+      count: const EidolonShardCount.hostileCharacters(),
+      detail: 'd',
+      features: const [
+        INpcTraitFeatureData(id: 'nf_test_shard', name: 'TEST — Shard feature'),
+      ],
+    ),
+  ),
+];
+
 /// Un manifest por entidad, con `name` propio — COMP/CON identifica un
 /// content pack por su manifest (nombre/autor/versión), así que 8 `.lcp`
 /// con el mismo manifest se tratan como el mismo pack: cada uno que se
@@ -250,6 +408,17 @@ Future<void> main(List<String> args) async {
     'reserves': _reserves(),
     'core_bonuses': _coreBonuses(),
     'talents': _talents(),
+    'systems': _mechSystems(),
+    'mods': _weaponMods(),
+    'pilot_gear': _pilotGear(),
+    'frames': _frames(),
+    'npc_features': _npcFeatures(),
+    'npc_classes': _npcClasses(),
+    'npc_templates': _npcTemplates(),
+    // Nombre de archivo sin confirmar contra un LCP real — ver nota en
+    // eidolon_layer_form_schema.dart. Contenido condicionado a un
+    // suplemento (ver vault MdD §15.3), igual que Bonds.
+    'eidolons': _eidolonLayers(),
   };
 
   final exporter = ZipContentPackExporter();
