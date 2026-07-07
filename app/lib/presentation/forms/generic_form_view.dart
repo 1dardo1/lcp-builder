@@ -5,10 +5,12 @@ import 'generic_form_controller.dart';
 
 /// Contexto de lectura/escritura para un nivel del formulario: el nivel
 /// superior lee/escribe en el [GenericFormController]; un ítem de
-/// [ListFieldSpec] lee/escribe en su propio mapa. Con esta indirección, el
-/// mismo código de `_buildField` sirve en ambos niveles — incluidos
-/// [ShapeChoiceFieldSpec]/[CatalogFieldSpec] anidados dentro de una lista
-/// (ej. varios `bonuses` por arma, cada uno con su propio catálogo).
+/// [ListFieldSpec] o un [GroupFieldSpec] leen/escriben en su propio mapa.
+/// Con esta indirección, el mismo código de `_buildField` sirve en todos
+/// los niveles — incluidos [ShapeChoiceFieldSpec]/[CatalogFieldSpec]
+/// anidados dentro de una lista o de un grupo (ej. varios `bonuses` por
+/// arma, cada uno con su propio catálogo; o `IEffectSaveData` como grupo
+/// único dentro de un ítem de `actions`).
 class _FieldContext {
   final dynamic Function(String key) get;
   final void Function(String key, dynamic value) set;
@@ -26,9 +28,14 @@ class _FieldContext {
 ///   usen las keys `'x.a'` / `'x.b'`; la elección se guarda en `'x.choice'`.
 /// - [CatalogFieldSpec] con `key = 'x'` espera que `valueFieldFor` use
 ///   siempre la key `'x.value'`; el id elegido se guarda en `'x.id'`.
+/// - [GroupFieldSpec] con `key = 'x'` guarda sus `fields` en un único mapa
+///   bajo `'x'` (no una lista); admite anidar los mismos catálogos/shape
+///   choices que un ítem de lista.
+/// - [MultiEnumFieldSpec] guarda directamente la `List<T>` seleccionada
+///   bajo su `key`, sin mapa de ítem (no hay sub-formulario por elemento).
 /// - Estas convenciones son relativas al [_FieldContext] activo: dentro de
-///   un ítem de [ListFieldSpec] son claves del propio ítem, no del
-///   controlador global.
+///   un ítem de [ListFieldSpec] o de un [GroupFieldSpec] son claves
+///   propias de ese nivel, no del controlador global.
 class GenericFormView extends StatelessWidget {
   final List<FieldSpec> fields;
   final GenericFormController controller;
@@ -85,6 +92,12 @@ class GenericFormView extends StatelessWidget {
         ShapeChoiceFieldSpec f => _buildShapeChoice(context, f, ctx),
         CatalogFieldSpec f => _buildCatalog(context, f, ctx),
         ListFieldSpec f => _buildList(context, f, ctx),
+        MultiEnumFieldSpec f => _buildMultiEnum(
+          f,
+          ctx.get(f.key),
+          (v) => ctx.set(f.key, v),
+        ),
+        GroupFieldSpec f => _buildGroup(context, f, ctx),
       },
     );
   }
@@ -225,6 +238,71 @@ class GenericFormView extends StatelessWidget {
         if (selectedId != null)
           _buildField(context, f.fieldFor(selectedId), ctx),
       ],
+    );
+  }
+
+  Widget _buildMultiEnum(
+    MultiEnumFieldSpec f,
+    dynamic current,
+    ValueChanged<List<dynamic>> onChanged,
+  ) {
+    final selected = (current as List?)?.toSet() ?? {};
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(f.label + (f.required ? ' *' : '')),
+        Wrap(
+          spacing: 8,
+          children: [
+            for (final option in f.options)
+              FilterChip(
+                key: ValueKey('${f.key}.${option.toString()}'),
+                label: Text(f.labelFor(option)),
+                selected: selected.contains(option),
+                onSelected: (isSelected) {
+                  final next = selected.toList();
+                  if (isSelected) {
+                    next.add(option);
+                  } else {
+                    next.remove(option);
+                  }
+                  onChanged(next);
+                },
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGroup(
+    BuildContext context,
+    GroupFieldSpec f,
+    _FieldContext ctx,
+  ) {
+    final groupCtx = _groupContext(f.key, ctx);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(f.label, style: Theme.of(context).textTheme.labelLarge),
+        for (final field in f.fields) _buildField(context, field, groupCtx),
+      ],
+    );
+  }
+
+  /// Contexto de un [GroupFieldSpec]: lee/escribe en el mapa único guardado
+  /// bajo `key`, análogo a [_itemContext] pero sin índice de lista (una
+  /// sola instancia, no una repetición).
+  _FieldContext _groupContext(String key, _FieldContext ctx) {
+    Map<String, dynamic> currentValue() =>
+        (ctx.get(key) as Map<String, dynamic>?) ?? const {};
+    return _FieldContext(
+      get: (subKey) => currentValue()[subKey],
+      set: (subKey, value) {
+        final current = Map<String, dynamic>.from(currentValue());
+        current[subKey] = value;
+        ctx.set(key, current);
+      },
     );
   }
 
