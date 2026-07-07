@@ -20,6 +20,7 @@ Notas de método acumuladas durante el proyecto. Relacionado: [[ADR-001 - Selecc
 - La investigación de plugins de plataforma debe preceder a la implementación de adapters, para no invalidar trabajo si el dominio revela nuevas necesidades.
 - Objetos de valor grandes con muchos campos de tipo lista omiten intencionadamente la igualdad estructural completa — decisión pendiente de revisar con `equatable` o `package:collection`.
 - **Comentarios de código vs. vault**: el vault es la única fuente de verdad para lógica de negocio (reglas del dominio Lancer/COMP-CON) — el código no la duplica, solo referencia la sección (`// Ver vault MdD §X`). Los comentarios en código se reservan para decisiones técnicas de la implementación Dart (por qué esta estructura de tipos, correcciones verificadas contra JSON real que protegen contra una regresión futura tipo "esto no es un typo"). Motivo: evitar que ambas fuentes diverjan con el tiempo — solo el vault se actualiza cuando cambia una regla.
+- **Campos polimórficos por catálogo externo (`IBonusData.val`)**: cuando la forma de un campo depende de un id de un catálogo externo (no un `type` fijo conocido de antemano), el patrón ya establecido en otros proyectos (JSON Schema `discriminator`+`mapping`, Zod discriminated unions) es un registro id → forma. En Dart se resuelve con el mismo mecanismo de enum-con-campo-asociado que ya usa el proyecto para `jsonValue` — ver [[Decisión - catálogo Bonus List y resolución de IBonusData.val]].
 
 ## Sobre priorización y feedback
 

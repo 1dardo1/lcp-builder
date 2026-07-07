@@ -366,14 +366,15 @@ class MountAssignment {
   const MountAssignment({required this.mountType, required this.maxMounts});
 }
 
-/// `id` referencia el Bonus List (catálogo COMP/CON) — el tipo real de
-/// `val` depende del id usado. No modelado como union: el catálogo de IDs
-/// que decide la forma no es parte de este documento todavía. Ver vault
-/// MdD §4 (tabla "Values" del Bonus List).
+/// `id` es [BonusId] (catálogo COMP/CON, ver vault MdD §4) — el tipo real
+/// de `val` depende del id usado (`id.valueKind`), validado en el
+/// constructor. Decisión de por qué se resuelve así (enum con campo
+/// asociado, no una sealed class por id) documentada en el vault
+/// (Aprendizajes).
 class IBonusData {
-  final String id;
+  final BonusId id;
   final Object
-  val; // NumericOrFormulaValue | bool | List<DieRoll> | MountAssignment
+  val; // NumericOrFormulaValue | bool | List<DieRoll> | MountAssignment — forma validada contra id.valueKind
   final num? accuracy;
   final List<DamageType>? damageTypes; // sin filtro "any" — omitir = todos
   final List<BonusRangeTypeFilter>?
@@ -383,7 +384,7 @@ class IBonusData {
   final bool? overwrite;
   final bool? replace;
 
-  const IBonusData({
+  IBonusData({
     required this.id,
     required this.val,
     this.accuracy,
@@ -393,7 +394,26 @@ class IBonusData {
     this.weaponSizes,
     this.overwrite,
     this.replace,
-  });
+  }) : assert(
+         _matchesValueKind(id, val),
+         'IBonusData.val no coincide con la forma esperada para '
+         '${id.jsonValue} (${id.valueKind}) — ver vault MdD §4',
+       );
+
+  static bool _matchesValueKind(BonusId id, Object val) {
+    switch (id.valueKind) {
+      case BonusValueKind.numericOrFormula:
+        return val is NumericOrFormulaValue;
+      case BonusValueKind.boolean:
+        return val is bool;
+      case BonusValueKind.dieRollList:
+        return val is List<DieRoll>;
+      case BonusValueKind.mountAssignment:
+        return val is MountAssignment;
+      case BonusValueKind.unverified:
+        return true; // sin ejemplo real confirmado — no bloquear todavía
+    }
+  }
 }
 
 // --- Sección 5 ---
