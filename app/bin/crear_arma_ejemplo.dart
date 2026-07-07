@@ -6,7 +6,7 @@
 //
 // Ruta por defecto si no se pasa argumento: build/arma_ejemplo.lcp
 
-import 'package:lcp_builder/application/use_cases/crear_arma_use_case.dart';
+import 'package:lcp_builder/application/use_cases/crear_contenido_use_case.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
@@ -56,13 +56,14 @@ ILcpManifestData _manifestDeEjemplo() {
 Future<void> main(List<String> args) async {
   final outputPath = args.isNotEmpty ? args[0] : 'build/arma_ejemplo.lcp';
 
-  final useCase = CrearArmaUseCase(
+  final useCase = CrearContenidoUseCase(
     exporter: ZipContentPackExporter(),
     fileWriter: LocalFileWriter(),
   );
 
   await useCase(
-    weapon: _armaDeEjemplo(),
+    contentKey: 'weapons',
+    content: _armaDeEjemplo(),
     manifest: _manifestDeEjemplo(),
     outputPath: outputPath,
   );

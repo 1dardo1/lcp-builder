@@ -1,50 +1,61 @@
 import 'package:flutter/material.dart';
 
-import '../../../application/use_cases/crear_arma_use_case.dart';
+import '../../../application/use_cases/crear_contenido_use_case.dart';
 import '../../../domain/domain.dart';
 import '../../../infrastructure/file_system/local_file_writer.dart';
 import '../../../infrastructure/lcp/zip_content_pack_exporter.dart';
+import '../../forms/entity_crear_config.dart';
 import '../../forms/generic_form_controller.dart';
 import '../../forms/generic_form_view.dart';
-import '../../forms/weapon_form_schema.dart';
 import '../../platform/lcp_save_location.dart';
 
-/// Pantalla Crear (arma) — primer uso real del motor genérico. Sin diseño
-/// de Figma todavía (`vault/UI-UX`): Material por defecto, funcional, no
-/// definitivo. La ruta de guardado la elige el usuario vía selector nativo
+/// Pantalla Crear genérica: una sola implementación para las 24 entidades,
+/// parametrizada por [EntityCrearConfig]. Sin diseño de Figma todavía
+/// (`vault/UI-UX`): Material por defecto, funcional, no definitivo. La
+/// ruta de guardado la elige el usuario vía selector nativo
 /// (`pickLcpSaveLocation`, adapter de plataforma — ver ADR-002).
-class CrearArmaScreen extends StatefulWidget {
-  const CrearArmaScreen({super.key});
+class CrearEntidadScreen extends StatefulWidget {
+  final EntityCrearConfig config;
+
+  const CrearEntidadScreen({super.key, required this.config});
 
   @override
-  State<CrearArmaScreen> createState() => _CrearArmaScreenState();
+  State<CrearEntidadScreen> createState() => _CrearEntidadScreenState();
 }
 
-class _CrearArmaScreenState extends State<CrearArmaScreen> {
+class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
   final _controller = GenericFormController();
-  final _schema = buildWeaponFormSchema();
+  late final _schema = widget.config.buildSchema();
   String? _resultMessage;
 
   Future<void> _crear() async {
+    final config = widget.config;
     try {
-      final weapon = weaponFromFormValues(_controller.values);
-      final outputPath = await pickLcpSaveLocation('${weapon.id}.lcp');
+      final content = config.fromFormValues(_controller.values);
+      final id = config.idOf(content);
+      final name = config.nameOf(content);
+      final outputPath = await pickLcpSaveLocation('$id.lcp');
       if (outputPath == null) {
         setState(() => _resultMessage = 'Cancelado.');
         return;
       }
       final manifest = ILcpManifestData(
-        name: '${weapon.name} — LCP Builder',
+        name: '$name — LCP Builder',
         author: 'LCP Builder',
         description: 'Generado desde el flujo Crear.',
         version: '0.1.0',
         v3: true,
       );
-      final useCase = CrearArmaUseCase(
+      final useCase = CrearContenidoUseCase(
         exporter: ZipContentPackExporter(),
         fileWriter: LocalFileWriter(),
       );
-      await useCase(weapon: weapon, manifest: manifest, outputPath: outputPath);
+      await useCase(
+        contentKey: config.contentKey,
+        content: content,
+        manifest: manifest,
+        outputPath: outputPath,
+      );
       setState(() => _resultMessage = 'Generado: $outputPath');
     } catch (e) {
       setState(() => _resultMessage = 'Error: $e');
@@ -54,7 +65,7 @@ class _CrearArmaScreenState extends State<CrearArmaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Crear arma')),
+      appBar: AppBar(title: Text(widget.config.title)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(

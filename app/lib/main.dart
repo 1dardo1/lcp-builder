@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'presentation/screens/crear/crear_arma_screen.dart';
+import 'presentation/screens/crear/crear_menu_screen.dart';
 
 void main() {
   runApp(const LcpBuilderApp());
@@ -16,7 +16,7 @@ class LcpBuilderApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const CrearArmaScreen(),
+      home: const CrearMenuScreen(),
     );
   }
 }

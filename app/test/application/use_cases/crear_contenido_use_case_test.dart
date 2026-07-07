@@ -3,23 +3,24 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lcp_builder/application/use_cases/crear_arma_use_case.dart';
+import 'package:lcp_builder/application/use_cases/crear_contenido_use_case.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
 
 /// Test de aceptación (ADR-002: al menos uno por iteración, validando el
-/// flujo desde la perspectiva del cliente): construye un arma completa,
-/// ejecuta el caso de uso real (exportador + escritura a disco reales, sin
-/// dobles de test) y verifica que el .lcp resultante es un zip de un solo
-/// nivel, con lcp_manifest.json y weapons.json legibles y correctos —
-/// exactamente lo que el cliente esperaría poder cargar en COMP/CON.
+/// flujo desde la perspectiva del cliente): construye una entidad
+/// completa, ejecuta el caso de uso real (exportador + escritura a disco
+/// reales, sin dobles de test) y verifica que el .lcp resultante es un zip
+/// de un solo nivel, con lcp_manifest.json y el archivo de contenido
+/// legibles y correctos — exactamente lo que el cliente esperaría poder
+/// cargar en COMP/CON.
 void main() {
-  test('Crear arma produce un .lcp válido en disco', () async {
+  test('Crear (arma) produce un .lcp válido en disco', () async {
     final tempDir = await Directory.systemTemp.createTemp('lcp_builder_test');
     final outputPath = '${tempDir.path}/arma.lcp';
 
-    final useCase = CrearArmaUseCase(
+    final useCase = CrearContenidoUseCase(
       exporter: ZipContentPackExporter(),
       fileWriter: LocalFileWriter(),
     );
@@ -54,7 +55,12 @@ void main() {
     );
 
     try {
-      await useCase(weapon: weapon, manifest: manifest, outputPath: outputPath);
+      await useCase(
+        contentKey: 'weapons',
+        content: weapon,
+        manifest: manifest,
+        outputPath: outputPath,
+      );
 
       final file = File(outputPath);
       expect(await file.exists(), isTrue);
@@ -99,4 +105,69 @@ void main() {
       await tempDir.delete(recursive: true);
     }
   });
+
+  test(
+    'ZipContentPackExporter.export produce un archivo por tipo de contenido, '
+    'para varias entidades a la vez',
+    () async {
+      final exporter = ZipContentPackExporter();
+      const manifest = ILcpManifestData(
+        name: 'Paquete multi-contenido',
+        author: 'Test',
+        description: 'desc',
+        version: '1.0.0',
+      );
+
+      final bytes = exporter.export(
+        manifest: manifest,
+        content: {
+          'weapons': [
+            IWeaponData(
+              id: 'mw_multi',
+              name: 'Arma',
+              source: 'GMS',
+              license: 'GMS Everest',
+              licenseId: 'mf_everest',
+              licenseLevel: 0,
+              effect: 'e',
+              description: 'd',
+              mount: MountType.main,
+              type: WeaponType.rifle,
+            ),
+          ],
+          'manufacturers': const [
+            IManufacturerData(
+              id: 'GMS',
+              name: 'General Manufacturing Systems',
+              description: 'd',
+              quote: 'q',
+              light: '#FFFFFF',
+              dark: '#000000',
+            ),
+          ],
+          'tags': const [
+            ITagData(id: 'tg_test', name: 'Test', description: 'd'),
+          ],
+        },
+      );
+
+      final archive = ZipDecoder().decodeBytes(bytes);
+      expect(
+        archive.files.map((f) => f.name),
+        containsAll([
+          'lcp_manifest.json',
+          'weapons.json',
+          'manufacturers.json',
+          'tags.json',
+        ]),
+      );
+
+      Object decode(String name) =>
+          jsonDecode(utf8.decode(archive.findFile(name)!.content as List<int>));
+
+      expect((decode('weapons.json') as List).first['id'], 'mw_multi');
+      expect((decode('manufacturers.json') as List).first['id'], 'GMS');
+      expect((decode('tags.json') as List).first['id'], 'tg_test');
+    },
+  );
 }
