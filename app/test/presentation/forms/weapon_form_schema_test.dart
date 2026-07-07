@@ -28,7 +28,7 @@ void main() {
       expect(weapon.damage!.first.val.formula, '2d6');
     });
 
-    test('ensambla un bonus numérico (rama "número" del shape choice)', () {
+    test('ensambla una lista con un único bonus numérico (rama "número")', () {
       final weapon = weaponFromFormValues({
         'id': 'mw_test',
         'name': 'Test',
@@ -40,9 +40,13 @@ void main() {
         'description': 'd',
         'mount': MountType.main,
         'type': WeaponType.rifle,
-        'bonus.id': BonusId.accuracy,
-        'bonus.value.choice': 'A',
-        'bonus.value.a': 1,
+        'bonuses': [
+          {
+            'bonus.id': BonusId.accuracy,
+            'bonus.value.choice': 'A',
+            'bonus.value.a': 1,
+          },
+        ],
       });
 
       expect(weapon.bonuses, hasLength(1));
@@ -53,7 +57,35 @@ void main() {
       );
     });
 
-    test('sin bonus elegido, bonuses queda null', () {
+    test('ensambla varios bonuses (catálogo anidado dentro de una lista)', () {
+      final weapon = weaponFromFormValues({
+        'id': 'mw_test',
+        'name': 'Test',
+        'source': 'GMS',
+        'license': 'GMS Everest',
+        'licenseId': 'mf_everest',
+        'licenseLevel': 0,
+        'effect': 'e',
+        'description': 'd',
+        'mount': MountType.main,
+        'type': WeaponType.rifle,
+        'bonuses': [
+          {
+            'bonus.id': BonusId.accuracy,
+            'bonus.value.choice': 'A',
+            'bonus.value.a': 1,
+          },
+          {'bonus.id': BonusId.cheapStruct, 'bonus.value': true},
+        ],
+      });
+
+      expect(weapon.bonuses, hasLength(2));
+      expect(weapon.bonuses![0].id, BonusId.accuracy);
+      expect(weapon.bonuses![1].id, BonusId.cheapStruct);
+      expect(weapon.bonuses![1].val, true);
+    });
+
+    test('sin bonuses, el campo queda null', () {
       final weapon = weaponFromFormValues({
         'id': 'mw_test',
         'name': 'Test',
