@@ -1,4 +1,5 @@
 import '../../domain/domain.dart';
+import 'entity_crear_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IWeaponData] para el motor genérico — cobertura
@@ -1418,3 +1419,12 @@ IWeaponData weaponFromFormValues(Map<String, dynamic> values) {
     profiles: _mapItems(values['profiles'], _profileFromItem),
   );
 }
+
+final weaponCrearConfig = EntityCrearConfig(
+  title: 'Crear arma',
+  contentKey: 'weapons',
+  buildSchema: buildWeaponFormSchema,
+  fromFormValues: weaponFromFormValues,
+  idOf: (content) => (content as IWeaponData).id,
+  nameOf: (content) => (content as IWeaponData).name,
+);

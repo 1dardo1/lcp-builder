@@ -399,3 +399,110 @@ Map<String, dynamic> lcpManifestDataToJson(ILcpManifestData v) => _clean({
   'v3': v.v3,
   'version_history': _list(v.versionHistory, changelogItemToJson),
 });
+
+// --- Sección 13.1 (Manufacturers) ---
+
+Map<String, dynamic> manufacturerDataToJson(IManufacturerData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'description': v.description,
+  'quote': v.quote,
+  'light': v.light,
+  'dark': v.dark,
+  'icon_svg': v.iconSvg,
+  'icon_url': v.iconUrl,
+});
+
+// --- Sección 6 (Tags, catálogo) ---
+
+Map<String, dynamic> tagDataToJson(ITagData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'description': v.description,
+  'hidden': v.hidden,
+  'filter_ignore': v.filterIgnore,
+});
+
+// --- Sección 11.5 (Skills) ---
+
+Map<String, dynamic> skillDataToJson(ISkillData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'description': v.description,
+  'detail': v.detail,
+  'family': v.family.jsonValue,
+});
+
+// --- Sección 17.4 (Statuses/Conditions) ---
+
+Map<String, dynamic> statusConditionDataToJson(IStatusConditionData v) =>
+    _clean({
+      'id': v.id,
+      'name': v.name,
+      'type': v.type.name,
+      'effects': v.effects,
+      'terse': v.terse,
+      'icon_svg': v.iconSvg,
+      'icon_url': v.iconUrl,
+      'exclusive': v.exclusive?.name,
+    });
+
+// --- Sección 17.3 (SITREPs) ---
+
+Map<String, dynamic> sitrepConditionToJson(ISitrepCondition v) => {
+  'title': v.title,
+  'condition': v.condition,
+};
+
+Map<String, dynamic> sitrepDataToJson(ISitrepData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'description': v.description,
+  'deployment': v.deployment,
+  'objective': v.objective,
+  'extraction': v.extraction,
+  'conditions': _list(v.conditions, sitrepConditionToJson),
+  'pc_victory': v.pcVictory,
+  'enemy_victory': v.enemyVictory,
+  'no_victory': v.noVictory,
+});
+
+// --- Sección 17.2 (Environments) ---
+
+Map<String, dynamic> environmentDataToJson(IEnvironmentData v) =>
+    _clean({'id': v.id, 'name': v.name, 'description': v.description});
+
+// --- Sección 11.1 (Backgrounds) ---
+
+Map<String, dynamic> backgroundDataToJson(IBackgroundData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'description': v.description,
+  'skills': v.skills,
+});
+
+// --- Sección 11.7 (Bonds) ---
+
+Map<String, dynamic> questionDataToJson(IQuestionData v) => {
+  'question': v.question,
+  'options': v.options,
+};
+
+Map<String, dynamic> bondPowerDataToJson(IBondPowerData v) => _clean({
+  'name': v.name,
+  'description': v.description,
+  'frequency': v.frequency?.jsonValue,
+  'prerequisite': v.prerequisite,
+  'veteran': v.veteran,
+  'master': v.master,
+  'origin': v.origin,
+});
+
+Map<String, dynamic> bondDataToJson(IBondData v) => _clean({
+  'id': v.id,
+  'name': v.name,
+  'major_ideals': v.majorIdeals,
+  'minor_ideals': v.minorIdeals,
+  'questions': _list(v.questions, questionDataToJson),
+  'powers': _list(v.powers, bondPowerDataToJson),
+});

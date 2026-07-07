@@ -483,9 +483,9 @@ Future<void> main(List<String> args) async {
     _test10FlagsYListasSimples(),
   ];
 
-  final bytes = ZipContentPackExporter().exportWeapons(
+  final bytes = ZipContentPackExporter().export(
     manifest: _manifestDePruebas(),
-    weapons: weapons,
+    content: {'weapons': weapons},
   );
   await LocalFileWriter().write(outputPath, bytes);
 

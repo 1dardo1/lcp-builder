@@ -104,4 +104,142 @@ void main() {
       expect(json.containsKey('dependencies'), isFalse);
     });
   });
+
+  group('manufacturerDataToJson', () {
+    test('mapea id/name y omite campos opcionales ausentes', () {
+      final json = manufacturerDataToJson(
+        const IManufacturerData(
+          id: 'GMS',
+          name: 'General Manufacturing Systems',
+          description: 'd',
+          quote: 'q',
+          light: '#FFFFFF',
+          dark: '#000000',
+        ),
+      );
+
+      expect(json['id'], 'GMS');
+      expect(json['light'], '#FFFFFF');
+      expect(json.containsKey('icon_svg'), isFalse);
+    });
+  });
+
+  group('tagDataToJson', () {
+    test('mapea filter_ignore en snake_case', () {
+      final json = tagDataToJson(
+        const ITagData(
+          id: 'tg_accurate',
+          name: 'Accurate',
+          description: 'd',
+          filterIgnore: true,
+        ),
+      );
+
+      expect(json['filter_ignore'], true);
+      expect(json.containsKey('hidden'), isFalse);
+    });
+  });
+
+  group('skillDataToJson', () {
+    test('mapea family.jsonValue', () {
+      final json = skillDataToJson(
+        const ISkillData(
+          id: 'sk_test',
+          name: 'Test',
+          description: 'd',
+          detail: 'det',
+          family: SkillFamily.intFamily,
+        ),
+      );
+
+      expect(json['family'], 'int');
+    });
+  });
+
+  group('statusConditionDataToJson', () {
+    test('mapea type y exclusive por .name', () {
+      final json = statusConditionDataToJson(
+        const IStatusConditionData(
+          id: 'st_shredded',
+          name: 'Shredded',
+          type: StatusConditionType.status,
+          effects: 'e',
+          exclusive: ExclusiveTarget.mech,
+        ),
+      );
+
+      expect(json['type'], 'status');
+      expect(json['exclusive'], 'mech');
+    });
+  });
+
+  group('sitrepDataToJson', () {
+    test('mapea conditions como lista de title/condition', () {
+      final json = sitrepDataToJson(
+        const ISitrepData(
+          id: 'sitrep_test',
+          name: 'Test',
+          description: 'd',
+          conditions: [ISitrepCondition(title: 't', condition: 'c')],
+        ),
+      );
+
+      expect(json['conditions'], [
+        {'title': 't', 'condition': 'c'},
+      ]);
+    });
+  });
+
+  group('environmentDataToJson', () {
+    test('mapea los 3 campos', () {
+      final json = environmentDataToJson(
+        const IEnvironmentData(id: 'env_test', name: 'Test', description: 'd'),
+      );
+
+      expect(json, {'id': 'env_test', 'name': 'Test', 'description': 'd'});
+    });
+  });
+
+  group('backgroundDataToJson', () {
+    test('mapea skills como lista de strings, sin transformar', () {
+      final json = backgroundDataToJson(
+        const IBackgroundData(
+          id: 'bg_test',
+          name: 'Test',
+          description: 'd',
+          skills: ['sk_a', 'sk_b'],
+        ),
+      );
+
+      expect(json['skills'], ['sk_a', 'sk_b']);
+    });
+  });
+
+  group('bondDataToJson', () {
+    test('mapea major_ideals/minor_ideals y questions/powers anidados', () {
+      final json = bondDataToJson(
+        const IBondData(
+          id: 'bond_test',
+          name: 'Test',
+          majorIdeals: ['Honor'],
+          minorIdeals: ['Cunning'],
+          questions: [
+            IQuestionData(question: '¿Por qué?', options: ['a', 'b']),
+          ],
+          powers: [IBondPowerData(name: 'Power', description: 'd')],
+        ),
+      );
+
+      expect(json['major_ideals'], ['Honor']);
+      expect(json['questions'], [
+        {
+          'question': '¿Por qué?',
+          'options': ['a', 'b'],
+        },
+      ]);
+      expect(json['powers'], [
+        {'name': 'Power', 'description': 'd'},
+      ]);
+    });
+  });
 }
