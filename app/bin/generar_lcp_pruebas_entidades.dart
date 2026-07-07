@@ -23,9 +23,12 @@ import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
 
 List<IManufacturerData> _manufacturers() => const [
   IManufacturerData(
-    id: 'GMS',
-    name: 'General Manufacturing Systems',
-    description: 'El mayor fabricante de la Union.',
+    // id distinto de los fabricantes reales de core data (GMS, IPS-N,
+    // SSC, HORUS, HA...) — un id que colisione se confunde en COMP/CON
+    // con el fabricante oficial en vez de aparecer como contenido nuevo.
+    id: 'TEST_MFR',
+    name: 'TEST Manufacturing',
+    description: 'Fabricante de prueba, no colisiona con core data.',
     quote: '"Fiable donde otros fallan."',
     light: '#D9D9D9',
     dark: '#1A1A1A',
@@ -43,8 +46,10 @@ List<IManufacturerData> _manufacturers() => const [
 
 List<ITagData> _tags() => const [
   ITagData(
-    id: 'tg_accurate',
-    name: 'Accurate',
+    // id distinto de los tags reales de core data (tg_accurate ya existe
+    // oficialmente) — mismo motivo que el id de manufacturer más abajo.
+    id: 'tg_test_accurate',
+    name: 'TEST — Accurate',
     description: 'Tira el dado de ataque dos veces, queda el mayor.',
   ),
   ITagData(
@@ -69,8 +74,10 @@ List<ISkillData> _skills() => [
 
 List<IStatusConditionData> _statusConditions() => const [
   IStatusConditionData(
-    id: 'st_shredded',
-    name: 'Shredded',
+    // id distinto de los statuses reales de core data (st_shredded ya
+    // existe oficialmente) — mismo motivo que el id de manufacturer.
+    id: 'st_test_shredded',
+    name: 'TEST — Shredded',
     type: StatusConditionType.status,
     effects: 'Vulnerable a Energy.',
     terse: 'Vuln. Energy',
@@ -108,8 +115,10 @@ List<ISitrepData> _sitreps() => const [
 
 List<IEnvironmentData> _environments() => const [
   IEnvironmentData(
-    id: 'env_vacuum',
-    name: 'Vacuum',
+    // id distinto de los entornos reales de core data (env_vacuum podría
+    // colisionar) — mismo motivo que el id de manufacturer.
+    id: 'env_test_vacuum',
+    name: 'TEST — Vacuum',
     description: 'Sin atmósfera. Reglas especiales de movimiento y daño.',
   ),
 ];
@@ -158,13 +167,18 @@ List<IBondData> _bonds() => const [
   ),
 ];
 
-ILcpManifestData _manifestDePruebas() => const ILcpManifestData(
-  name: 'LCP Builder — paquete de pruebas (entidades simples)',
+/// Un manifest por entidad, con `name` propio — COMP/CON identifica un
+/// content pack por su manifest (nombre/autor/versión), así que 8 `.lcp`
+/// con el mismo manifest se tratan como el mismo pack: cada uno que se
+/// carga sobrescribe al anterior en vez de sumarse. Ver vault
+/// "Principios y decisiones clave" — mismo tipo de bug que las keys
+/// duplicadas en un `Map`, pero a nivel de content pack.
+ILcpManifestData _manifestDePruebas(String contentKey) => ILcpManifestData(
+  name: 'LCP Builder — paquete de pruebas ($contentKey)',
   author: 'LCP Builder',
   description:
       'Paquete generado por generar_lcp_pruebas_entidades.dart para '
-      'verificar en COMP/CON las 8 entidades simples completadas en esta '
-      'sesión.',
+      'verificar en COMP/CON la entidad "$contentKey".',
   version: '0.1.0',
   v3: true,
 );
@@ -192,7 +206,7 @@ Future<void> main(List<String> args) async {
   for (final entry in content.entries) {
     final outputPath = '$outputDir/${entry.key}.lcp';
     final bytes = exporter.export(
-      manifest: _manifestDePruebas(),
+      manifest: _manifestDePruebas(entry.key),
       content: {entry.key: entry.value},
     );
     await fileWriter.write(outputPath, bytes);
