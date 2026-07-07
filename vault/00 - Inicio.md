@@ -28,7 +28,8 @@ Vehículo de aprendizaje de arquitectura de software (Clean/Hexagonal) y pieza d
 - Flujo Crear (arma) funcionando de principio a fin, **con formulario real** (Material sin diseño definitivo, motor genérico) y verificado cargando un `.lcp` real en COMP/CON. Ver "Flujo Crear — arma" en `app/README.md`.
 - Motor de formulario genérico (`app/lib/presentation/forms/`) para las 24 entidades: esquema declarativo escrito a mano (decisión ya tomada, no codegen), interpretado por un único motor. Cubre **todos** los casos polimórficos del catálogo (§19), incluidos catálogo anidado dentro de lista, uniones cerradas de 3-4 vías reutilizando `CatalogFieldSpec`, selección múltiple de enum (`MultiEnumFieldSpec`) y sub-formulario de forma fija (`GroupFieldSpec`).
 - Esquema de `IWeaponData` **completo** (todos los campos de la entidad) — única excepción documentada: `deployables` dentro de `deployables` queda fuera del formulario (recursión acotada a 1 nivel, decisión consciente, no limitación técnica).
-- Pendiente: diseñar pantallas Crear/Editar/Vista en Figma (para reemplazar el Material por defecto), investigar plugins Linux/Android, escalar el mismo motor al resto de entidades.
+- Adapter de "selector nativo" (ADR-002): `CrearArmaScreen` ya pide al usuario dónde guardar el `.lcp` en vez de usar una ruta fija, vía `file_selector` (paquete federado del equipo de Flutter, decisión ya documentada en `app/README.md`).
+- Pendiente: diseñar pantallas Crear/Editar/Vista en Figma (para reemplazar el Material por defecto), escalar el mismo motor al resto de entidades.
 
 ## Próximos pasos (on the horizon)
 
@@ -38,8 +39,8 @@ Vehículo de aprendizaje de arquitectura de software (Clean/Hexagonal) y pieza d
 - [x] Motor de formulario genérico (esquema a mano) + formulario real de Crear arma
 - [x] Extender el motor para anidar catálogo dentro de una lista (varios bonuses por arma)
 - [x] Completar el esquema de arma con el resto de campos (`ammo`, `actions`, `active_effects`, `synergies`, `deployables`, `profiles`, `on_attack`/`on_hit`/`on_crit`/`on_miss`, filtros de `bonuses`) — motor extendido con `MultiEnumFieldSpec` y `GroupFieldSpec`
+- [x] Investigar y añadir plugin de selector de archivo para Linux/Android (`file_selector`) — `CrearArmaScreen` ya no usa una ruta fija
 - [ ] Diseñar en Figma las pantallas Crear/Editar/Vista (sustituir el Material por defecto)
-- [ ] Investigar plugins Flutter para sistema de archivos en Linux/Android
 - [ ] Investigar plugins Flutter para Windows/macOS/iOS (diferido)
 - [ ] Resolver las dos decisiones de UI abiertas (ver [[Referencia visual COMP-CON]])
 - [ ] Escalar el motor genérico al resto de las 24 entidades
