@@ -43,19 +43,30 @@ Implementado completo (27 archivos: `enums/enums.dart`, `value_objects/value_obj
 
 `flutter create --project-name lcp_builder --platforms=android,ios,linux,macos,windows .` ejecutado (Flutter 3.44.4 stable instalado en este entorno remoto), generando `pubspec.yaml`, las carpetas de plataforma (`android/`, `ios/`, `linux/`, `macos/`, `windows/` — sin `web/`, fuera del alcance del ADR-001), `lib/main.dart` (demo por defecto, pendiente de sustituir por el flujo Crear) y `test/widget_test.dart` (test de ejemplo). No tocó nada dentro de `lib/domain/` ni el resto de la estructura ya preparada. `flutter analyze` sobre el proyecto completo: **"No issues found!"**.
 
-## Flujo Crear — arma (verificación headless, sin formulario todavía)
+## Flujo Crear — arma
 
-Primera entidad completa de principio a fin: dominio → `.lcp` en disco, sin interfaz — para verificar que el `.lcp` generado es correcto antes de construir el formulario real (pendiente de diseño en Figma).
+Primera entidad completa de principio a fin: dominio → `.lcp` en disco. Verificado dos veces — con un test de aceptación automatizado, y cargando un `.lcp` real generado por el propio pipeline en COMP/CON (confirmado por el equipo de desarrollo).
 
 - `domain/ports/content_pack_exporter.dart`, `domain/ports/file_writer.dart` — puertos hexagonales.
 - `infrastructure/lcp/domain_json_mapper.dart` — traduce el dominio a JSON (snake_case, grafía exacta de la spec). Cubre el grafo completo de `IWeaponData`/`ILcpManifestData`; los tipos compartidos (`IDamageData`, `IActionData`, `IBonusData`...) se reutilizarán en el resto de entidades.
 - `infrastructure/lcp/zip_content_pack_exporter.dart` — produce el zip de un solo nivel (`lcp_manifest.json` + `weapons.json`) que exige el formato `.lcp`.
 - `infrastructure/file_system/local_file_writer.dart` — adapter Linux (escritura abierta, `dart:io`).
 - `application/use_cases/crear_arma_use_case.dart` — orquesta ambos puertos.
-- `bin/crear_arma_ejemplo.dart` — script ejecutable (`dart run bin/crear_arma_ejemplo.dart [ruta.lcp]`) que genera un `.lcp` real con un arma de ejemplo, para probarlo cargándolo en COMP/CON.
+- `bin/crear_arma_ejemplo.dart` — script ejecutable headless (`dart run bin/crear_arma_ejemplo.dart [ruta.lcp]`), útil para probar el pipeline sin la UI.
 
 Al escribir el mapper se encontraron y corrigieron dos bugs reales del dominio ya mergeado: `DamageType` y `RangeType` (y `BonusRangeTypeFilter`) no tenían `jsonValue` — exportaban en minúscula (`"kinetic"`) en vez de la grafía real de la spec (`"Kinetic"`).
 
-Tests: `test/infrastructure/lcp/domain_json_mapper_test.dart` (unitarios) y `test/application/use_cases/crear_arma_use_case_test.dart` (aceptación end-to-end: genera un `.lcp` real en un directorio temporal, lo abre como zip y verifica su contenido) — cumple la condición de tests bloqueante de ADR-002 para esta iteración. `flutter test`: 9/9 pasan.
+### Motor de formulario genérico
 
-**Pendiente:** diseñar en Figma las pantallas Crear/Editar/Vista y construir el formulario real en `presentation/`, sustituyendo `lib/main.dart` y este script headless.
+Antes de escalar a más entidades: un único motor (`presentation/forms/`) capaz de renderizar el formulario de cualquier entidad a partir de una descripción declarativa, en vez de una pantalla a mano por entidad. Decisión ya razonada: **esquema escrito a mano** por entidad, no generación de código (`build_runner`) — ver la conversación de arquitectura correspondiente; se revisa esa decisión si la fricción de mantener los esquemas a mano se vuelve real.
+
+- `presentation/forms/field_spec.dart` — el modelo declarativo (`FieldSpec`). Cubre las categorías del catálogo de casos polimórficos (`vault/Modelo de Dominio/19...`) presentes en `IWeaponData`: campos simples, enum-select, listas de sub-formulario, caso 3 (`ShapeChoiceFieldSpec`, forma decidida por el valor) y caso 4 (`CatalogFieldSpec`, catálogo externo — usado para resolver `bonuses` vía `BonusId`).
+- `presentation/forms/generic_form_controller.dart` / `generic_form_view.dart` — el motor en sí: estado + widget Material que interpreta cualquier `List<FieldSpec>`. Sin diseño de Figma todavía (`vault/UI-UX`) — deliberadamente funcional, no definitivo.
+- `presentation/forms/weapon_form_schema.dart` — el esquema concreto de `IWeaponData` (primer corte, no exhaustivo — `actions`/`active_effects`/`synergies`/`deployables`/`profiles` quedan pendientes, repetirían el mismo patrón sin aportar mecanismo nuevo; `bonuses` admite un único bonus, no una lista, hasta anidar catálogo-dentro-de-lista en el motor) y el ensamblador que construye el `IWeaponData` real a partir de los valores del formulario.
+- `presentation/screens/crear/crear_arma_screen.dart` — pantalla que usa el motor + dispara `CrearArmaUseCase`. Sustituye el `lib/main.dart` de ejemplo de `flutter create`.
+
+Bug real de Dart encontrado al conectar el motor: los campos función genéricos (`EnumFieldSpec<T>.displayLabel`, `CatalogFieldSpec<TId>.idLabel/valueFieldFor`) fallaban en tiempo de ejecución al invocarse a través de una referencia sin el argumento de tipo (variance de funciones — `(T) -> String` no es subtipo de `(dynamic) -> String`). Resuelto con métodos wrapper (`labelFor`, `fieldFor`) definidos dentro de la propia clase genérica, donde `T` sigue fijado.
+
+Tests: mapper JSON (unitarios), aceptación end-to-end del caso de uso (genera un `.lcp` real, lo abre como zip, verifica contenido), ensamblador del formulario (unitarios), y smoke test de la app completa — cumple la condición de tests bloqueante de ADR-002. `flutter test`: 12/12 pasan. No se pudo ejecutar `flutter run` en este entorno remoto (sin display gráfico) — verificado con tests de widget en su lugar.
+
+**Pendiente:** diseñar en Figma las pantallas Crear/Editar/Vista (para reemplazar el Material por defecto), extender el motor para anidar catálogo-dentro-de-lista (bonuses múltiples), y completar el esquema con el resto de campos de `IWeaponData`.
