@@ -12,9 +12,32 @@ library;
 
 // --- Sección 1: tipos primitivos compuestos ---
 
-enum DamageType { kinetic, energy, explosive, heat, burn, variable }
+enum DamageType {
+  kinetic('Kinetic'),
+  energy('Energy'),
+  explosive('Explosive'),
+  heat('Heat'),
+  burn('Burn'),
+  variable('Variable');
 
-enum RangeType { threat, range, burst, blast, cone, line }
+  final String jsonValue;
+  const DamageType(this.jsonValue);
+}
+
+/// El identificador Dart del valor `range` va en minúscula para no chocar
+/// visualmente con el tipo contenedor `IRangeData` — `jsonValue` conserva
+/// la grafía real de la spec ("Range", mayúscula inicial).
+enum RangeType {
+  threat('Threat'),
+  range('Range'),
+  burst('Burst'),
+  blast('Blast'),
+  cone('Cone'),
+  line('Line');
+
+  final String jsonValue;
+  const RangeType(this.jsonValue);
+}
 
 /// "CQB" verificado contra lib/weapons.json — "CQC" (visto en la página de
 /// Bonuses) es un error de tecleo de esa página, no un valor real.
@@ -117,7 +140,18 @@ enum BonusWeaponSizeFilter {
 }
 
 /// Sin valor "any" — la fuente no lo documenta para este campo.
-enum BonusRangeTypeFilter { threat, range, burst, blast, cone, line, melee }
+enum BonusRangeTypeFilter {
+  threat('Threat'),
+  range('Range'),
+  burst('Burst'),
+  blast('Blast'),
+  cone('Cone'),
+  line('Line'),
+  melee('Melee');
+
+  final String jsonValue;
+  const BonusRangeTypeFilter(this.jsonValue);
+}
 
 /// Enum de `add_mount` (Bonuses) — conjunto distinto de [MountType] (Frames,
 /// sección 13.2): no incluye Flex ni Integrated. Dos enums independientes.
