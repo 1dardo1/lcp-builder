@@ -4,18 +4,23 @@
 /// entidad aporta su propia lista de [FieldSpec]; el motor (`GenericFormView`)
 /// es el único código compartido entre las 24 entidades.
 ///
-/// Cubre las categorías del catálogo de casos polimórficos
-/// (`vault/Modelo de Dominio/19...`) que aparecen en `IWeaponData`:
+/// Cubre las 6 categorías del catálogo de casos polimórficos
+/// (`vault/Modelo de Dominio/19...`) — ninguna necesitó, al completar las
+/// 24 entidades, una pieza más allá de las ya construidas para `IWeaponData`:
+/// - Caso 1/2 (unión discriminada por tag `type`, o por campo exclusivo —
+///   ej. `IPilotGearData`, `INpcFeatureData`): el discriminador vive en el
+///   tipo Dart (`sealed class`), pero el formulario para construir una
+///   instancia sí necesita elegir la variante en tiempo de ejecución —
+///   resuelto con [ShapeChoiceFieldSpec] (una rama por variante) +
+///   [GroupFieldSpec] (campos propios de cada rama).
 /// - Caso 3 (forma decidida por el propio valor) → [ShapeChoiceFieldSpec].
 /// - Caso 4 (catálogo externo) → [CatalogFieldSpec].
 /// - Caso 5 (string con gramática propia) → [PatternTextFieldSpec].
-/// Caso 1/2 (unión con tag o campo exclusivo, ej. `IPilotGearData`) no
-/// aparece en esta entidad — pendiente de resolver cuando se aborde una
-/// entidad que lo necesite. Caso 6 (variabilidad por tier, NPC) tampoco
-/// aparece en `IWeaponData`, pero ya tiene decisión de diseño cerrada sin
-/// [FieldSpec] nuevo: [ShapeChoiceFieldSpec] generalizado a N ramas +
-/// [GroupFieldSpec] reutilizado para "exactamente 3 campos, uno por tier"
-/// — ver vault "Decisión - variabilidad por tier de NPC".
+/// - Caso 6 (variabilidad por tier, NPC — `TierValue`/`NpcSize`/
+///   `EidolonShardCount`): misma composición que caso 1/2,
+///   [ShapeChoiceFieldSpec] generalizado a N ramas + [GroupFieldSpec]
+///   reutilizado para "exactamente 3 campos, uno por tier" — ver vault
+///   "Decisión - variabilidad por tier de NPC".
 library;
 
 sealed class FieldSpec {
@@ -78,23 +83,35 @@ class EnumFieldSpec<T> extends FieldSpec {
   String labelFor(dynamic value) => displayLabel(value as T);
 }
 
-/// Caso 3 del catálogo: el valor puede tener una de dos formas (ej.
-/// `NumericOrFormulaValue` = número fijo o fórmula; `StringOrBool`). El
-/// usuario elige la forma con un selector binario; el motor renderiza
-/// después el sub-campo correspondiente.
+/// Una rama de un [ShapeChoiceFieldSpec]: `value` es el identificador
+/// estable que se guarda como elección (y que, por convención de quien
+/// construye el spec, también sirve de sufijo de key para los campos de
+/// `field`, ej. `'type.a'`); `label` es el texto del selector; `field` es
+/// el sub-campo a pintar tras elegir esta rama, o `null` si la rama no
+/// necesita más datos (ej. el valor fijo `hostile_characters`).
+class ShapeChoiceOption {
+  final String value;
+  final String label;
+  final FieldSpec? field;
+  const ShapeChoiceOption({
+    required this.value,
+    required this.label,
+    this.field,
+  });
+}
+
+/// Caso 3 del catálogo (el valor puede tener una de varias formas — ej.
+/// `NumericOrFormulaValue` = número fijo o fórmula; `StringOrBool`) y caso
+/// 6 (variabilidad por tier de NPC, ej. `EidolonShardCount` con 3 formas):
+/// el usuario elige una rama con un selector de N opciones; el motor
+/// renderiza después el sub-campo de la rama elegida, si tiene uno.
 class ShapeChoiceFieldSpec extends FieldSpec {
-  final String optionALabel;
-  final FieldSpec optionA;
-  final String optionBLabel;
-  final FieldSpec optionB;
+  final List<ShapeChoiceOption> options;
   const ShapeChoiceFieldSpec({
     required super.key,
     required super.label,
     super.required,
-    required this.optionALabel,
-    required this.optionA,
-    required this.optionBLabel,
-    required this.optionB,
+    required this.options,
   });
 }
 

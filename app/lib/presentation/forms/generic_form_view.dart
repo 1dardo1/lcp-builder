@@ -24,8 +24,11 @@ class _FieldContext {
 /// mecanismo funciona, no la experiencia visual.
 ///
 /// Convención de `key` para campos anidados (ver `field_spec.dart`):
-/// - [ShapeChoiceFieldSpec] con `key = 'x'` espera que `optionA`/`optionB`
-///   usen las keys `'x.a'` / `'x.b'`; la elección se guarda en `'x.choice'`.
+/// - [ShapeChoiceFieldSpec] con `key = 'x'` guarda la rama elegida (el
+///   `value` de la [ShapeChoiceOption] activa) en `'x.choice'`; por
+///   convención cada opción usa `'x.<value>'` como key de su propio campo
+///   (ej. `'x.a'`/`'x.b'` para dos ramas, aunque el número de ramas es
+///   libre — ver caso 6 del catálogo, con 3 ramas en `EidolonShardCount`).
 /// - [CatalogFieldSpec] con `key = 'x'` espera que `valueFieldFor` use
 ///   siempre la key `'x.value'`; el id elegido se guarda en `'x.id'`.
 /// - [GroupFieldSpec] con `key = 'x'` guarda sus `fields` en un único mapa
@@ -195,21 +198,26 @@ class GenericFormView extends StatelessWidget {
     ShapeChoiceFieldSpec f,
     _FieldContext ctx,
   ) {
-    final choice = ctx.get('${f.key}.choice') as String? ?? 'A';
-    final activeSpec = choice == 'A' ? f.optionA : f.optionB;
+    final choice =
+        ctx.get('${f.key}.choice') as String? ?? f.options.first.value;
+    final activeOption = f.options.firstWhere(
+      (o) => o.value == choice,
+      orElse: () => f.options.first,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(f.label, style: Theme.of(context).textTheme.labelLarge),
         SegmentedButton<String>(
           segments: [
-            ButtonSegment(value: 'A', label: Text(f.optionALabel)),
-            ButtonSegment(value: 'B', label: Text(f.optionBLabel)),
+            for (final o in f.options)
+              ButtonSegment(value: o.value, label: Text(o.label)),
           ],
           selected: {choice},
           onSelectionChanged: (s) => ctx.set('${f.key}.choice', s.first),
         ),
-        _buildField(context, activeSpec, ctx),
+        if (activeOption.field != null)
+          _buildField(context, activeOption.field!, ctx),
       ],
     );
   }

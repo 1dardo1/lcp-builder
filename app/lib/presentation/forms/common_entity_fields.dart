@@ -36,10 +36,22 @@ FieldSpec numericOrFormulaField(String key, String label) =>
     ShapeChoiceFieldSpec(
       key: key,
       label: label,
-      optionALabel: 'Número',
-      optionA: NumberFieldSpec(key: '$key.a', label: label, allowDecimal: true),
-      optionBLabel: 'Fórmula',
-      optionB: TextFieldSpec(key: '$key.b', label: 'Fórmula (ej. {grit}+2)'),
+      options: [
+        ShapeChoiceOption(
+          value: 'A',
+          label: 'Número',
+          field: NumberFieldSpec(
+            key: '$key.a',
+            label: label,
+            allowDecimal: true,
+          ),
+        ),
+        ShapeChoiceOption(
+          value: 'B',
+          label: 'Fórmula',
+          field: TextFieldSpec(key: '$key.b', label: 'Fórmula (ej. {grit}+2)'),
+        ),
+      ],
     );
 
 NumericOrFormulaValue? numericOrFormulaFromItem(
@@ -62,17 +74,25 @@ NumericOrFormulaValue? numericOrFormulaFromItem(
 FieldSpec damageSaveField() => const ShapeChoiceFieldSpec(
   key: 'save',
   label: 'Save',
-  optionALabel: 'Texto',
-  optionA: TextFieldSpec(key: 'save.a', label: 'Save (texto libre)'),
-  optionBLabel: 'Estructurado',
-  optionB: GroupFieldSpec(
-    key: 'save.b',
-    label: 'Save estructurado',
-    fields: [
-      TextFieldSpec(key: 'stat', label: 'Stat', required: true),
-      BoolFieldSpec(key: 'aoe', label: 'AoE'),
-    ],
-  ),
+  options: [
+    ShapeChoiceOption(
+      value: 'A',
+      label: 'Texto',
+      field: TextFieldSpec(key: 'save.a', label: 'Save (texto libre)'),
+    ),
+    ShapeChoiceOption(
+      value: 'B',
+      label: 'Estructurado',
+      field: GroupFieldSpec(
+        key: 'save.b',
+        label: 'Save estructurado',
+        fields: [
+          TextFieldSpec(key: 'stat', label: 'Stat', required: true),
+          BoolFieldSpec(key: 'aoe', label: 'AoE'),
+        ],
+      ),
+    ),
+  ],
 );
 
 Object? damageSaveFromItem(Map<String, dynamic> item) {
@@ -86,6 +106,26 @@ Object? damageSaveFromItem(Map<String, dynamic> item) {
   if (stat == null || stat.isEmpty) return null;
   return IDamageSaveData(stat: stat, aoe: group?['aoe'] as bool?);
 }
+
+/// `StringOrBool` para `aoe` — repetido literalmente en `IDamageData`,
+/// `IStatusEffectData` e `IOtherEffectData` (y también en `INpcDamageData`,
+/// que restringe `damage` pero no `aoe`), de ahí la extracción.
+FieldSpec aoeField() => const ShapeChoiceFieldSpec(
+  key: 'aoe',
+  label: 'AoE',
+  options: [
+    ShapeChoiceOption(
+      value: 'A',
+      label: 'Texto',
+      field: TextFieldSpec(key: 'aoe.a', label: 'AoE (texto)'),
+    ),
+    ShapeChoiceOption(
+      value: 'B',
+      label: 'Sí/No',
+      field: BoolFieldSpec(key: 'aoe.b', label: 'AoE'),
+    ),
+  ],
+);
 
 List<FieldSpec> damageItemFields() => [
   EnumFieldSpec<DamageType>(
@@ -102,14 +142,7 @@ List<FieldSpec> damageItemFields() => [
     pattern: diceExpressionPattern,
     patternHint: 'ej. 2d6, 10, 1d6+{grit}',
   ),
-  const ShapeChoiceFieldSpec(
-    key: 'aoe',
-    label: 'AoE',
-    optionALabel: 'Texto',
-    optionA: TextFieldSpec(key: 'aoe.a', label: 'AoE (texto)'),
-    optionBLabel: 'Sí/No',
-    optionB: BoolFieldSpec(key: 'aoe.b', label: 'AoE'),
-  ),
+  aoeField(),
   damageSaveField(),
   const BoolFieldSpec(key: 'saveHalf', label: 'Mitad de daño con save'),
   const BoolFieldSpec(key: 'ap', label: 'AP (ignora armadura)'),
@@ -200,14 +233,7 @@ List<FieldSpec> statusEffectItemFields() => [
     options: MechStat.values,
     displayLabel: (s) => s.name,
   ),
-  const ShapeChoiceFieldSpec(
-    key: 'aoe',
-    label: 'AoE',
-    optionALabel: 'Texto',
-    optionA: TextFieldSpec(key: 'aoe.a', label: 'AoE (texto)'),
-    optionBLabel: 'Sí/No',
-    optionB: BoolFieldSpec(key: 'aoe.b', label: 'AoE'),
-  ),
+  aoeField(),
   EnumFieldSpec<TargetType>(
     key: 'target',
     label: 'Target',
@@ -272,15 +298,23 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
       key: 'resistance.value',
       label: 'Immunity',
       required: true,
-      optionALabel: 'Valor conocido',
-      optionA: EnumFieldSpec<ResistanceValue>(
-        key: 'resistance.value.a',
-        label: 'Valor',
-        options: ResistanceValue.values,
-        displayLabel: resistanceValueLabel,
-      ),
-      optionBLabel: 'ID de status/condition',
-      optionB: TextFieldSpec(key: 'resistance.value.b', label: 'ID'),
+      options: [
+        ShapeChoiceOption(
+          value: 'A',
+          label: 'Valor conocido',
+          field: EnumFieldSpec<ResistanceValue>(
+            key: 'resistance.value.a',
+            label: 'Valor',
+            options: ResistanceValue.values,
+            displayLabel: resistanceValueLabel,
+          ),
+        ),
+        ShapeChoiceOption(
+          value: 'B',
+          label: 'ID de status/condition',
+          field: TextFieldSpec(key: 'resistance.value.b', label: 'ID'),
+        ),
+      ],
     ),
   },
 );
@@ -384,14 +418,7 @@ List<FieldSpec> otherEffectItemFields() => [
     options: TargetType.values,
     displayLabel: (t) => t.name,
   ),
-  const ShapeChoiceFieldSpec(
-    key: 'aoe',
-    label: 'AoE',
-    optionALabel: 'Texto',
-    optionA: TextFieldSpec(key: 'aoe.a', label: 'AoE (texto)'),
-    optionBLabel: 'Sí/No',
-    optionB: BoolFieldSpec(key: 'aoe.b', label: 'AoE'),
-  ),
+  aoeField(),
 ];
 
 IOtherEffectData? otherEffectFromItem(Map<String, dynamic> item) {
@@ -526,7 +553,7 @@ IActiveEffectData activeEffectFromGroup(Map<String, dynamic> item) =>
       addStatus: mapItems(item['addStatus'], statusEffectFromItem),
       addResist: mapItems(item['addResist'], resistanceFromItem),
       addSpecial: mapItems(item['addSpecial'], specialStatusFromItem),
-      removeSpecial: mapStringItems(item['removeSpecial']),
+      removeSpecial: mapStringIdItems(item['removeSpecial']),
       addOther: mapItems(item['addOther'], otherEffectFromItem),
       save: effectSaveFromGroup(item['save'] as Map<String, dynamic>?),
       attack: item['attack'] as AttackType?,
@@ -535,6 +562,22 @@ IActiveEffectData activeEffectFromGroup(Map<String, dynamic> item) =>
       accuracy: item['accuracy'] as num?,
       attackBonus: item['attackBonus'] as num?,
     );
+
+/// Campo `IActiveEffectData?` suelto (no envuelto en `TextOrActiveEffect`,
+/// a diferencia de `textOrActiveEffectField`) — ej. `on_attack`/`on_hit`/
+/// `on_crit`/`on_miss` de `IWeaponModData`, que en la spec son siempre un
+/// active effect estructurado, nunca texto libre.
+FieldSpec activeEffectGroupField(String key, String label) =>
+    GroupFieldSpec(key: key, label: label, fields: activeEffectFields());
+
+IActiveEffectData? activeEffectFromGroupOrNull(
+  Map<String, dynamic> item,
+  String key,
+) {
+  final group = item[key] as Map<String, dynamic>?;
+  if (group == null || group['name'] == null) return null;
+  return activeEffectFromGroup(group);
+}
 
 List<FieldSpec> actionItemFields() => [
   const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
@@ -628,7 +671,7 @@ IActionData actionFromItem(Map<String, dynamic> item) {
     addStatus: mapItems(item['addStatus'], statusEffectFromItem),
     addResist: mapItems(item['addResist'], resistanceFromItem),
     addSpecial: mapItems(item['addSpecial'], specialStatusFromItem),
-    removeSpecial: mapStringItems(item['removeSpecial']),
+    removeSpecial: mapStringIdItems(item['removeSpecial']),
     addOther: mapItems(item['addOther'], otherEffectFromItem),
     activeEffects: mapItems(item['activeEffects'], activeEffectFromGroup),
     save: effectSaveFromGroup(item['save'] as Map<String, dynamic>?),
@@ -647,17 +690,25 @@ FieldSpec bonusCatalogField() => CatalogFieldSpec<BonusId>(
       key: 'bonus.value',
       label: 'Valor',
       required: true,
-      optionALabel: 'Número',
-      optionA: NumberFieldSpec(
-        key: 'bonus.value.a',
-        label: 'Número',
-        allowDecimal: true,
-      ),
-      optionBLabel: 'Fórmula',
-      optionB: TextFieldSpec(
-        key: 'bonus.value.b',
-        label: 'Fórmula (ej. {grit}+2)',
-      ),
+      options: [
+        ShapeChoiceOption(
+          value: 'A',
+          label: 'Número',
+          field: NumberFieldSpec(
+            key: 'bonus.value.a',
+            label: 'Número',
+            allowDecimal: true,
+          ),
+        ),
+        ShapeChoiceOption(
+          value: 'B',
+          label: 'Fórmula',
+          field: TextFieldSpec(
+            key: 'bonus.value.b',
+            label: 'Fórmula (ej. {grit}+2)',
+          ),
+        ),
+      ],
     ),
     BonusValueKind.boolean => const BoolFieldSpec(
       key: 'bonus.value',
@@ -1043,7 +1094,7 @@ IDeployableData deployableFromItem(Map<String, dynamic> item) =>
       activeEffects: mapItems(item['activeEffects'], activeEffectFromGroup),
       addStatus: mapItems(item['addStatus'], statusEffectFromItem),
       addSpecial: mapItems(item['addSpecial'], specialStatusFromItem),
-      removeSpecial: mapStringItems(item['removeSpecial']),
+      removeSpecial: mapStringIdItems(item['removeSpecial']),
       addOther: mapItems(item['addOther'], otherEffectFromItem),
       addResist: mapItems(item['addResist'], resistanceFromItem),
       tags: mapItems(item['tags'], tagFromItem),
@@ -1080,14 +1131,22 @@ FieldSpec textOrActiveEffectField(String key, String label) =>
     ShapeChoiceFieldSpec(
       key: key,
       label: label,
-      optionALabel: 'Texto',
-      optionA: TextFieldSpec(key: '$key.a', label: '$label (texto)'),
-      optionBLabel: 'Active effect',
-      optionB: GroupFieldSpec(
-        key: '$key.b',
-        label: '$label (active effect)',
-        fields: activeEffectFields(),
-      ),
+      options: [
+        ShapeChoiceOption(
+          value: 'A',
+          label: 'Texto',
+          field: TextFieldSpec(key: '$key.a', label: '$label (texto)'),
+        ),
+        ShapeChoiceOption(
+          value: 'B',
+          label: 'Active effect',
+          field: GroupFieldSpec(
+            key: '$key.b',
+            label: '$label (active effect)',
+            fields: activeEffectFields(),
+          ),
+        ),
+      ],
     );
 
 TextOrActiveEffect? textOrActiveEffectFromItem(
@@ -1118,14 +1177,248 @@ List<T>? mapItems<T>(
   return mapped.isEmpty ? null : mapped;
 }
 
-List<String>? mapStringItems(dynamic rawItems) {
-  final items = (rawItems as List<String>?) ?? const [];
-  return items.isEmpty ? null : items;
-}
-
 List<String>? mapStringIdItems(dynamic rawItems) {
   final items = (rawItems as List<Map<String, dynamic>>?) ?? const [];
   if (items.isEmpty) return null;
   final ids = items.map((i) => i['id'] as String?).whereType<String>().toList();
   return ids.isEmpty ? null : ids;
 }
+
+// --- Sección 15 (NPC Data): TierValue / NpcSize — caso 6 del catálogo de
+// casos polimórficos (variabilidad por tier de NPC). Resuelto sin
+// FieldSpec nuevo: ShapeChoiceFieldSpec (generalizado a N ramas) +
+// GroupFieldSpec, ver vault "Decisión - variabilidad por tier de NPC". ---
+
+/// `TierValue = number | [number, number, number]`. La rama "por tier" pide
+/// 3 campos fijos (`tier1`/`tier2`/`tier3`), mismo criterio que descartó
+/// `ListFieldSpec` en otros grupos de tamaño fijo (ej. `IEffectSaveData`).
+FieldSpec tierValueField(String key, String label) => ShapeChoiceFieldSpec(
+  key: key,
+  label: label,
+  options: [
+    ShapeChoiceOption(
+      value: 'single',
+      label: 'Único (los 3 tiers)',
+      field: NumberFieldSpec(key: '$key.single', label: label),
+    ),
+    ShapeChoiceOption(
+      value: 'perTier',
+      label: 'Por tier',
+      field: GroupFieldSpec(
+        key: '$key.perTier',
+        label: '$label por tier',
+        fields: const [
+          NumberFieldSpec(key: 'tier1', label: 'Tier 1', required: true),
+          NumberFieldSpec(key: 'tier2', label: 'Tier 2', required: true),
+          NumberFieldSpec(key: 'tier3', label: 'Tier 3', required: true),
+        ],
+      ),
+    ),
+  ],
+);
+
+TierValue? tierValueFromItem(Map<String, dynamic> item, String key) {
+  final choice = item['$key.choice'] as String? ?? 'single';
+  if (choice == 'single') {
+    final v = item['$key.single'] as num?;
+    return v == null ? null : TierValue.single(v);
+  }
+  final group = item['$key.perTier'] as Map<String, dynamic>?;
+  final t1 = group?['tier1'] as num?;
+  final t2 = group?['tier2'] as num?;
+  final t3 = group?['tier3'] as num?;
+  if (t1 == null || t2 == null || t3 == null) return null;
+  return TierValue.perTier([t1, t2, t3]);
+}
+
+/// `NpcSize` no ofrece elección (el dominio solo tiene un constructor,
+/// siempre 3 sub-arrays) — a diferencia de [tierValueField], va directo al
+/// `GroupFieldSpec` sin envolverlo en un `ShapeChoiceFieldSpec`. Cada tier
+/// admite varios tamaños válidos a la vez, de ahí `MultiEnumFieldSpec`.
+const _npcSizeValues = [0.5, 1, 2, 3];
+
+FieldSpec npcSizeField() => GroupFieldSpec(
+  key: 'size',
+  label: 'Tamaño (uno o más valores válidos por tier: 0.5, 1, 2, 3)',
+  fields: [
+    for (final n in [1, 2, 3])
+      MultiEnumFieldSpec<num>(
+        key: 'tier$n',
+        label: 'Tier $n',
+        options: _npcSizeValues,
+        displayLabel: (v) => v.toString(),
+      ),
+  ],
+);
+
+NpcSize? npcSizeFromItem(Map<String, dynamic> item) {
+  final group = item['size'] as Map<String, dynamic>?;
+  if (group == null) return null;
+  final t1 = (group['tier1'] as List?)?.cast<num>() ?? const [];
+  final t2 = (group['tier2'] as List?)?.cast<num>() ?? const [];
+  final t3 = (group['tier3'] as List?)?.cast<num>() ?? const [];
+  if (t1.isEmpty || t2.isEmpty || t3.isEmpty) return null;
+  return NpcSize([t1, t2, t3]);
+}
+
+// --- Sección 13.4 (IMechSystemData) — bundle base reutilizado por
+// MechSystem y WeaponMod (WeaponMod extiende todos los campos de
+// MechSystem, pero al ser clases de dominio distintas cada una necesita
+// construir su propia instancia — no se puede "extender" un objeto ya
+// construido). Mismo criterio que llevó a extraer el paquete de
+// actions/bonuses/synergies/deployables a este módulo: un segundo
+// consumidor real confirmando que merece la pena compartirlo. ---
+
+List<FieldSpec> mechSystemBaseFields() => [
+  const TextFieldSpec(key: 'id', label: 'ID', required: true),
+  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'source',
+    label: 'Fabricante (source; opcional solo en License Collection)',
+  ),
+  const TextFieldSpec(
+    key: 'license',
+    label: 'Licencia (opcional solo en License Collection)',
+  ),
+  const TextFieldSpec(
+    key: 'licenseId',
+    label: 'ID de la licencia (frame; opcional solo en License Collection)',
+  ),
+  const NumberFieldSpec(
+    key: 'licenseLevel',
+    label: 'Nivel de licencia (0-3)',
+    required: true,
+  ),
+  EnumFieldSpec<SystemType>(
+    key: 'type',
+    label: 'Tipo (default: System)',
+    options: SystemType.values,
+    displayLabel: (t) => t.jsonValue,
+  ),
+  const TextFieldSpec(key: 'effect', label: 'Efecto', maxLines: 3),
+  const TextFieldSpec(key: 'description', label: 'Descripción', maxLines: 3),
+  const NumberFieldSpec(key: 'sp', label: 'SP'),
+  const ListFieldSpec(
+    key: 'tags',
+    label: 'Tags',
+    itemFields: [TextFieldSpec(key: 'id', label: 'ID del tag', required: true)],
+  ),
+  ListFieldSpec(
+    key: 'actions',
+    label: 'Actions',
+    itemFields: actionItemFields(),
+  ),
+  ListFieldSpec(
+    key: 'bonuses',
+    label: 'Bonuses',
+    itemFields: bonusItemFields(),
+  ),
+  const BoolFieldSpec(key: 'noBonus', label: 'Ignora bonuses'),
+  ListFieldSpec(
+    key: 'synergies',
+    label: 'Synergies',
+    itemFields: synergyItemFields(),
+  ),
+  const BoolFieldSpec(key: 'noSynergy', label: 'Ignora synergies'),
+  ListFieldSpec(
+    key: 'deployables',
+    label: 'Deployables',
+    itemFields: deployableItemFields(),
+  ),
+  ListFieldSpec(
+    key: 'counters',
+    label: 'Counters',
+    itemFields: counterItemFields(),
+  ),
+  const ListFieldSpec(
+    key: 'integrated',
+    label: 'Integrated (IDs, sin validar referencias circulares)',
+    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+  ),
+  const ListFieldSpec(
+    key: 'specialEquipment',
+    label: 'Special equipment (IDs)',
+    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+  ),
+  ListFieldSpec(
+    key: 'activeEffects',
+    label: 'Active effects',
+    itemFields: activeEffectFields(),
+  ),
+];
+
+/// Valores comunes ya ensamblados desde `values` — cada entidad concreta
+/// (`MechSystem`, `WeaponMod`) los pasa a su propio constructor de dominio
+/// junto con sus campos específicos.
+class MechSystemBaseValues {
+  final String id;
+  final String name;
+  final String? source;
+  final String? license;
+  final String? licenseId;
+  final int licenseLevel;
+  final SystemType? type;
+  final String? effect;
+  final String? description;
+  final int? sp;
+  final List<ITagInstance>? tags;
+  final List<IActionData>? actions;
+  final List<IBonusData>? bonuses;
+  final bool? noBonus;
+  final List<ISynergyData>? synergies;
+  final bool? noSynergy;
+  final List<IDeployableData>? deployables;
+  final List<ICounterData>? counters;
+  final List<String>? integrated;
+  final List<String>? specialEquipment;
+  final List<IActiveEffectData>? activeEffects;
+
+  const MechSystemBaseValues({
+    required this.id,
+    required this.name,
+    this.source,
+    this.license,
+    this.licenseId,
+    required this.licenseLevel,
+    this.type,
+    this.effect,
+    this.description,
+    this.sp,
+    this.tags,
+    this.actions,
+    this.bonuses,
+    this.noBonus,
+    this.synergies,
+    this.noSynergy,
+    this.deployables,
+    this.counters,
+    this.integrated,
+    this.specialEquipment,
+    this.activeEffects,
+  });
+}
+
+MechSystemBaseValues mechSystemBaseFromValues(Map<String, dynamic> values) =>
+    MechSystemBaseValues(
+      id: values['id'] as String,
+      name: values['name'] as String,
+      source: values['source'] as String?,
+      license: values['license'] as String?,
+      licenseId: values['licenseId'] as String?,
+      licenseLevel: (values['licenseLevel'] as num?)?.toInt() ?? 0,
+      type: values['type'] as SystemType?,
+      effect: values['effect'] as String?,
+      description: values['description'] as String?,
+      sp: (values['sp'] as num?)?.toInt(),
+      tags: mapItems(values['tags'], tagFromItem),
+      actions: mapItems(values['actions'], actionFromItem),
+      bonuses: mapItems(values['bonuses'], bonusFromItemValues),
+      noBonus: values['noBonus'] as bool?,
+      synergies: mapItems(values['synergies'], synergyFromItem),
+      noSynergy: values['noSynergy'] as bool?,
+      deployables: mapItems(values['deployables'], deployableFromItem),
+      counters: mapItems(values['counters'], counterFromItem),
+      integrated: mapStringIdItems(values['integrated']),
+      specialEquipment: mapStringIdItems(values['specialEquipment']),
+      activeEffects: mapItems(values['activeEffects'], activeEffectFromGroup),
+    );
