@@ -35,4 +35,5 @@ tags: [modelo-dominio, lcp-builder, moc]
 - [[16. Checklist - NPC Data (COMPLETO)]]
 - [[17. Other]]
 - [[18. Clasificación entidad-value object - verificada (revisión completa del documento)]]
+- [[19. Catálogo de casos polimórficos (para el formulario)]] — no transcribe spec nueva; reagrupa tipos ya definidos por cómo se decide su forma concreta, de cara al formulario de Crear
 - [[Recordatorio de método (no es parte del modelo, es nota de proceso)]]
