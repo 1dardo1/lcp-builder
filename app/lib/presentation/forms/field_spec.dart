@@ -9,10 +9,13 @@
 /// - Caso 3 (forma decidida por el propio valor) → [ShapeChoiceFieldSpec].
 /// - Caso 4 (catálogo externo) → [CatalogFieldSpec].
 /// - Caso 5 (string con gramática propia) → [PatternTextFieldSpec].
-/// Caso 1/2 (unión con tag o campo exclusivo, ej. `IPilotGearData`) y caso 6
-/// (variabilidad por tier, NPC) no aparecen en esta entidad — quedan
-/// pendientes de un [FieldSpec] propio cuando se aborde una entidad que los
-/// necesite.
+/// Caso 1/2 (unión con tag o campo exclusivo, ej. `IPilotGearData`) no
+/// aparece en esta entidad — pendiente de resolver cuando se aborde una
+/// entidad que lo necesite. Caso 6 (variabilidad por tier, NPC) tampoco
+/// aparece en `IWeaponData`, pero ya tiene decisión de diseño cerrada sin
+/// [FieldSpec] nuevo: [ShapeChoiceFieldSpec] generalizado a N ramas +
+/// [GroupFieldSpec] reutilizado para "exactamente 3 campos, uno por tier"
+/// — ver vault "Decisión - variabilidad por tier de NPC".
 library;
 
 sealed class FieldSpec {

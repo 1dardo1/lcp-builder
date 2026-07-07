@@ -31,7 +31,8 @@ Vehículo de aprendizaje de arquitectura de software (Clean/Hexagonal) y pieza d
 - Adapter de "selector nativo" (ADR-002): la pantalla Crear ya pide al usuario dónde guardar el `.lcp` en vez de usar una ruta fija, vía `file_selector` (paquete federado del equipo de Flutter, decisión ya documentada en `app/README.md`).
 - Crear ya no es solo arma: se generalizó el puerto exportador, el caso de uso y la pantalla (`CrearEntidadScreen` + `EntityCrearConfig`, ver "Crear multi-entidad" en `app/README.md`) a cualquier entidad, con un menú de inicio. Además de arma, hay esquema completo para 8 entidades "trivial": fabricante, tag, skill, status/condition, sitrep, entorno, background, bond.
 - El "paquete" de actions/bonuses/synergies/deployables/counters/activeEffects (antes atrapado en `weapon_form_schema.dart`) se extrajo a `presentation/forms/common_entity_fields.dart`, verificado sin regresiones antes de reutilizarlo. Con eso, Reserve/CoreBonus/Talent (entidades "medium") quedaron completas: esquema, ensamblador, mapper JSON y registro en el menú Crear.
-- Pendiente: diseñar pantallas Crear/Editar/Vista en Figma (para reemplazar el Material por defecto), y las entidades con casos polimórficos propios (Frame, PilotGear, NpcFeature, NpcClass, NpcTemplate, MechSystem, WeaponMod, EidolonLayer).
+- Caso 6 del catálogo de polimorfismo (variabilidad por tier de NPC: `TierValue`, `NpcSize`, `EidolonShardCount`, `ICustomStatData.defaultValue`) ya tiene **decisión de diseño cerrada** (sin `FieldSpec` nuevo — `ShapeChoiceFieldSpec` generalizado a N ramas + `GroupFieldSpec` reutilizado para "exactamente 3 campos, uno por tier"), pendiente de implementar en `field_spec.dart`/`generic_form_view.dart`. Ver [[Decisión - variabilidad por tier de NPC (caso 6 del catálogo de polimorfismo)]].
+- Pendiente: diseñar pantallas Crear/Editar/Vista en Figma (para reemplazar el Material por defecto), implementar el caso 6 en el motor, y las entidades con casos polimórficos propios (Frame, PilotGear, NpcFeature, NpcClass, NpcTemplate, MechSystem, WeaponMod, EidolonLayer).
 
 ## Próximos pasos (on the horizon)
 
@@ -44,6 +45,8 @@ Vehículo de aprendizaje de arquitectura de software (Clean/Hexagonal) y pieza d
 - [x] Investigar y añadir plugin de selector de archivo para Linux/Android (`file_selector`) — la pantalla Crear ya no usa una ruta fija
 - [x] Generalizar Crear a cualquier entidad (puerto exportador + caso de uso + pantalla genérica + menú), y construir esquema completo para 8 entidades simples (fabricante, tag, skill, status/condition, sitrep, entorno, background, bond)
 - [x] Extraer a un módulo común el "paquete" actions/bonuses/synergies/deployables (hoy en `common_entity_fields.dart`) y completar Reserve/CoreBonus/Talent
+- [x] Decidir el mecanismo del caso 6 (variabilidad por tier de NPC) — `ShapeChoiceFieldSpec` generalizado a N ramas + `GroupFieldSpec`, sin `FieldSpec` nuevo
+- [ ] Implementar el caso 6 en `field_spec.dart`/`generic_form_view.dart` (generalizar `ShapeChoiceFieldSpec` de A/B a N ramas)
 - [ ] Completar las entidades con casos polimórficos propios (Frame, PilotGear, NpcFeature, NpcClass, NpcTemplate, MechSystem, WeaponMod, EidolonLayer)
 - [ ] Diseñar en Figma las pantallas Crear/Editar/Vista (sustituir el Material por defecto)
 - [ ] Investigar plugins Flutter para Windows/macOS/iOS (diferido)
