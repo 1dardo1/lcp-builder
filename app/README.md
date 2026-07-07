@@ -70,3 +70,11 @@ Bug real de Dart encontrado al conectar el motor: los campos función genéricos
 Tests: mapper JSON (unitarios), aceptación end-to-end del caso de uso (genera un `.lcp` real, lo abre como zip, verifica contenido), ensamblador del formulario (unitarios — catálogo anidado, uniones cerradas de 3/4 vías, `TextOrActiveEffect` anidado, campos `num|NumericOrFormulaValue`, reutilización de esquema en `profiles`, `synergies` con location personalizada), widget tests de `MultiEnumFieldSpec`/`GroupFieldSpec`/catálogo-en-lista, y smoke test de la app completa — cumple la condición de tests bloqueante de ADR-002. `flutter test`: 25/25 pasan. No se pudo ejecutar `flutter run` en este entorno remoto (sin display gráfico) — verificado con tests de widget en su lugar.
 
 **Pendiente:** diseñar en Figma las pantallas Crear/Editar/Vista (para reemplazar el Material por defecto). El esquema de arma ya está completo; el siguiente escalón es extender el mismo motor al resto de las 24 entidades.
+
+### Selector de ubicación de guardado (`file_selector`)
+
+`CrearArmaScreen` ya no escribe en una ruta fija — pide al usuario dónde guardar vía `presentation/platform/lcp_save_location.dart`, un adapter de "selector nativo" (categoría de ADR-002) sobre el paquete [`file_selector`](https://pub.dev/packages/file_selector).
+
+Decisión frente a la alternativa más popular (`file_picker`): `file_selector` es el paquete federado del propio equipo de Flutter (publisher verificado) y llama a APIs nativas del SO en cada plataforma, mientras que `file_picker` en Linux ejecuta comandos de shell (`zenity`/`kdialog`/`qarma`) — más frágil ante problemas del entorno (binario no instalado, versión distinta) y con un bug conocido donde `saveFile` no llega a escribir nada en Linux. En Android, el diálogo de `file_selector` usa el Storage Access Framework nativo, así que no hace falta pedir permisos de almacenamiento amplios para este flujo.
+
+Vive en `presentation/`, no en `infrastructure/`: pedir la ruta es una interacción con el usuario/SO, no una operación de E/S — `CrearArmaUseCase` sigue recibiendo solo la ruta ya resuelta, sin saber que hubo un diálogo (mismo principio que "el dominio solo recibe rutas de archivo", ver `vault/Aprendizajes/Principios y decisiones clave.md`).
