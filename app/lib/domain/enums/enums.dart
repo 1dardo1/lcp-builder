@@ -133,6 +133,134 @@ enum MountAssignmentType {
   const MountAssignmentType(this.jsonValue);
 }
 
+/// Forma esperada de `IBonusData.val` para un [BonusId] dado. `unverified`:
+/// ids sin ejemplo real confirmado en el muestreo — ver vault MdD §4.
+enum BonusValueKind {
+  numericOrFormula,
+  boolean,
+  dieRollList,
+  mountAssignment,
+  unverified,
+}
+
+/// Catálogo Bonus List de COMP/CON. Resuelve el caso 4 de
+/// `19. Catálogo de casos polimórficos` (forma de `val` determinada por un
+/// catálogo externo, no por un tag conocido de antemano) mediante el mismo
+/// patrón de enum-con-campo-asociado ya usado para `jsonValue` en este
+/// archivo — ver decisión completa en el vault (Aprendizajes).
+///
+/// **No verificado id por id contra JSON real** (a diferencia del resto de
+/// este archivo) — transcrito de la Wiki con un muestreo puntual. Ver
+/// discrepancias encontradas y límites reconocidos en vault MdD §4.
+enum BonusId {
+  range('range', BonusValueKind.numericOrFormula),
+  damage('damage', BonusValueKind.numericOrFormula),
+  attackRoll('attack_roll', BonusValueKind.numericOrFormula),
+  techAttack('tech_attack', BonusValueKind.numericOrFormula),
+  hp('hp', BonusValueKind.numericOrFormula),
+  armor('armor', BonusValueKind.numericOrFormula),
+  structure('structure', BonusValueKind.numericOrFormula),
+  stress('stress', BonusValueKind.numericOrFormula),
+  heatcap('heatcap', BonusValueKind.numericOrFormula),
+  repcap('repcap', BonusValueKind.numericOrFormula),
+  speed('speed', BonusValueKind.numericOrFormula),
+  evasion('evasion', BonusValueKind.numericOrFormula),
+  edef('edef', BonusValueKind.numericOrFormula),
+  sensor('sensor', BonusValueKind.numericOrFormula),
+  attack('attack', BonusValueKind.numericOrFormula),
+  grapple('grapple', BonusValueKind.numericOrFormula),
+  ram('ram', BonusValueKind.numericOrFormula),
+  save('save', BonusValueKind.numericOrFormula),
+  sp('sp', BonusValueKind.numericOrFormula),
+  size('size', BonusValueKind.numericOrFormula),
+  boost('boost', BonusValueKind.numericOrFormula),
+  armorMax('armor_max', BonusValueKind.numericOrFormula),
+  accuracy('accuracy', BonusValueKind.numericOrFormula),
+  thrown('thrown', BonusValueKind.numericOrFormula),
+  threat('threat', BonusValueKind.numericOrFormula),
+  hull('hull', BonusValueKind.numericOrFormula),
+  agility('agility', BonusValueKind.numericOrFormula),
+  engineering('engineering', BonusValueKind.numericOrFormula),
+  systems('systems', BonusValueKind.numericOrFormula),
+  hullCheck('hull_check', BonusValueKind.numericOrFormula),
+  agilityCheck('agility_check', BonusValueKind.numericOrFormula),
+  engineeringCheck('engineering_check', BonusValueKind.numericOrFormula),
+  systemsCheck('systems_check', BonusValueKind.numericOrFormula),
+  hullSave('hull_save', BonusValueKind.numericOrFormula),
+  agilitySave('agility_save', BonusValueKind.numericOrFormula),
+  engineeringSave('engineering_save', BonusValueKind.numericOrFormula),
+  systemsSave('systems_save', BonusValueKind.numericOrFormula),
+  deployCount('deploy_count', BonusValueKind.numericOrFormula),
+  skillPoint('skill_point', BonusValueKind.numericOrFormula),
+  mechSkillPoint('mech_skill_point', BonusValueKind.numericOrFormula),
+  talentPoint('talent_point', BonusValueKind.numericOrFormula),
+  licensePoint('license_point', BonusValueKind.numericOrFormula),
+  cbPoint('cb_point', BonusValueKind.numericOrFormula),
+  aiCap('ai_cap', BonusValueKind.numericOrFormula),
+  limitedBonus('limited_bonus', BonusValueKind.numericOrFormula),
+  pilotHp('pilot_hp', BonusValueKind.numericOrFormula),
+  pilotArmor('pilot_armor', BonusValueKind.numericOrFormula),
+  pilotEvasion('pilot_evasion', BonusValueKind.numericOrFormula),
+  pilotEdef('pilot_edef', BonusValueKind.numericOrFormula),
+  pilotSpeed('pilot_speed', BonusValueKind.numericOrFormula),
+  pilotArmorSlots('pilot_armor_slots', BonusValueKind.numericOrFormula),
+  pilotGearSlots('pilot_gear_slots', BonusValueKind.numericOrFormula),
+  pilotWeaponSlots('pilot_weapon_slots', BonusValueKind.numericOrFormula),
+  mountAccuracy('mount_accuracy', BonusValueKind.numericOrFormula),
+  mountRange('mount_range', BonusValueKind.numericOrFormula),
+  mountDamage('mount_damage', BonusValueKind.numericOrFormula),
+  activations('activations', BonusValueKind.numericOrFormula),
+  activationsPct('activations_pct', BonusValueKind.numericOrFormula),
+
+  deployableHp('deployable_hp', BonusValueKind.numericOrFormula),
+  deployableSize('deployable_size', BonusValueKind.numericOrFormula),
+  deployableCharges('deployable_charges', BonusValueKind.numericOrFormula),
+  deployableArmor('deployable_armor', BonusValueKind.numericOrFormula),
+  deployableEvasion('deployable_evasion', BonusValueKind.numericOrFormula),
+  deployableEdef('deployable_edef', BonusValueKind.numericOrFormula),
+  deployableHeatcap('deployable_heatcap', BonusValueKind.numericOrFormula),
+  deployableRepcap('deployable_repcap', BonusValueKind.numericOrFormula),
+  deployableSensorRange(
+    'deployable_sensor_range',
+    BonusValueKind.numericOrFormula,
+  ),
+  deployableTechAttack(
+    'deployable_tech_attack',
+    BonusValueKind.numericOrFormula,
+  ),
+  deployableSave('deployable_save', BonusValueKind.numericOrFormula),
+  deployableSpeed('deployable_speed', BonusValueKind.numericOrFormula),
+
+  droneHp('drone_hp', BonusValueKind.numericOrFormula),
+  droneSize('drone_size', BonusValueKind.numericOrFormula),
+  droneCharges('drone_charges', BonusValueKind.numericOrFormula),
+  droneArmor('drone_armor', BonusValueKind.numericOrFormula),
+  droneEvasion('drone_evasion', BonusValueKind.numericOrFormula),
+  droneEdef('drone_edef', BonusValueKind.numericOrFormula),
+  droneHeatcap('drone_heatcap', BonusValueKind.numericOrFormula),
+  droneRepcap('drone_repcap', BonusValueKind.numericOrFormula),
+  droneSensorRange('drone_sensor_range', BonusValueKind.numericOrFormula),
+  droneTechAttack('drone_tech_attack', BonusValueKind.numericOrFormula),
+  droneSave('drone_save', BonusValueKind.numericOrFormula),
+  droneSpeed('drone_speed', BonusValueKind.numericOrFormula),
+
+  cheapStruct('cheap_struct', BonusValueKind.boolean),
+  cheapStress('cheap_stress', BonusValueKind.boolean),
+  noMods('no_mods', BonusValueKind.boolean),
+
+  overcharge('overcharge', BonusValueKind.dieRollList),
+  addMount('add_mount', BonusValueKind.mountAssignment),
+
+  mountDamageType('mount_damage_type', BonusValueKind.unverified),
+  mountRangeType('mount_range_type', BonusValueKind.unverified),
+  mountWeaponType('mount_weapon_type', BonusValueKind.unverified),
+  sizes('sizes', BonusValueKind.unverified);
+
+  final String jsonValue;
+  final BonusValueKind valueKind;
+  const BonusId(this.jsonValue, this.valueKind);
+}
+
 // --- Sección 5: Synergies ---
 
 enum SystemType {
