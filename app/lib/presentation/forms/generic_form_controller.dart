@@ -5,6 +5,11 @@ import 'package:flutter/foundation.dart';
 /// el tipo de dominio final, solo lo que cada [FieldSpec] necesita para
 /// renderizarse. El ensamblado a un tipo de dominio concreto (`IWeaponData`)
 /// vive en el esquema de cada entidad (`weapon_form_schema.dart`), no aquí.
+///
+/// Las listas (`ListFieldSpec`) y sus ítems anidados se gestionan con estos
+/// mismos `get`/`set` genéricos — ver `_FieldContext` en
+/// `generic_form_view.dart`, que construye un contexto de lectura/escritura
+/// por ítem sin necesitar métodos especiales aquí.
 class GenericFormController extends ChangeNotifier {
   final Map<String, dynamic> _values = {};
 
@@ -12,30 +17,6 @@ class GenericFormController extends ChangeNotifier {
 
   void set(String key, dynamic value) {
     _values[key] = value;
-    notifyListeners();
-  }
-
-  List<Map<String, dynamic>> listValues(String key) =>
-      (_values[key] as List<Map<String, dynamic>>?) ?? const [];
-
-  void addListItem(String key) {
-    final list = List<Map<String, dynamic>>.from(listValues(key));
-    list.add({});
-    _values[key] = list;
-    notifyListeners();
-  }
-
-  void removeListItem(String key, int index) {
-    final list = List<Map<String, dynamic>>.from(listValues(key));
-    list.removeAt(index);
-    _values[key] = list;
-    notifyListeners();
-  }
-
-  void setListItemValue(String key, int index, String itemKey, dynamic value) {
-    final list = List<Map<String, dynamic>>.from(listValues(key));
-    list[index] = {...list[index], itemKey: value};
-    _values[key] = list;
     notifyListeners();
   }
 

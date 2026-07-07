@@ -3,6 +3,18 @@ import 'package:flutter/material.dart';
 import 'field_spec.dart';
 import 'generic_form_controller.dart';
 
+/// Contexto de lectura/escritura para un nivel del formulario: el nivel
+/// superior lee/escribe en el [GenericFormController]; un ítem de
+/// [ListFieldSpec] lee/escribe en su propio mapa. Con esta indirección, el
+/// mismo código de `_buildField` sirve en ambos niveles — incluidos
+/// [ShapeChoiceFieldSpec]/[CatalogFieldSpec] anidados dentro de una lista
+/// (ej. varios `bonuses` por arma, cada uno con su propio catálogo).
+class _FieldContext {
+  final dynamic Function(String key) get;
+  final void Function(String key, dynamic value) set;
+  const _FieldContext({required this.get, required this.set});
+}
+
 /// Motor genérico: interpreta una `List<FieldSpec>` y la pinta como
 /// formulario Material, sin saber nada de qué entidad de dominio hay
 /// detrás. Es deliberadamente feo (sin diseño de Figma todavía, ver
@@ -14,9 +26,9 @@ import 'generic_form_controller.dart';
 ///   usen las keys `'x.a'` / `'x.b'`; la elección se guarda en `'x.choice'`.
 /// - [CatalogFieldSpec] con `key = 'x'` espera que `valueFieldFor` use
 ///   siempre la key `'x.value'`; el id elegido se guarda en `'x.id'`.
-/// - Dentro de [ListFieldSpec] solo se soportan campos simples (Text,
-///   Number, Bool, Enum) en esta primera versión — anidar otro
-///   Shape/Catalog/List dentro de una lista queda pendiente.
+/// - Estas convenciones son relativas al [_FieldContext] activo: dentro de
+///   un ítem de [ListFieldSpec] son claves del propio ítem, no del
+///   controlador global.
 class GenericFormView extends StatelessWidget {
   final List<FieldSpec> fields;
   final GenericFormController controller;
@@ -29,49 +41,50 @@ class GenericFormView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rootContext = _FieldContext(get: controller.get, set: controller.set);
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (final field in fields) _buildTopLevelField(context, field),
+          for (final field in fields) _buildField(context, field, rootContext),
         ],
       ),
     );
   }
 
-  Widget _buildTopLevelField(BuildContext context, FieldSpec field) {
+  Widget _buildField(BuildContext context, FieldSpec field, _FieldContext ctx) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: switch (field) {
         TextFieldSpec f => _buildText(
           f,
-          controller.get(f.key),
-          (v) => controller.set(f.key, v),
+          ctx.get(f.key),
+          (v) => ctx.set(f.key, v),
         ),
         NumberFieldSpec f => _buildNumber(
           f,
-          controller.get(f.key),
-          (v) => controller.set(f.key, v),
+          ctx.get(f.key),
+          (v) => ctx.set(f.key, v),
         ),
         BoolFieldSpec f => _buildBool(
           f,
-          controller.get(f.key),
-          (v) => controller.set(f.key, v),
+          ctx.get(f.key),
+          (v) => ctx.set(f.key, v),
         ),
         EnumFieldSpec f => _buildEnum(
           f,
-          controller.get(f.key),
-          (v) => controller.set(f.key, v),
+          ctx.get(f.key),
+          (v) => ctx.set(f.key, v),
         ),
         PatternTextFieldSpec f => _buildPatternText(
           f,
-          controller.get(f.key),
-          (v) => controller.set(f.key, v),
+          ctx.get(f.key),
+          (v) => ctx.set(f.key, v),
         ),
-        ShapeChoiceFieldSpec f => _buildShapeChoice(context, f),
-        CatalogFieldSpec f => _buildCatalog(context, f),
-        ListFieldSpec f => _buildList(context, f),
+        ShapeChoiceFieldSpec f => _buildShapeChoice(context, f, ctx),
+        CatalogFieldSpec f => _buildCatalog(context, f, ctx),
+        ListFieldSpec f => _buildList(context, f, ctx),
       },
     );
   }
@@ -164,8 +177,12 @@ class GenericFormView extends StatelessWidget {
     );
   }
 
-  Widget _buildShapeChoice(BuildContext context, ShapeChoiceFieldSpec f) {
-    final choice = controller.get('${f.key}.choice') as String? ?? 'A';
+  Widget _buildShapeChoice(
+    BuildContext context,
+    ShapeChoiceFieldSpec f,
+    _FieldContext ctx,
+  ) {
+    final choice = ctx.get('${f.key}.choice') as String? ?? 'A';
     final activeSpec = choice == 'A' ? f.optionA : f.optionB;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,15 +194,19 @@ class GenericFormView extends StatelessWidget {
             ButtonSegment(value: 'B', label: Text(f.optionBLabel)),
           ],
           selected: {choice},
-          onSelectionChanged: (s) => controller.set('${f.key}.choice', s.first),
+          onSelectionChanged: (s) => ctx.set('${f.key}.choice', s.first),
         ),
-        _buildTopLevelField(context, activeSpec),
+        _buildField(context, activeSpec, ctx),
       ],
     );
   }
 
-  Widget _buildCatalog(BuildContext context, CatalogFieldSpec f) {
-    final selectedId = controller.get('${f.key}.id');
+  Widget _buildCatalog(
+    BuildContext context,
+    CatalogFieldSpec f,
+    _FieldContext ctx,
+  ) {
+    final selectedId = ctx.get('${f.key}.id');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -199,16 +220,16 @@ class GenericFormView extends StatelessWidget {
             for (final id in f.catalogIds)
               DropdownMenuItem(value: id, child: Text(f.labelFor(id))),
           ],
-          onChanged: (v) => controller.set('${f.key}.id', v),
+          onChanged: (v) => ctx.set('${f.key}.id', v),
         ),
         if (selectedId != null)
-          _buildTopLevelField(context, f.fieldFor(selectedId)),
+          _buildField(context, f.fieldFor(selectedId), ctx),
       ],
     );
   }
 
-  Widget _buildList(BuildContext context, ListFieldSpec f) {
-    final items = controller.listValues(f.key);
+  Widget _buildList(BuildContext context, ListFieldSpec f, _FieldContext ctx) {
+    final items = (ctx.get(f.key) as List<Map<String, dynamic>>?) ?? const [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -222,9 +243,13 @@ class GenericFormView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   for (final itemField in f.itemFields)
-                    _buildListItemField(f.key, i, itemField, items[i]),
+                    _buildField(
+                      context,
+                      itemField,
+                      _itemContext(f.key, i, ctx),
+                    ),
                   TextButton.icon(
-                    onPressed: () => controller.removeListItem(f.key, i),
+                    onPressed: () => _removeListItem(f.key, i, ctx),
                     icon: const Icon(Icons.delete_outline),
                     label: const Text('Quitar'),
                   ),
@@ -233,7 +258,7 @@ class GenericFormView extends StatelessWidget {
             ),
           ),
         TextButton.icon(
-          onPressed: () => controller.addListItem(f.key),
+          onPressed: () => _addListItem(f.key, ctx),
           icon: const Icon(Icons.add),
           label: Text('Añadir ${f.label}'),
         ),
@@ -241,24 +266,38 @@ class GenericFormView extends StatelessWidget {
     );
   }
 
-  Widget _buildListItemField(
-    String listKey,
-    int index,
-    FieldSpec itemField,
-    Map<String, dynamic> itemValues,
-  ) {
-    final current = itemValues[itemField.key];
-    void onChanged(dynamic v) =>
-        controller.setListItemValue(listKey, index, itemField.key, v);
+  /// Contexto de un ítem concreto de una lista: lee/escribe en el mapa de
+  /// ese ítem, dentro de la lista guardada en `ctx` bajo `listKey`. Las
+  /// keys de los campos del ítem (incluidas las de un `Catalog`/`Shape`
+  /// anidado) son relativas a este mapa, no al contexto padre.
+  _FieldContext _itemContext(String listKey, int index, _FieldContext ctx) {
+    List<Map<String, dynamic>> currentItems() =>
+        (ctx.get(listKey) as List<Map<String, dynamic>>?) ?? const [];
+    return _FieldContext(
+      get: (key) => currentItems()[index][key],
+      set: (key, value) {
+        final items = List<Map<String, dynamic>>.from(
+          (ctx.get(listKey) as List<Map<String, dynamic>>?) ?? const [],
+        );
+        items[index] = {...items[index], key: value};
+        ctx.set(listKey, items);
+      },
+    );
+  }
 
-    return switch (itemField) {
-      TextFieldSpec f => _buildText(f, current, onChanged),
-      NumberFieldSpec f => _buildNumber(f, current, onChanged),
-      BoolFieldSpec f => _buildBool(f, current, onChanged),
-      EnumFieldSpec f => _buildEnum(f, current, onChanged),
-      PatternTextFieldSpec f => _buildPatternText(f, current, onChanged),
-      ShapeChoiceFieldSpec() || CatalogFieldSpec() || ListFieldSpec() =>
-        const Text('Anidación no soportada todavía dentro de una lista'),
-    };
+  void _addListItem(String key, _FieldContext ctx) {
+    final items = List<Map<String, dynamic>>.from(
+      (ctx.get(key) as List<Map<String, dynamic>>?) ?? const [],
+    );
+    items.add({});
+    ctx.set(key, items);
+  }
+
+  void _removeListItem(String key, int index, _FieldContext ctx) {
+    final items = List<Map<String, dynamic>>.from(
+      (ctx.get(key) as List<Map<String, dynamic>>?) ?? const [],
+    );
+    items.removeAt(index);
+    ctx.set(key, items);
   }
 }

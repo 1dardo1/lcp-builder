@@ -4,15 +4,55 @@ import 'field_spec.dart';
 /// Esquema de campos de [IWeaponData] para el motor genérico — primer
 /// corte, no exhaustivo. Cubre representativamente cada categoría del
 /// catálogo de casos polimórficos (campos simples, enum-select, listas de
-/// sub-formulario, caso 3 vía `aoe`, caso 4 vía `bonuses`/`BonusId`).
+/// sub-formulario, caso 3 vía `aoe`, caso 4 vía `bonuses`/`BonusId`
+/// anidado dentro de una lista).
 ///
 /// Pendiente (no es una limitación del motor, es alcance de este primer
 /// corte): `actions`, `active_effects`, `synergies`, `deployables`,
 /// `profiles` — repetirían el mismo patrón ya demostrado sin aportar
-/// mecanismo nuevo. `bonuses` se admite como un único bonus, no una lista
-/// — anidar [CatalogFieldSpec] dentro de [ListFieldSpec] queda pendiente
-/// de extender el motor.
+/// mecanismo nuevo.
 final _diceExpressionPattern = RegExp(r'^[0-9dD+\-*/(){}A-Za-z_ ]+$');
+
+FieldSpec _bonusCatalogField() => CatalogFieldSpec<BonusId>(
+  key: 'bonus',
+  label: 'Bonus',
+  catalogIds: BonusId.values,
+  idLabel: (id) => id.jsonValue,
+  valueFieldFor: (id) => switch (id.valueKind) {
+    BonusValueKind.numericOrFormula => const ShapeChoiceFieldSpec(
+      key: 'bonus.value',
+      label: 'Valor',
+      required: true,
+      optionALabel: 'Número',
+      optionA: NumberFieldSpec(
+        key: 'bonus.value.a',
+        label: 'Número',
+        allowDecimal: true,
+      ),
+      optionBLabel: 'Fórmula',
+      optionB: TextFieldSpec(
+        key: 'bonus.value.b',
+        label: 'Fórmula (ej. {grit}+2)',
+      ),
+    ),
+    BonusValueKind.boolean => const BoolFieldSpec(
+      key: 'bonus.value',
+      label: 'Activo',
+    ),
+    BonusValueKind.dieRollList => const TextFieldSpec(
+      key: 'bonus.value',
+      label: 'Progresión, separada por comas (ej. 1d6, 1d6+1d8, 2d6+1d10)',
+    ),
+    BonusValueKind.mountAssignment => const TextFieldSpec(
+      key: 'bonus.value',
+      label: 'mount_type:max_mounts (ej. main:3)',
+    ),
+    BonusValueKind.unverified => const TextFieldSpec(
+      key: 'bonus.value',
+      label: 'Valor (sin confirmar, ver vault MdD §4)',
+    ),
+  },
+);
 
 List<FieldSpec> buildWeaponFormSchema() => [
   const TextFieldSpec(key: 'id', label: 'ID', required: true),
@@ -117,51 +157,59 @@ List<FieldSpec> buildWeaponFormSchema() => [
       ),
     ],
   ),
-  CatalogFieldSpec<BonusId>(
-    key: 'bonus',
-    label: 'Bonus (opcional, uno solo en este primer corte)',
-    catalogIds: BonusId.values,
-    idLabel: (id) => id.jsonValue,
-    valueFieldFor: (id) => switch (id.valueKind) {
-      BonusValueKind.numericOrFormula => const ShapeChoiceFieldSpec(
-        key: 'bonus.value',
-        label: 'Valor',
-        required: true,
-        optionALabel: 'Número',
-        optionA: NumberFieldSpec(
-          key: 'bonus.value.a',
-          label: 'Número',
-          allowDecimal: true,
-        ),
-        optionBLabel: 'Fórmula',
-        optionB: TextFieldSpec(
-          key: 'bonus.value.b',
-          label: 'Fórmula (ej. {grit}+2)',
-        ),
-      ),
-      BonusValueKind.boolean => const BoolFieldSpec(
-        key: 'bonus.value',
-        label: 'Activo',
-      ),
-      BonusValueKind.dieRollList => const TextFieldSpec(
-        key: 'bonus.value',
-        label: 'Progresión, separada por comas (ej. 1d6, 1d6+1d8, 2d6+1d10)',
-      ),
-      BonusValueKind.mountAssignment => const TextFieldSpec(
-        key: 'bonus.value',
-        label: 'mount_type:max_mounts (ej. main:3)',
-      ),
-      BonusValueKind.unverified => const TextFieldSpec(
-        key: 'bonus.value',
-        label: 'Valor (sin confirmar, ver vault MdD §4)',
-      ),
-    },
+  ListFieldSpec(
+    key: 'bonuses',
+    label: 'Bonuses',
+    // Catálogo (caso 4) anidado dentro de una lista: cada ítem elige su
+    // propio BonusId de forma independiente. Demuestra que el motor ya no
+    // limita CatalogFieldSpec/ShapeChoiceFieldSpec al nivel superior.
+    itemFields: [_bonusCatalogField()],
   ),
 ];
 
 DiceExpression _diceExpressionFromInput(String raw) {
   final n = num.tryParse(raw);
   return n != null ? DiceExpression.number(n) : DiceExpression.formula(raw);
+}
+
+/// Ensambla un `IBonusData` a partir de los valores de un ítem de la lista
+/// `bonuses` (ver [_bonusCatalogField]).
+IBonusData? _bonusFromItemValues(Map<String, dynamic> item) {
+  final bonusId = item['bonus.id'] as BonusId?;
+  if (bonusId == null) return null;
+
+  final Object val = switch (bonusId.valueKind) {
+    BonusValueKind.numericOrFormula =>
+      (item['bonus.value.choice'] as String? ?? 'A') == 'A'
+          ? NumericOrFormulaValue.number((item['bonus.value.a'] as num?) ?? 0)
+          : NumericOrFormulaValue.formula(
+              (item['bonus.value.b'] as String?) ?? '',
+            ),
+    BonusValueKind.boolean => (item['bonus.value'] as bool?) ?? false,
+    // Cada elemento de la lista es ya una cadena DieRoll completa (ej. la
+    // progresión de overcharge: "1d6", "1d6+1d8", "2d6+1d10"...) — se
+    // separan por comas, no se trocea una sola cadena por sus +/-.
+    BonusValueKind.dieRollList =>
+      (item['bonus.value'] as String? ?? '')
+          .split(',')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .map(DieRoll.new)
+          .toList(),
+    BonusValueKind.mountAssignment => () {
+      final raw = (item['bonus.value'] as String? ?? 'main:1').split(':');
+      final type = MountAssignmentType.values.firstWhere(
+        (t) => t.jsonValue.toLowerCase() == raw[0].toLowerCase(),
+        orElse: () => MountAssignmentType.main,
+      );
+      return MountAssignment(
+        mountType: type,
+        maxMounts: int.tryParse(raw.length > 1 ? raw[1] : '1') ?? 1,
+      );
+    }(),
+    BonusValueKind.unverified => item['bonus.value'] as String? ?? '',
+  };
+  return IBonusData(id: bonusId, val: val);
 }
 
 /// Ensambla los valores crudos del formulario en un [IWeaponData] real.
@@ -173,45 +221,12 @@ IWeaponData weaponFromFormValues(Map<String, dynamic> values) {
   final rangeItems =
       (values['range'] as List<Map<String, dynamic>>?) ?? const [];
   final tagItems = (values['tags'] as List<Map<String, dynamic>>?) ?? const [];
-  final bonusId = values['bonus.id'] as BonusId?;
-
-  IBonusData? bonus;
-  if (bonusId != null) {
-    final Object val = switch (bonusId.valueKind) {
-      BonusValueKind.numericOrFormula =>
-        (values['bonus.value.choice'] as String? ?? 'A') == 'A'
-            ? NumericOrFormulaValue.number(
-                (values['bonus.value.a'] as num?) ?? 0,
-              )
-            : NumericOrFormulaValue.formula(
-                (values['bonus.value.b'] as String?) ?? '',
-              ),
-      BonusValueKind.boolean => (values['bonus.value'] as bool?) ?? false,
-      // Cada elemento de la lista es ya una cadena DieRoll completa (ej. la
-      // progresión de overcharge: "1d6", "1d6+1d8", "2d6+1d10"...) — se
-      // separan por comas, no se trocea una sola cadena por sus +/-.
-      BonusValueKind.dieRollList =>
-        (values['bonus.value'] as String? ?? '')
-            .split(',')
-            .map((s) => s.trim())
-            .where((s) => s.isNotEmpty)
-            .map(DieRoll.new)
-            .toList(),
-      BonusValueKind.mountAssignment => () {
-        final raw = (values['bonus.value'] as String? ?? 'main:1').split(':');
-        final type = MountAssignmentType.values.firstWhere(
-          (t) => t.jsonValue.toLowerCase() == raw[0].toLowerCase(),
-          orElse: () => MountAssignmentType.main,
-        );
-        return MountAssignment(
-          mountType: type,
-          maxMounts: int.tryParse(raw.length > 1 ? raw[1] : '1') ?? 1,
-        );
-      }(),
-      BonusValueKind.unverified => values['bonus.value'] as String? ?? '',
-    };
-    bonus = IBonusData(id: bonusId, val: val);
-  }
+  final bonusItems =
+      (values['bonuses'] as List<Map<String, dynamic>>?) ?? const [];
+  final bonuses = bonusItems
+      .map(_bonusFromItemValues)
+      .whereType<IBonusData>()
+      .toList();
 
   return IWeaponData(
     id: values['id'] as String,
@@ -248,6 +263,6 @@ IWeaponData weaponFromFormValues(Map<String, dynamic> values) {
     tags: tagItems.isEmpty
         ? null
         : [for (final item in tagItems) ITagInstance(id: item['id'] as String)],
-    bonuses: bonus == null ? null : [bonus],
+    bonuses: bonuses.isEmpty ? null : bonuses,
   );
 }
