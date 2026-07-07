@@ -52,7 +52,7 @@ Primera entidad completa de principio a fin: dominio → `.lcp` en disco. Verifi
 - `infrastructure/lcp/zip_content_pack_exporter.dart` — produce el zip de un solo nivel (`lcp_manifest.json` + un archivo por tipo de contenido) que exige el formato `.lcp`.
 - `infrastructure/file_system/local_file_writer.dart` — adapter Linux (escritura abierta, `dart:io`).
 - `application/use_cases/crear_contenido_use_case.dart` — orquesta ambos puertos, genérico para cualquier entidad (ver "Crear multi-entidad" más abajo).
-- `bin/crear_arma_ejemplo.dart` — script ejecutable headless (`dart run bin/crear_arma_ejemplo.dart [ruta.lcp]`), útil para probar el pipeline sin la UI.
+- `bin/generar_lcp_pruebas.dart` — script ejecutable headless (`dart run bin/generar_lcp_pruebas.dart [ruta.lcp]`, por defecto `build/weapons.lcp`), útil para probar el pipeline sin la UI y para verificación manual en COMP/CON: genera varias armas, cada una centrada en una combinación distinta de campos/casos polimórficos.
 
 Al escribir el mapper se encontraron y corrigieron dos bugs reales del dominio ya mergeado: `DamageType` y `RangeType` (y `BonusRangeTypeFilter`) no tenían `jsonValue` — exportaban en minúscula (`"kinetic"`) en vez de la grafía real de la spec (`"Kinetic"`).
 
@@ -75,6 +75,7 @@ Antes de esta pieza, "Crear" solo sabía construir un arma — cada entidad nuev
 - `presentation/forms/entity_crear_config.dart` — `EntityCrearConfig`: describe cómo tratar una entidad (título, `contentKey`, esquema, ensamblador, cómo extraer `id`/`name` del objeto ya ensamblado) sin que la pantalla necesite conocer el tipo concreto. Cada esquema de entidad exporta la suya (`weaponCrearConfig`, `manufacturerCrearConfig`...).
 - `presentation/screens/crear/crear_entidad_screen.dart` — pantalla Crear genérica, una sola implementación para las 24 entidades, parametrizada por `EntityCrearConfig`. Sustituye a la antigua `CrearArmaScreen`.
 - `presentation/screens/crear/crear_menu_screen.dart` — menú de inicio: lista `crearEntidadConfigs` y navega a `CrearEntidadScreen` con la config elegida. Es el nuevo `home` de la app.
+- `bin/generar_lcp_pruebas_entidades.dart` — mismo objetivo que `generar_lcp_pruebas.dart` pero para las 8 entidades simples: genera **un `.lcp` por entidad** (`manufacturers.lcp`, `tags.lcp`...), no uno combinado — así, si COMP/CON rechaza alguno al importar, el archivo mismo señala cuál falla, sin tener que aislarlo a mano dentro de un paquete con varias entidades mezcladas. Convención de nombre compartida con `generar_lcp_pruebas.dart` (`weapons.lcp`): el nombre del archivo es el `contentKey`.
 
 **Entidades con esquema completo:** arma, y 8 entidades "simples" (sin casos polimórficos propios): `IManufacturerData`, `ITagData`, `ISkillData`, `IStatusConditionData`, `ISitrepData`, `IEnvironmentData`, `IBackgroundData`, `IBondData`. Cada una en su propio `presentation/forms/<entidad>_form_schema.dart`, siguiendo el mismo patrón que arma (esquema declarativo + función ensambladora + mapper JSON en `domain_json_mapper.dart`).
 

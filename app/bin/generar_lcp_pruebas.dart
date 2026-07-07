@@ -2,10 +2,10 @@
 // cada una centrada en una combinación distinta de campos/casos
 // polimórficos de `IWeaponData` (los mismos que ya cubre por completo
 // `weapon_form_schema.dart` — ver PR "Completar el esquema de IWeaponData").
-// El objetivo NO es que el ensamblado del formulario, sino verificar que
+// El objetivo NO es el ensamblado del formulario, sino verificar que
 // COMP/CON acepta como válida cualquier forma que nosotros demos por válida
 // a nivel de dominio/exportación — construye los `IWeaponData` directamente
-// (no pasa por `weaponFromFormValues`), igual que `crear_arma_ejemplo.dart`.
+// (no pasa por `weaponFromFormValues`).
 //
 // Cada arma exercita un subconjunto de campos con un `name`/`id` propio
 // ("TEST NN - ..."), para poder identificar en COMP/CON qué combinación
@@ -14,7 +14,9 @@
 // Uso:
 //   dart run bin/generar_lcp_pruebas.dart [ruta_salida.lcp]
 //
-// Ruta por defecto si no se pasa argumento: build/lcp_pruebas.lcp
+// Ruta por defecto si no se pasa argumento: build/weapons.lcp — nombre
+// coherente con los `.lcp` que produce `generar_lcp_pruebas_entidades.dart`
+// (uno por tipo de contenido, con el nombre del `contentKey`).
 
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
@@ -468,7 +470,7 @@ ILcpManifestData _manifestDePruebas() => const ILcpManifestData(
 );
 
 Future<void> main(List<String> args) async {
-  final outputPath = args.isNotEmpty ? args[0] : 'build/lcp_pruebas.lcp';
+  final outputPath = args.isNotEmpty ? args[0] : 'build/weapons.lcp';
 
   final weapons = [
     _test01DanioCompleto(),
