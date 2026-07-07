@@ -1,17 +1,21 @@
-// Script de verificación manual: genera un único `.lcp` con varias
-// instancias de cada una de las 8 entidades "simples" completadas en esta
-// sesión (manufacturer, tag, skill, status_condition, sitrep, environment,
-// background, bond) — mismo objetivo que `generar_lcp_pruebas.dart` para
-// armas: confirmar en COMP/CON que el dominio/mapper produce JSON que el
-// importador acepta, antes de dar por buena cada entidad. Construye los
-// objetos de dominio directamente (no pasa por los ensambladores del
-// formulario) y exporta con `ContentPackExporter.export`, que ya soporta
-// varios tipos de contenido en el mismo `.lcp`.
+// Script de verificación manual: genera un `.lcp` **por entidad** (no uno
+// combinado) con varias instancias de cada una de las 8 entidades
+// "simples" completadas en esta sesión (manufacturer, tag, skill,
+// status_condition, sitrep, environment, background, bond) — mismo
+// objetivo que `generar_lcp_pruebas.dart` para armas: confirmar en
+// COMP/CON que el dominio/mapper produce JSON que el importador acepta,
+// antes de dar por buena cada entidad. Un archivo por tipo, no uno con las
+// 8 mezcladas, para que un rechazo de COMP/CON señale directamente qué
+// entidad falla. Construye los objetos de dominio directamente (no pasa
+// por los ensambladores del formulario) y exporta con
+// `ContentPackExporter.export`.
 //
 // Uso:
-//   dart run bin/generar_lcp_pruebas_entidades.dart [ruta_salida.lcp]
+//   dart run bin/generar_lcp_pruebas_entidades.dart [directorio_salida]
 //
-// Ruta por defecto si no se pasa argumento: build/lcp_pruebas_entidades.lcp
+// Directorio por defecto si no se pasa argumento: build/pruebas_entidades/
+// (genera manufacturers.lcp, tags.lcp, skills.lcp, statuses.lcp,
+// sitreps.lcp, environments.lcp, backgrounds.lcp, bonds.lcp)
 
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
@@ -166,25 +170,33 @@ ILcpManifestData _manifestDePruebas() => const ILcpManifestData(
 );
 
 Future<void> main(List<String> args) async {
-  final outputPath = args.isNotEmpty
-      ? args[0]
-      : 'build/lcp_pruebas_entidades.lcp';
+  final outputDir = args.isNotEmpty ? args[0] : 'build/pruebas_entidades';
 
-  final bytes = ZipContentPackExporter().export(
-    manifest: _manifestDePruebas(),
-    content: {
-      'manufacturers': _manufacturers(),
-      'tags': _tags(),
-      'skills': _skills(),
-      'statuses': _statusConditions(),
-      'sitreps': _sitreps(),
-      'environments': _environments(),
-      'backgrounds': _backgrounds(),
-      'bonds': _bonds(),
-    },
-  );
-  await LocalFileWriter().write(outputPath, bytes);
+  final content = <String, List<Object>>{
+    'manufacturers': _manufacturers(),
+    'tags': _tags(),
+    'skills': _skills(),
+    'statuses': _statusConditions(),
+    'sitreps': _sitreps(),
+    'environments': _environments(),
+    'backgrounds': _backgrounds(),
+    'bonds': _bonds(),
+  };
 
-  // ignore: avoid_print
-  print('Generado: $outputPath');
+  final exporter = ZipContentPackExporter();
+  final fileWriter = LocalFileWriter();
+
+  // Un .lcp por tipo de contenido (no uno combinado): así, si COMP/CON
+  // rechaza alguno al importar, queda claro cuál sin tener que aislarlo a
+  // mano dentro de un paquete con las 8 entidades mezcladas.
+  for (final entry in content.entries) {
+    final outputPath = '$outputDir/${entry.key}.lcp';
+    final bytes = exporter.export(
+      manifest: _manifestDePruebas(),
+      content: {entry.key: entry.value},
+    );
+    await fileWriter.write(outputPath, bytes);
+    // ignore: avoid_print
+    print('Generado: $outputPath');
+  }
 }
