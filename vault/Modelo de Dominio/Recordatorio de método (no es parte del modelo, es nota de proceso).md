@@ -2,7 +2,7 @@
 tags: [modelo-dominio, lcp-builder]
 ---
 
-⬅️ [[18. Clasificación entidad-value object - verificada (revisión completa del documento)]] | 🏠 [[00 - Indice]] | ➡️ —
+⬅️ [[19. Catálogo de casos polimórficos (para el formulario)]] | 🏠 [[00 - Indice]] | ➡️ —
 
 ## Recordatorio de método (no es parte del modelo, es nota de proceso)
 
