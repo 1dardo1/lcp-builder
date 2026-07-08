@@ -22,12 +22,18 @@ import 'field_spec.dart';
 // --- Sección 9: IAmmoData (solo la usa arma) ---
 
 List<FieldSpec> _ammoItemFields() => [
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de este tipo de munición.',
+  ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 2,
+    helpText: 'Texto de reglas de esta munición.',
   ),
   const NumberFieldSpec(key: 'cost', label: 'Coste'),
   MultiEnumFieldSpec<WeaponType>(
@@ -110,15 +116,29 @@ List<FieldSpec> _weaponEffectFields() => [
     label: 'Counters',
     itemFields: counterItemFields(),
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'integrated',
     label: 'Integrated (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID de otro sistema/equipo incluido gratis, no su nombre.',
+      ),
+    ],
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'specialEquipment',
     label: 'Special equipment (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID del equipo especial asociado, no su nombre visible.',
+      ),
+    ],
   ),
   textOrActiveEffectField('onAttack', 'Al atacar'),
   textOrActiveEffectField('onHit', 'Al acertar'),
@@ -130,7 +150,12 @@ List<FieldSpec> _weaponEffectFields() => [
 ];
 
 List<FieldSpec> _profileItemFields() => [
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de este perfil de disparo del arma.',
+  ),
   textOrActiveEffectField('effect', 'Efecto'),
   ..._weaponEffectFields(),
 ];

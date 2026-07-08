@@ -7,13 +7,24 @@ import 'field_spec.dart';
 /// dominio). Sin caso polimórfico propio — mismo patrón que las entidades
 /// "trivial" de la primera tanda, campos planos + una lista de IDs.
 List<FieldSpec> buildNpcTemplateFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del template. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del template, ej. "Elite".',
+  ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas/sabor de este template.',
   ),
   EnumFieldSpec<NpcForceTag>(
     key: 'forceTag',
@@ -21,10 +32,17 @@ List<FieldSpec> buildNpcTemplateFormSchema() => [
     options: NpcForceTag.values,
     displayLabel: (t) => t.jsonValue,
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'prohibitTemplates',
     label: 'Templates cuya aplicación conjunta se prohíbe (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID de otro template incompatible con este, no su nombre.',
+      ),
+    ],
   ),
   const NumberFieldSpec(key: 'optionalMin', label: 'Optional min (default 0)'),
   const NumberFieldSpec(key: 'optionalMax', label: 'Optional max'),
@@ -42,6 +60,9 @@ List<FieldSpec> buildNpcTemplateFormSchema() => [
     key: 'caveat',
     label: 'Caveat (reglas especiales no trackeadas por COMP/CON)',
     maxLines: 2,
+    helpText:
+        'Nota de reglas que el GM tiene que aplicar a mano, porque COMP/CON '
+        'no la automatiza.',
   ),
   ListFieldSpec(
     key: 'activeEffects',

@@ -8,8 +8,18 @@ import 'field_spec.dart';
 /// deployables/counters/activeEffects que arma, extraído a
 /// `common_entity_fields.dart` precisamente para esto.
 List<FieldSpec> buildReserveFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único de la reserve. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de la reserve, ej. "Bounty Reserve".',
+  ),
   EnumFieldSpec<ReserveType>(
     key: 'type',
     label: 'Tipo (solo agrupa en pestañas de UI)',
@@ -17,8 +27,17 @@ List<FieldSpec> buildReserveFormSchema() => [
     options: ReserveType.values,
     displayLabel: (t) => t.name,
   ),
-  const TextFieldSpec(key: 'label', label: 'Etiqueta (default: el nombre)'),
-  const TextFieldSpec(key: 'description', label: 'Descripción', maxLines: 3),
+  const TextFieldSpec(
+    key: 'label',
+    label: 'Etiqueta (default: el nombre)',
+    helpText: 'Texto corto que sustituye al nombre en la UI de COMP/CON, si hace falta.',
+  ),
+  const TextFieldSpec(
+    key: 'description',
+    label: 'Descripción',
+    maxLines: 3,
+    helpText: 'Texto de reglas de esta reserve.',
+  ),
   const BoolFieldSpec(key: 'consumable', label: 'Consumible'),
   ListFieldSpec(
     key: 'actions',
@@ -45,15 +64,29 @@ List<FieldSpec> buildReserveFormSchema() => [
     label: 'Counters',
     itemFields: counterItemFields(),
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'integrated',
     label: 'Integrated (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID de otro sistema/equipo incluido gratis, no su nombre.',
+      ),
+    ],
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'specialEquipment',
     label: 'Special equipment (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID del equipo especial asociado, no su nombre visible.',
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'activeEffects',

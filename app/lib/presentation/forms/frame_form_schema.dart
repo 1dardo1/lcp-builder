@@ -46,12 +46,18 @@ IFrameStats _frameStatsFromGroup(Map<String, dynamic> group) => IFrameStats(
 );
 
 List<FieldSpec> _frameTraitItemFields() => [
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de este trait del frame.',
+  ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas de este trait.',
   ),
   ListFieldSpec(
     key: 'actions',
@@ -78,15 +84,29 @@ List<FieldSpec> _frameTraitItemFields() => [
     label: 'Counters',
     itemFields: counterItemFields(),
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'integrated',
     label: 'Integrated (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID de otro sistema/equipo incluido gratis, no su nombre.',
+      ),
+    ],
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'specialEquipment',
     label: 'Special equipment (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID del equipo especial asociado, no su nombre visible.',
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'activeEffects',
@@ -110,18 +130,30 @@ IFrameTraitData _frameTraitFromItem(Map<String, dynamic> item) =>
     );
 
 List<FieldSpec> _coreSystemFields() => [
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
-  const TextFieldSpec(key: 'description', label: 'Descripción', maxLines: 3),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del core system, ej. "Sunder Cannon".',
+  ),
+  const TextFieldSpec(
+    key: 'description',
+    label: 'Descripción',
+    maxLines: 3,
+    helpText: 'Texto de sabor/ambientación del core system.',
+  ),
   const TextFieldSpec(
     key: 'activeName',
     label: 'Nombre (activo)',
     required: true,
+    helpText: 'El nombre de la parte activa del core system (la que se activa).',
   ),
   const TextFieldSpec(
     key: 'activeEffect',
     label: 'Efecto (activo)',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas de la parte activa.',
   ),
   EnumFieldSpec<ActivationType>(
     key: 'activation',
@@ -162,11 +194,16 @@ List<FieldSpec> _coreSystemFields() => [
     label: 'Synergies (activo)',
     itemFields: synergyItemFields(),
   ),
-  const TextFieldSpec(key: 'passiveName', label: 'Nombre (pasivo)'),
+  const TextFieldSpec(
+    key: 'passiveName',
+    label: 'Nombre (pasivo)',
+    helpText: 'El nombre de la parte pasiva del core system, si tiene una.',
+  ),
   const TextFieldSpec(
     key: 'passiveEffect',
     label: 'Efecto (pasivo)',
     maxLines: 3,
+    helpText: 'Texto de reglas de la parte pasiva, siempre activa.',
   ),
   ListFieldSpec(
     key: 'passiveActions',
@@ -193,20 +230,40 @@ List<FieldSpec> _coreSystemFields() => [
     label: 'Counters',
     itemFields: counterItemFields(),
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'integrated',
     label: 'Integrated (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID de otro sistema/equipo incluido gratis, no su nombre.',
+      ),
+    ],
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'specialEquipment',
     label: 'Special equipment (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID del equipo especial asociado, no su nombre visible.',
+      ),
+    ],
   ),
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID del tag', required: true)],
+    itemFields: [TextFieldSpec(
+        key: 'id',
+        label: 'ID del tag',
+        required: true,
+        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+            'todavía no existe, usa el botón de crear tag desde el menú.',
+      )],
   ),
 ];
 
@@ -259,6 +316,9 @@ FieldSpec _specialtyField() => const ShapeChoiceFieldSpec(
             key: 'source',
             label: 'Fabricante (Manufacturer ID)',
             required: true,
+            helpText:
+                'El ID del fabricante requerido para esta specialty, no su '
+                'nombre visible.',
             referenceEntityKey: 'manufacturers',
             referenceLabel: 'fabricante',
           ),
@@ -289,8 +349,18 @@ Object? _specialtyFromValues(Map<String, dynamic> values) {
 }
 
 List<FieldSpec> buildFrameFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del frame. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del frame, ej. "Everest".',
+  ),
   const TextFieldSpec(
     key: 'source',
     label: 'Fabricante (debe coincidir con un Manufacturer ID)',
@@ -316,13 +386,21 @@ List<FieldSpec> buildFrameFormSchema() => [
   const ListFieldSpec(
     key: 'mechtype',
     label: 'Mechtype (al menos uno, solo hint de UI)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'Mechtype', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'Mechtype',
+        required: true,
+        helpText: 'Etiqueta libre para agrupar en la UI, ej. "Striker", "Tank".',
+      ),
+    ],
   ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de sabor/ambientación del frame.',
   ),
   const ListFieldSpec(
     key: 'mounts',
@@ -352,8 +430,15 @@ List<FieldSpec> buildFrameFormSchema() => [
   const TextFieldSpec(
     key: 'variant',
     label: 'Variant (id o nombre del frame del que es variante)',
+    helpText:
+        'Solo si este frame es una variante visual/de nombre de otro — el '
+        'id o nombre del frame original.',
   ),
-  const TextFieldSpec(key: 'imageUrl', label: 'Imagen (URL)'),
+  const TextFieldSpec(
+    key: 'imageUrl',
+    label: 'Imagen (URL)',
+    helpText: 'URL a la imagen/banner del frame. Opcional.',
+  ),
   const NumberFieldSpec(key: 'yPos', label: 'Alineación vertical (banner UI)'),
 ];
 

@@ -8,8 +8,18 @@ import 'field_spec.dart';
 /// referencias circulares en `integrated` — responsabilidad del formulario
 /// evitarlo (no automatizado en este primer corte, ver vault MdD §11.2).
 List<FieldSpec> buildCoreBonusFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del core bonus. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del core bonus.',
+  ),
   const TextFieldSpec(
     key: 'source',
     label: 'Fabricante (debe coincidir con un Manufacturer ID)',
@@ -23,17 +33,22 @@ List<FieldSpec> buildCoreBonusFormSchema() => [
     label: 'Efecto',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas del core bonus.',
   ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de sabor/ambientación, sin efecto mecánico.',
   ),
   const TextFieldSpec(
     key: 'mountedEffect',
     label: 'Efecto al instalar en un mount',
     maxLines: 2,
+    helpText:
+        'Texto de reglas adicional, solo si este core bonus hace algo '
+        'especial al instalarse en un mount concreto.',
   ),
   ListFieldSpec(
     key: 'activeEffects',
@@ -65,15 +80,30 @@ List<FieldSpec> buildCoreBonusFormSchema() => [
     label: 'Counters',
     itemFields: counterItemFields(),
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'integrated',
     label: 'Integrated (IDs, instalado automáticamente)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID de otro sistema/equipo que se instala automáticamente '
+            'con este core bonus, no su nombre visible.',
+      ),
+    ],
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'specialEquipment',
     label: 'Special equipment (IDs, disponible en el selector)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID del equipo especial que se desbloquea, no su nombre.',
+      ),
+    ],
   ),
 ];
 

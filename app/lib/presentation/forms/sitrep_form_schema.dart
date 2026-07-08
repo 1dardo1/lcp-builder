@@ -5,27 +5,59 @@ import 'field_spec.dart';
 /// Esquema de campos de [ISitrepData] (sección 17.3 del modelo de
 /// dominio).
 List<FieldSpec> buildSitrepFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del sitrep. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de la situación/misión.',
+  ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Resumen general de qué va este sitrep.',
   ),
-  const TextFieldSpec(key: 'deployment', label: 'Despliegue', maxLines: 2),
-  const TextFieldSpec(key: 'objective', label: 'Objetivo', maxLines: 2),
-  const TextFieldSpec(key: 'extraction', label: 'Extracción', maxLines: 2),
+  const TextFieldSpec(
+    key: 'deployment',
+    label: 'Despliegue',
+    maxLines: 2,
+    helpText: 'Cómo se colocan los mechs en el mapa al empezar.',
+  ),
+  const TextFieldSpec(
+    key: 'objective',
+    label: 'Objetivo',
+    maxLines: 2,
+    helpText: 'Qué tienen que conseguir los jugadores en esta misión.',
+  ),
+  const TextFieldSpec(
+    key: 'extraction',
+    label: 'Extracción',
+    maxLines: 2,
+    helpText: 'Cómo termina/se sale de la misión.',
+  ),
   const ListFieldSpec(
     key: 'conditions',
     label: 'Condiciones de victoria (no confirmado de forma cruzada)',
     itemFields: [
-      TextFieldSpec(key: 'title', label: 'Título', required: true),
+      TextFieldSpec(
+        key: 'title',
+        label: 'Título',
+        required: true,
+        helpText: 'Nombre corto de esta condición de victoria.',
+      ),
       TextFieldSpec(
         key: 'condition',
         label: 'Condición',
         required: true,
         maxLines: 2,
+        helpText: 'Qué hay que cumplir para que aplique esta condición.',
       ),
     ],
   ),
@@ -33,13 +65,20 @@ List<FieldSpec> buildSitrepFormSchema() => [
     key: 'pcVictory',
     label: 'Victoria de los PCs',
     maxLines: 2,
+    helpText: 'Qué pasa en la narrativa si ganan los jugadores.',
   ),
   const TextFieldSpec(
     key: 'enemyVictory',
     label: 'Victoria enemiga',
     maxLines: 2,
+    helpText: 'Qué pasa en la narrativa si gana el bando enemigo.',
   ),
-  const TextFieldSpec(key: 'noVictory', label: 'Sin victoria', maxLines: 2),
+  const TextFieldSpec(
+    key: 'noVictory',
+    label: 'Sin victoria',
+    maxLines: 2,
+    helpText: 'Qué pasa si la misión termina sin un ganador claro.',
+  ),
 ];
 
 List<ISitrepCondition>? _conditionsFromValues(Map<String, dynamic> values) {

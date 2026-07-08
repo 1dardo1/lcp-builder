@@ -10,12 +10,18 @@ import 'field_spec.dart';
 /// cada rank, no al nivel superior del talento (el talento en sí no tiene
 /// ese paquete, solo sus ranks lo tienen).
 List<FieldSpec> _rankItemFields() => [
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de este rank del talento.',
+  ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas de este rank.',
   ),
   const BoolFieldSpec(
     key: 'exclusive',
@@ -46,15 +52,29 @@ List<FieldSpec> _rankItemFields() => [
     label: 'Counters',
     itemFields: counterItemFields(),
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'integrated',
     label: 'Integrated (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID de otro sistema/equipo incluido gratis, no su nombre.',
+      ),
+    ],
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'specialEquipment',
     label: 'Special equipment (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID del equipo especial asociado, no su nombre visible.',
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'activeEffects',
@@ -78,22 +98,45 @@ IRankData _rankFromItem(Map<String, dynamic> item) => IRankData(
 );
 
 List<FieldSpec> buildTalentFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del talento. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del talento, ej. "Gunslinger".',
+  ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de ambientación sobre este talento.',
   ),
   ListFieldSpec(
     key: 'ranks',
     label: 'Ranks (3 en la práctica de COMP/CON)',
     itemFields: _rankItemFields(),
   ),
-  const TextFieldSpec(key: 'iconSvg', label: 'Icono (SVG)'),
-  const TextFieldSpec(key: 'iconUrl', label: 'Icono (URL, si no hay SVG)'),
-  const TextFieldSpec(key: 'terse', label: 'Descripción corta'),
+  const TextFieldSpec(
+    key: 'iconSvg',
+    label: 'Icono (SVG)',
+    helpText: 'Contenido SVG del icono. Opcional.',
+  ),
+  const TextFieldSpec(
+    key: 'iconUrl',
+    label: 'Icono (URL, si no hay SVG)',
+    helpText: 'URL a una imagen de icono, solo si no hay SVG. Opcional.',
+  ),
+  const TextFieldSpec(
+    key: 'terse',
+    label: 'Descripción corta',
+    helpText: 'Resumen de una línea del talento, si hace falta.',
+  ),
 ];
 
 ITalentData talentFromFormValues(Map<String, dynamic> values) {

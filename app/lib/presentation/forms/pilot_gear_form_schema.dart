@@ -14,14 +14,30 @@ import 'field_spec.dart';
 /// campos propios de esa variante — no hace falta un `FieldSpec` nuevo
 /// tampoco para este caso.
 List<FieldSpec> _pilotWeaponFields() => [
-  const TextFieldSpec(key: 'description', label: 'Descripción', maxLines: 3),
-  const TextFieldSpec(key: 'effect', label: 'Efecto', maxLines: 3),
+  const TextFieldSpec(
+    key: 'description',
+    label: 'Descripción',
+    maxLines: 3,
+    helpText: 'Texto de sabor/ambientación, sin efecto mecánico.',
+  ),
+  const TextFieldSpec(
+    key: 'effect',
+    label: 'Efecto',
+    maxLines: 3,
+    helpText: 'Texto de reglas — lo que hace mecánicamente esta arma de piloto.',
+  ),
   ListFieldSpec(key: 'range', label: 'Alcance', itemFields: rangeItemFields()),
   ListFieldSpec(key: 'damage', label: 'Daño', itemFields: damageItemFields()),
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID del tag', required: true)],
+    itemFields: [TextFieldSpec(
+        key: 'id',
+        label: 'ID del tag',
+        required: true,
+        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+            'todavía no existe, usa el botón de crear tag desde el menú.',
+      )],
   ),
   ListFieldSpec(
     key: 'actions',
@@ -56,11 +72,22 @@ List<FieldSpec> _pilotWeaponFields() => [
 ];
 
 List<FieldSpec> _pilotArmorOrGearFields() => [
-  const TextFieldSpec(key: 'description', label: 'Descripción', maxLines: 3),
+  const TextFieldSpec(
+    key: 'description',
+    label: 'Descripción',
+    maxLines: 3,
+    helpText: 'Texto de reglas y/o sabor de este equipo de piloto.',
+  ),
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID del tag', required: true)],
+    itemFields: [TextFieldSpec(
+        key: 'id',
+        label: 'ID del tag',
+        required: true,
+        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+            'todavía no existe, usa el botón de crear tag desde el menú.',
+      )],
   ),
   ListFieldSpec(
     key: 'actions',
@@ -90,8 +117,18 @@ List<FieldSpec> _pilotArmorOrGearFields() => [
 ];
 
 List<FieldSpec> buildPilotGearFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del pilot gear. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del pilot gear.',
+  ),
   ShapeChoiceFieldSpec(
     key: 'kind',
     label: 'Tipo de gear',

@@ -5,19 +5,31 @@ import 'field_spec.dart';
 /// Esquema de campos de [ISkillData] (Trigger, sección 11.5 del modelo de
 /// dominio).
 List<FieldSpec> buildSkillFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del trigger. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del trigger, ej. "Assault".',
+  ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción (terso)',
     required: true,
     maxLines: 2,
+    helpText: 'Frase corta que resume qué representa este trigger.',
   ),
   const TextFieldSpec(
     key: 'detail',
     label: 'Detalle (flavor text)',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de ambientación más largo, sin efecto mecánico.',
   ),
   EnumFieldSpec<SkillFamily>(
     key: 'family',

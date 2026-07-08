@@ -49,7 +49,13 @@ FieldSpec numericOrFormulaField(String key, String label) =>
         ShapeChoiceOption(
           value: 'B',
           label: 'Fórmula',
-          field: TextFieldSpec(key: '$key.b', label: 'Fórmula (ej. {grit}+2)'),
+          field: TextFieldSpec(
+            key: '$key.b',
+            label: 'Fórmula (ej. {grit}+2)',
+            helpText:
+                'Fórmula en vez de número fijo — usa llaves para referirte a '
+                'un stat del piloto/mech, ej. "{grit}+2" o "{level}".',
+          ),
         ),
       ],
     );
@@ -78,7 +84,13 @@ FieldSpec damageSaveField() => const ShapeChoiceFieldSpec(
     ShapeChoiceOption(
       value: 'A',
       label: 'Texto',
-      field: TextFieldSpec(key: 'save.a', label: 'Save (texto libre)'),
+      field: TextFieldSpec(
+        key: 'save.a',
+        label: 'Save (texto libre)',
+        helpText:
+            'Texto de reglas tal cual aparece en la tarjeta, ej. "On a hit, '
+            'target must succeed a HULL save or take 5 heat."',
+      ),
     ),
     ShapeChoiceOption(
       value: 'B',
@@ -87,7 +99,14 @@ FieldSpec damageSaveField() => const ShapeChoiceFieldSpec(
         key: 'save.b',
         label: 'Save estructurado',
         fields: [
-          TextFieldSpec(key: 'stat', label: 'Stat', required: true),
+          TextFieldSpec(
+            key: 'stat',
+            label: 'Stat',
+            required: true,
+            helpText:
+                'El stat contra el que tira el objetivo, en minúsculas '
+                '(ej. "hull", "agility", "systems", "engineering").',
+          ),
           BoolFieldSpec(key: 'aoe', label: 'AoE'),
         ],
       ),
@@ -117,7 +136,13 @@ FieldSpec aoeField() => const ShapeChoiceFieldSpec(
     ShapeChoiceOption(
       value: 'A',
       label: 'Texto',
-      field: TextFieldSpec(key: 'aoe.a', label: 'AoE (texto)'),
+      field: TextFieldSpec(
+        key: 'aoe.a',
+        label: 'AoE (texto)',
+        helpText:
+            'Forma del área de efecto, como aparece en la tarjeta — ej. '
+            '"3-cone", "1-line", "burst 1".',
+      ),
     ),
     ShapeChoiceOption(
       value: 'B',
@@ -218,6 +243,10 @@ List<FieldSpec> statusEffectItemFields() => [
     key: 'id',
     label: 'ID de status/condition',
     required: true,
+    helpText:
+        'El ID del status o condition (ej. "immobilized", "stunned"), no su '
+        'nombre visible. Si todavía no existe, créalo primero desde "Crear '
+        'status/condition" en el menú.',
   ),
   PatternTextFieldSpec(
     key: 'duration',
@@ -312,7 +341,11 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
         ShapeChoiceOption(
           value: 'B',
           label: 'ID de status/condition',
-          field: TextFieldSpec(key: 'resistance.value.b', label: 'ID'),
+          field: TextFieldSpec(
+            key: 'resistance.value.b',
+            label: 'ID',
+            helpText: 'El ID del status/condition al que es inmune, no su nombre.',
+          ),
         ),
       ],
     ),
@@ -361,8 +394,20 @@ IResistanceData? resistanceFromItem(Map<String, dynamic> item) {
 }
 
 List<FieldSpec> specialStatusItemFields() => [
-  const TextFieldSpec(key: 'attribute', label: 'Atributo', required: true),
-  const TextFieldSpec(key: 'detail', label: 'Detalle', maxLines: 2),
+  const TextFieldSpec(
+    key: 'attribute',
+    label: 'Atributo',
+    required: true,
+    helpText:
+        'Nombre corto del efecto especial que no encaja en las categorías '
+        'normales de resist/vulnerability/immunity, ej. "Shredded".',
+  ),
+  const TextFieldSpec(
+    key: 'detail',
+    label: 'Detalle',
+    maxLines: 2,
+    helpText: 'Texto de reglas de ese efecto especial, si hace falta explicarlo.',
+  ),
   EnumFieldSpec<TargetType>(
     key: 'target',
     label: 'Target',
@@ -472,14 +517,24 @@ IEffectSaveData? effectSaveFromGroup(Map<String, dynamic>? group) {
 // --- Sección 3: IActiveEffectData / IActionData ---
 
 List<FieldSpec> activeEffectFields() => [
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de este efecto activo, ej. "Overcharged".',
+  ),
   const TextFieldSpec(
     key: 'detail',
     label: 'Detalle',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas — lo que hace mecánicamente este efecto.',
   ),
-  const TextFieldSpec(key: 'condition', label: 'Condición'),
+  const TextFieldSpec(
+    key: 'condition',
+    label: 'Condición',
+    helpText: 'Cuándo se activa este efecto, si no es siempre (texto libre).',
+  ),
   EnumFieldSpec<ActionFrequency>(
     key: 'frequency',
     label: 'Frecuencia',
@@ -518,7 +573,15 @@ List<FieldSpec> activeEffectFields() => [
   const ListFieldSpec(
     key: 'removeSpecial',
     label: 'Quita special status',
-    itemFields: [TextFieldSpec(key: 'id', label: 'Atributo', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'Atributo',
+        required: true,
+        helpText: 'El nombre del atributo especial a quitar (debe coincidir '
+            'exactamente con el que se añadió en otro sitio).',
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'addOther',
@@ -580,7 +643,12 @@ IActiveEffectData? activeEffectFromGroupOrNull(
 }
 
 List<FieldSpec> actionItemFields() => [
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de la acción, ej. "Skirmish".',
+  ),
   EnumFieldSpec<ActivationType>(
     key: 'activation',
     label: 'Activación',
@@ -593,6 +661,7 @@ List<FieldSpec> actionItemFields() => [
     label: 'Detalle',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas — lo que hace mecánicamente esta acción.',
   ),
   EnumFieldSpec<ActionFrequency>(
     key: 'frequency',
@@ -600,7 +669,13 @@ List<FieldSpec> actionItemFields() => [
     options: ActionFrequency.values,
     displayLabel: (f) => f.jsonValue,
   ),
-  const TextFieldSpec(key: 'trigger', label: 'Trigger (si es Reaction)'),
+  const TextFieldSpec(
+    key: 'trigger',
+    label: 'Trigger (si es Reaction)',
+    helpText:
+        'Qué dispara esta acción cuando es de tipo Reaction, ej. "Cuando el '
+        'piloto sea alcanzado por un ataque cuerpo a cuerpo".',
+  ),
   const NumberFieldSpec(key: 'cost', label: 'Coste (si es limited)'),
   const BoolFieldSpec(key: 'pilot', label: 'Pilot'),
   const BoolFieldSpec(key: 'mech', label: 'Mech'),
@@ -631,7 +706,15 @@ List<FieldSpec> actionItemFields() => [
   const ListFieldSpec(
     key: 'removeSpecial',
     label: 'Quita special status',
-    itemFields: [TextFieldSpec(key: 'id', label: 'Atributo', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'Atributo',
+        required: true,
+        helpText: 'El nombre del atributo especial a quitar (debe coincidir '
+            'exactamente con el que se añadió en otro sitio).',
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'addOther',
@@ -706,6 +789,9 @@ FieldSpec bonusCatalogField() => CatalogFieldSpec<BonusId>(
           field: TextFieldSpec(
             key: 'bonus.value.b',
             label: 'Fórmula (ej. {grit}+2)',
+            helpText:
+                'Fórmula en vez de número fijo — usa llaves para referirte a '
+                'un stat del piloto/mech, ej. "{grit}+2" o "{level}".',
           ),
         ),
       ],
@@ -717,14 +803,23 @@ FieldSpec bonusCatalogField() => CatalogFieldSpec<BonusId>(
     BonusValueKind.dieRollList => const TextFieldSpec(
       key: 'bonus.value',
       label: 'Progresión, separada por comas (ej. 1d6, 1d6+1d8, 2d6+1d10)',
+      helpText:
+          'Un valor de dados por cada rango del bonus, separados por comas — '
+          'el primero para el rango 1, el segundo para el rango 2, etc.',
     ),
     BonusValueKind.mountAssignment => const TextFieldSpec(
       key: 'bonus.value',
       label: 'mount_type:max_mounts (ej. main:3)',
+      helpText:
+          'Tipo de mount seguido de dos puntos y el número máximo de mounts '
+          'de ese tipo, ej. "main:3" o "flex:1".',
     ),
     BonusValueKind.unverified => const TextFieldSpec(
       key: 'bonus.value',
       label: 'Valor (sin confirmar, ver vault MdD §4)',
+      helpText:
+          'Este bonus todavía no tiene forma confirmada en el modelo de '
+          'dominio — escribe el valor tal cual aparece en la spec oficial.',
     ),
   },
 );
@@ -855,6 +950,7 @@ List<FieldSpec> synergyItemFields() => [
     label: 'Detalle',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas de la synergy — qué gana el piloto/mech.',
   ),
   MultiEnumFieldSpec<WeaponType>(
     key: 'weaponTypes',
@@ -931,16 +1027,25 @@ SynergyLocation synergyLocationFromValue(String value) {
 /// `weapon_form_schema.dart` (decisión documentada allí, aplica igual
 /// para cualquier entidad que anide deployables).
 List<FieldSpec> deployableItemFields() => [
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del deployable, ej. "Recon Drone".',
+  ),
   const TextFieldSpec(
     key: 'type',
     label: 'Tipo (Drone | Mine | Deployable | personalizado)',
+    helpText:
+        'Escribe exactamente "Drone", "Mine" o "Deployable" para los tipos '
+        'estándar, o cualquier otro texto para un tipo personalizado.',
   ),
   const TextFieldSpec(
     key: 'detail',
     label: 'Detalle',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas de este deployable.',
   ),
   EnumFieldSpec<ActivationType>(
     key: 'activation',
@@ -969,7 +1074,14 @@ List<FieldSpec> deployableItemFields() => [
   const NumberFieldSpec(key: 'instances', label: 'Instancias'),
   const NumberFieldSpec(key: 'cost', label: 'Coste (si el padre es limited)'),
   const NumberFieldSpec(key: 'size', label: 'Tamaño', allowDecimal: true),
-  const TextFieldSpec(key: 'sizeSpecial', label: 'Tamaño especial'),
+  const TextFieldSpec(
+    key: 'sizeSpecial',
+    label: 'Tamaño especial',
+    helpText:
+        'Solo si el tamaño no es un número fijo (ej. "1 por punto de '
+        'estructura perdido"). Si el tamaño es un número normal, usa el '
+        'campo "Tamaño" de arriba y deja este vacío.',
+  ),
   numericOrFormulaField('armor', 'Armor'),
   numericOrFormulaField('hp', 'HP'),
   numericOrFormulaField('evasion', 'Evasion'),
@@ -1022,7 +1134,15 @@ List<FieldSpec> deployableItemFields() => [
   const ListFieldSpec(
     key: 'removeSpecial',
     label: 'Quita special status',
-    itemFields: [TextFieldSpec(key: 'id', label: 'Atributo', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'Atributo',
+        required: true,
+        helpText: 'El nombre del atributo especial a quitar (debe coincidir '
+            'exactamente con el que se añadió en otro sitio).',
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'addOther',
@@ -1037,7 +1157,13 @@ List<FieldSpec> deployableItemFields() => [
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID del tag', required: true)],
+    itemFields: [TextFieldSpec(
+        key: 'id',
+        label: 'ID del tag',
+        required: true,
+        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+            'todavía no existe, usa el botón de crear tag desde el menú.',
+      )],
   ),
   const BoolFieldSpec(
     key: 'pilot',
@@ -1105,8 +1231,18 @@ IDeployableData deployableFromItem(Map<String, dynamic> item) =>
 // --- Sección 7: ICounterData ---
 
 List<FieldSpec> counterItemFields() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador interno de este contador. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del contador, ej. "Cargas de granada".',
+  ),
   const NumberFieldSpec(key: 'defaultValue', label: 'Valor por defecto'),
   const NumberFieldSpec(key: 'min', label: 'Mínimo'),
   const NumberFieldSpec(key: 'max', label: 'Máximo'),
@@ -1135,7 +1271,12 @@ FieldSpec textOrActiveEffectField(String key, String label) =>
         ShapeChoiceOption(
           value: 'A',
           label: 'Texto',
-          field: TextFieldSpec(key: '$key.a', label: '$label (texto)'),
+          field: TextFieldSpec(
+            key: '$key.a',
+            label: '$label (texto)',
+            helpText: 'Texto de reglas libre, para cuando no hace falta la '
+                'forma estructurada de "Active effect".',
+          ),
         ),
         ShapeChoiceOption(
           value: 'B',
@@ -1270,8 +1411,20 @@ NpcSize? npcSizeFromItem(Map<String, dynamic> item) {
 // consumidor real confirmando que merece la pena compartirlo. ---
 
 List<FieldSpec> mechSystemBaseFields() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText:
+        'Identificador único dentro del .lcp. Minúsculas, sin espacios — no '
+        'es el nombre visible, eso va en "Nombre".',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre que verá el jugador en COMP/CON.',
+  ),
   const TextFieldSpec(
     key: 'source',
     label: 'Fabricante (source; opcional solo en License Collection)',
@@ -1302,13 +1455,29 @@ List<FieldSpec> mechSystemBaseFields() => [
     options: SystemType.values,
     displayLabel: (t) => t.jsonValue,
   ),
-  const TextFieldSpec(key: 'effect', label: 'Efecto', maxLines: 3),
-  const TextFieldSpec(key: 'description', label: 'Descripción', maxLines: 3),
+  const TextFieldSpec(
+    key: 'effect',
+    label: 'Efecto',
+    maxLines: 3,
+    helpText: 'Texto de reglas del sistema — lo que hace mecánicamente.',
+  ),
+  const TextFieldSpec(
+    key: 'description',
+    label: 'Descripción',
+    maxLines: 3,
+    helpText: 'Texto de sabor/ambientación, sin efecto mecánico.',
+  ),
   const NumberFieldSpec(key: 'sp', label: 'SP'),
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID del tag', required: true)],
+    itemFields: [TextFieldSpec(
+        key: 'id',
+        label: 'ID del tag',
+        required: true,
+        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+            'todavía no existe, usa el botón de crear tag desde el menú.',
+      )],
   ),
   ListFieldSpec(
     key: 'actions',
@@ -1337,15 +1506,30 @@ List<FieldSpec> mechSystemBaseFields() => [
     label: 'Counters',
     itemFields: counterItemFields(),
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'integrated',
     label: 'Integrated (IDs, sin validar referencias circulares)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID de otro sistema/equipo que viene incluido gratis '
+            'con este, no su nombre visible.',
+      ),
+    ],
   ),
-  const ListFieldSpec(
+  ListFieldSpec(
     key: 'specialEquipment',
     label: 'Special equipment (IDs)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID',
+        required: true,
+        helpText: 'El ID del equipo especial asociado, no su nombre visible.',
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'activeEffects',
