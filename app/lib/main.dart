@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'presentation/screens/crear/crear_menu_screen.dart';
+import 'presentation/screens/home/home_screen.dart';
 import 'presentation/session/crear_session.dart';
 
 void main() {
@@ -23,7 +23,7 @@ class LcpBuilderApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: CrearMenuScreen(session: session),
+      home: HomeScreen(session: session),
     );
   }
 }
