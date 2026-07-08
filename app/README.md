@@ -110,6 +110,8 @@ Tres carencias de UX quedaban tras cerrar las 24 entidades: (1) el flujo solo pe
 
 Bug real encontrado (y corregido, con test de regresión) durante la demo manual: `_finalizar()` añadía la entidad a `session` *antes* de los diálogos cancelables (nombre del paquete, ubicación de guardado). Si el usuario cancelaba cualquiera de los dos y volvía a pulsar "Finalizar lcp", la entidad se añadía una segunda vez — duplicado silencioso en el `.lcp` exportado. Se corrigió pasando la entidad pendiente a `finalizarLcp()` (`pendingContentKey`/`pendingContent`), que ahora la añade a la sesión solo después de que ambos diálogos se confirmen.
 
+**Cobertura de `helpText`**: tras la demo, se extendió de un puñado de campos (arma + referencias) a prácticamente todos los campos de texto de las 24 entidades — cada `TextFieldSpec`/rama de texto de un `ShapeChoiceFieldSpec` explica qué se espera (id vs. nombre visible, formato esperado, ejemplo concreto). Quedan sin `helpText` explícito los `PatternTextFieldSpec` (`DiceExpression`, `EffectDuration`, `SynergyLocation`...), porque ya muestran su `patternHint` siempre visible bajo el campo, sin necesidad de pulsar el botón de ayuda.
+
 ### Pantalla de inicio (Crear / Mostrar / Editar)
 
 `main.dart` ya no arranca directamente en el menú de Crear — arranca en `presentation/screens/home/home_screen.dart`, con las 3 fases del plan de ADR-003 (Crear → Mostrar/localizar → Editar/eliminar) como opciones. Solo "Crear" navega a una pantalla funcional (`CrearMenuScreen`); "Mostrar" y "Editar" navegan a `presentation/screens/no_implementado_screen.dart`, un placeholder compartido que no depende de ninguna de las dos fases todavía sin construir — se sustituirá cuando a cada una le toque su turno.

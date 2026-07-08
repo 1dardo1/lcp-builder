@@ -6,13 +6,24 @@ import 'field_spec.dart';
 /// dominio) — la entidad más simple del dominio, sin listas ni casos
 /// polimórficos.
 List<FieldSpec> buildEnvironmentFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del entorno. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del entorno, ej. "Sistema de Dombrovski".',
+  ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de ambientación sobre este entorno/lugar.',
   ),
 ];
 

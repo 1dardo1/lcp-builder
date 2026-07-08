@@ -35,7 +35,13 @@ List<FieldSpec> buildWeaponModFormSchema() => [
   const ListFieldSpec(
     key: 'addedTags',
     label: 'Tags añadidos (se quitan si el mod se quita)',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID del tag', required: true)],
+    itemFields: [TextFieldSpec(
+        key: 'id',
+        label: 'ID del tag',
+        required: true,
+        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+            'todavía no existe, usa el botón de crear tag desde el menú.',
+      )],
   ),
   ListFieldSpec(
     key: 'addedDamage',

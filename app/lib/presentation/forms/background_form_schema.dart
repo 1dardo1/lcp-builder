@@ -5,19 +5,35 @@ import 'field_spec.dart';
 /// Esquema de campos de [IBackgroundData] (sección 11.1 del modelo de
 /// dominio).
 List<FieldSpec> buildBackgroundFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del background. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del background, ej. "Colony Kid".',
+  ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de ambientación sobre este background del piloto.',
   ),
   const ListFieldSpec(
     key: 'skills',
     label: 'Skills recomendadas (IDs de skills.json)',
     itemFields: [
-      TextFieldSpec(key: 'id', label: 'ID de skill', required: true),
+      TextFieldSpec(
+        key: 'id',
+        label: 'ID de skill',
+        required: true,
+        helpText: 'El ID de un trigger (skill), no su nombre visible.',
+      ),
     ],
   ),
 ];

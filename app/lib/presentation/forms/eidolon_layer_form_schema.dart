@@ -76,6 +76,7 @@ List<FieldSpec> _shardFields() => [
     label: 'Detalle',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas/sabor de este shard.',
   ),
   ListFieldSpec(
     key: 'features',
@@ -101,25 +102,40 @@ IEidolonShardData? _shardFromGroup(Map<String, dynamic>? group) {
 }
 
 List<FieldSpec> buildEidolonLayerFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del eidolon layer. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de esta capa del eidolon.',
+  ),
   const TextFieldSpec(
     key: 'appearance',
     label: 'Apariencia',
     required: true,
     maxLines: 3,
+    helpText: 'Cómo cambia visualmente el eidolon en esta capa.',
   ),
   const TextFieldSpec(
     key: 'hints',
     label: 'Hints (dirigido a jugadores)',
     required: true,
     maxLines: 3,
+    helpText: 'Pistas narrativas para los jugadores sobre esta capa.',
   ),
   const TextFieldSpec(
     key: 'rules',
     label: 'Rules (admite sintaxis {X/Y/Z} sensible a tier)',
     required: true,
     maxLines: 4,
+    helpText:
+        'Texto de reglas de esta capa. Si un número cambia según el tier '
+        'del NPC, escribe "{valor_tier1/valor_tier2/valor_tier3}".',
   ),
   ListFieldSpec(
     key: 'features',

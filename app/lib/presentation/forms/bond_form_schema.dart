@@ -7,28 +7,62 @@ import 'field_spec.dart';
 /// (`options` dentro de cada `question`) — mismo mecanismo genérico que
 /// una lista dentro de un grupo, sin necesitar nada nuevo del motor.
 List<FieldSpec> buildBondFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único del bond. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible del bond, ej. "The Hunter".',
+  ),
   const ListFieldSpec(
     key: 'majorIdeals',
     label: 'Ideales mayores (2-5 típicamente)',
-    itemFields: [TextFieldSpec(key: 'value', label: 'Ideal', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'value',
+        label: 'Ideal',
+        required: true,
+        helpText: 'Un ideal mayor de este bond, en pocas palabras.',
+      ),
+    ],
   ),
   const ListFieldSpec(
     key: 'minorIdeals',
     label: 'Ideales menores (2-5 típicamente)',
-    itemFields: [TextFieldSpec(key: 'value', label: 'Ideal', required: true)],
+    itemFields: [
+      TextFieldSpec(
+        key: 'value',
+        label: 'Ideal',
+        required: true,
+        helpText: 'Un ideal menor de este bond, en pocas palabras.',
+      ),
+    ],
   ),
   const ListFieldSpec(
     key: 'questions',
     label: 'Preguntas',
     itemFields: [
-      TextFieldSpec(key: 'question', label: 'Pregunta', required: true),
+      TextFieldSpec(
+        key: 'question',
+        label: 'Pregunta',
+        required: true,
+        helpText: 'Una de las preguntas de trasfondo asociadas a este bond.',
+      ),
       ListFieldSpec(
         key: 'options',
         label: 'Opciones de respuesta',
         itemFields: [
-          TextFieldSpec(key: 'value', label: 'Opción', required: true),
+          TextFieldSpec(
+            key: 'value',
+            label: 'Opción',
+            required: true,
+            helpText: 'Una posible respuesta a la pregunta de arriba.',
+          ),
         ],
       ),
     ],
@@ -37,12 +71,18 @@ List<FieldSpec> buildBondFormSchema() => [
     key: 'powers',
     label: 'Powers',
     itemFields: [
-      const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+      const TextFieldSpec(
+        key: 'name',
+        label: 'Nombre',
+        required: true,
+        helpText: 'El nombre visible de este power del bond.',
+      ),
       const TextFieldSpec(
         key: 'description',
         label: 'Descripción',
         required: true,
         maxLines: 3,
+        helpText: 'Texto de reglas de este power.',
       ),
       EnumFieldSpec<ActionFrequency>(
         key: 'frequency',
@@ -50,10 +90,18 @@ List<FieldSpec> buildBondFormSchema() => [
         options: ActionFrequency.values,
         displayLabel: (f) => f.jsonValue,
       ),
-      const TextFieldSpec(key: 'prerequisite', label: 'Prerrequisito'),
+      const TextFieldSpec(
+        key: 'prerequisite',
+        label: 'Prerrequisito',
+        helpText: 'Qué hace falta para poder elegir este power, si aplica.',
+      ),
       const BoolFieldSpec(key: 'veteran', label: 'Solo estatus Veteran'),
       const BoolFieldSpec(key: 'master', label: 'Solo estatus Master'),
-      const TextFieldSpec(key: 'origin', label: 'Origen'),
+      const TextFieldSpec(
+        key: 'origin',
+        label: 'Origen',
+        helpText: 'De dónde viene este power (ej. clock, minor ideal...).',
+      ),
     ],
   ),
 ];

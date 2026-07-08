@@ -18,11 +18,22 @@ import 'field_spec.dart';
 /// ensamblador vivan en funciones públicas, no solo en `buildSchema`.
 
 List<FieldSpec> npcFeatureBaseFields() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único de la feature. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de la feature.',
+  ),
   const TextFieldSpec(
     key: 'origin',
     label: 'Origen (ID de NPC Class/Template)',
+    helpText: 'El ID de la NPC Class o Template de la que viene esta feature.',
   ),
   const BoolFieldSpec(key: 'base', label: 'Asignada automáticamente'),
   const BoolFieldSpec(key: 'deprecated', label: 'Deprecated'),
@@ -32,11 +43,21 @@ List<FieldSpec> npcFeatureBaseFields() => [
     key: 'buildFeature',
     label: 'Build feature (sin efecto en combate)',
   ),
-  const TextFieldSpec(key: 'mod', label: 'Modifica a (ID de otra feature)'),
+  const TextFieldSpec(
+    key: 'mod',
+    label: 'Modifica a (ID de otra feature)',
+    helpText: 'El ID de la feature que esta modifica, no su nombre visible.',
+  ),
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(key: 'id', label: 'ID del tag', required: true)],
+    itemFields: [TextFieldSpec(
+        key: 'id',
+        label: 'ID del tag',
+        required: true,
+        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+            'todavía no existe, usa el botón de crear tag desde el menú.',
+      )],
   ),
   ListFieldSpec(
     key: 'actions',
@@ -119,7 +140,13 @@ FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
       field: GroupFieldSpec(
         key: 'kind.reaction',
         label: 'Datos de reaction',
-        fields: [TextFieldSpec(key: 'trigger', label: 'Trigger')],
+        fields: [
+          TextFieldSpec(
+            key: 'trigger',
+            label: 'Trigger',
+            helpText: 'Qué dispara esta reaction, en texto libre.',
+          ),
+        ],
       ),
     ),
     ShapeChoiceOption(
@@ -145,6 +172,9 @@ FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
             key: 'weaponType',
             label: 'Tipo de arma ("{Size} {Type}", ej. "Superheavy Rifle")',
             required: true,
+            helpText:
+                'Texto libre combinando tamaño y tipo, tal como se muestra '
+                'en la tarjeta del NPC, ej. "Heavy Cannon".',
           ),
           ListFieldSpec(
             key: 'damage',

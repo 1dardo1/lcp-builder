@@ -10,9 +10,21 @@ import 'field_spec.dart';
 /// `npcSizeField` de `common_entity_fields.dart`) — ninguna pieza nueva.
 
 List<FieldSpec> _npcClassInfoFields() => const [
-  TextFieldSpec(key: 'flavor', label: 'Flavor (texto de Compendium)'),
-  TextFieldSpec(key: 'tactics', label: 'Tactics (nota para el GM)'),
-  TextFieldSpec(key: 'terse', label: 'Terse (resumen ultra-corto)'),
+  TextFieldSpec(
+    key: 'flavor',
+    label: 'Flavor (texto de Compendium)',
+    helpText: 'Texto de ambientación sobre esta clase de NPC.',
+  ),
+  TextFieldSpec(
+    key: 'tactics',
+    label: 'Tactics (nota para el GM)',
+    helpText: 'Consejos de cómo jugar/usar este NPC en mesa, para el máster.',
+  ),
+  TextFieldSpec(
+    key: 'terse',
+    label: 'Terse (resumen ultra-corto)',
+    helpText: 'Resumen de una línea de la clase.',
+  ),
 ];
 
 INpcClassInfo _npcClassInfoFromGroup(Map<String, dynamic> group) =>
@@ -65,8 +77,18 @@ INpcClassStats _npcClassStatsFromGroup(
 );
 
 List<FieldSpec> buildNpcClassFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
+  const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText: 'Identificador único de la clase de NPC. Minúsculas, sin espacios.',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre visible de la clase de NPC, ej. "Guard".',
+  ),
   EnumFieldSpec<NpcRole>(
     key: 'role',
     label: 'Rol',
