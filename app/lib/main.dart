@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'l10n/gen/app_localizations.dart';
+import 'presentation/i18n/locale_controller.dart';
 import 'presentation/screens/home/home_screen.dart';
 import 'presentation/session/crear_session.dart';
 
@@ -7,23 +10,44 @@ void main() {
   runApp(LcpBuilderApp());
 }
 
-/// Sesión de Crear: una única instancia por app, creada aquí y pasada por
-/// toda la jerarquía de pantallas (ver `CrearSession`) — no puede ser
-/// `const` porque `CrearSession` es un `ChangeNotifier` mutable, así que
-/// `LcpBuilderApp` deja de ser un widget const.
+/// Sesión de Crear y controlador de idioma: instancias únicas por app,
+/// creadas aquí y pasadas por toda la jerarquía de pantallas (ver
+/// `CrearSession`/`LocaleController`) — no puede ser `const` porque ambas
+/// son `ChangeNotifier` mutables, así que `LcpBuilderApp` deja de ser un
+/// widget const.
+///
+/// `locale` escucha [localeController] con `ListenableBuilder` envolviendo
+/// el propio `MaterialApp`: cambiar de idioma desde cualquier pantalla
+/// (selector en la esquina superior derecha, ver `LanguageSwitcher`)
+/// reconstruye `MaterialApp` con la nueva `Locale`, que Flutter propaga a
+/// `AppLocalizations.of(context)` en toda la jerarquía sin más cableado.
 class LcpBuilderApp extends StatelessWidget {
   final CrearSession session;
+  final LocaleController localeController;
 
-  LcpBuilderApp({super.key}) : session = CrearSession();
+  LcpBuilderApp({super.key})
+    : session = CrearSession(),
+      localeController = LocaleController();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'LCP Builder',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    return ListenableBuilder(
+      listenable: localeController,
+      builder: (context, _) => MaterialApp(
+        title: 'LCP Builder',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        ),
+        locale: localeController.locale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: HomeScreen(session: session, localeController: localeController),
       ),
-      home: HomeScreen(session: session),
     );
   }
 }

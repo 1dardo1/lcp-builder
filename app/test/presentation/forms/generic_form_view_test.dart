@@ -6,6 +6,8 @@ import 'package:lcp_builder/presentation/forms/generic_form_controller.dart';
 import 'package:lcp_builder/presentation/forms/generic_form_view.dart';
 import 'package:lcp_builder/presentation/forms/weapon_form_schema.dart';
 
+import '../../support/test_app.dart';
+
 Future<GenericFormController> _pumpFields(
   WidgetTester tester,
   List<FieldSpec> fields, {
@@ -13,8 +15,8 @@ Future<GenericFormController> _pumpFields(
 }) async {
   final controller = GenericFormController();
   await tester.pumpWidget(
-    MaterialApp(
-      home: Scaffold(
+    wrapWithLocalization(
+      Scaffold(
         body: SingleChildScrollView(
           child: GenericFormView(
             fields: fields,
@@ -148,8 +150,8 @@ void main() {
 
       final controller = GenericFormController();
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        wrapWithLocalization(
+          Scaffold(
             body: SingleChildScrollView(
               child: GenericFormView(
                 fields: buildWeaponFormSchema(),
@@ -266,6 +268,49 @@ void main() {
       ]);
 
       expect(find.text('Crear fabricante'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'locale en: traduce label/helpText del campo y el texto fijo del motor '
+    '(Ayuda/Crear referencia), vía field_translations.dart',
+    (tester) async {
+      final controller = GenericFormController();
+      await tester.pumpWidget(
+        wrapWithLocalization(
+          Scaffold(
+            body: GenericFormView(
+              fields: const [
+                TextFieldSpec(
+                  key: 'source',
+                  label: 'Fabricante (source)',
+                  helpText:
+                      'El ID del fabricante (Manufacturer), no su nombre visible.',
+                  referenceEntityKey: 'manufacturers',
+                  referenceLabel: 'fabricante',
+                ),
+              ],
+              controller: controller,
+              locale: const Locale('en'),
+              onCreateReference: (_) async => 'X',
+            ),
+          ),
+          locale: const Locale('en'),
+        ),
+      );
+
+      expect(find.text('Manufacturer (source)'), findsOneWidget);
+      expect(find.text('Create manufacturer'), findsOneWidget);
+      expect(find.text('Fabricante (source)'), findsNothing);
+
+      await tester.tap(find.byIcon(Icons.help_outline));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text("The manufacturer's ID, not its display name."),
+        findsOneWidget,
+      );
+      expect(find.text('Close'), findsOneWidget);
     },
   );
 }

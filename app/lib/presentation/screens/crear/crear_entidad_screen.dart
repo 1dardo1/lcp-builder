@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/gen/app_localizations.dart';
 import '../../forms/crear_entidad_configs.dart';
 import '../../forms/entity_crear_config.dart';
 import '../../forms/generic_form_controller.dart';
 import '../../forms/generic_form_view.dart';
+import '../../i18n/field_translations.dart';
+import '../../i18n/locale_controller.dart';
 import '../../session/crear_session.dart';
 import '../../session/finalizar_lcp.dart';
+import '../../widgets/language_switcher.dart';
 
 /// Pantalla Crear genérica: una sola implementación para las 24 entidades,
 /// parametrizada por [EntityCrearConfig]. Sin diseño de Figma todavía
@@ -30,11 +34,13 @@ import '../../session/finalizar_lcp.dart';
 class CrearEntidadScreen extends StatefulWidget {
   final EntityCrearConfig config;
   final CrearSession session;
+  final LocaleController localeController;
 
   const CrearEntidadScreen({
     super.key,
     required this.config,
     required this.session,
+    required this.localeController,
   });
 
   @override
@@ -52,7 +58,9 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
       setState(() => _errorMessage = null);
       return content;
     } catch (e) {
-      setState(() => _errorMessage = 'Error: $e');
+      setState(
+        () => _errorMessage = AppLocalizations.of(context).errorPrefix('$e'),
+      );
       return null;
     }
   }
@@ -84,8 +92,11 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
     if (refConfig == null) return null;
     final created = await Navigator.of(context).push<Object>(
       MaterialPageRoute(
-        builder: (_) =>
-            CrearEntidadScreen(config: refConfig, session: widget.session),
+        builder: (_) => CrearEntidadScreen(
+          config: refConfig,
+          session: widget.session,
+          localeController: widget.localeController,
+        ),
       ),
     );
     if (created == null) return null;
@@ -94,8 +105,13 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+    final locale = widget.localeController.locale;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.config.title)),
+      appBar: AppBar(
+        title: Text(translateFieldText(widget.config.title, locale)),
+        actions: [LanguageSwitcher(controller: widget.localeController)],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
@@ -103,6 +119,7 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
             GenericFormView(
               fields: _schema,
               controller: _controller,
+              locale: locale,
               onCreateReference: _onCreateReference,
             ),
             const SizedBox(height: 16),
@@ -110,12 +127,12 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
               children: [
                 OutlinedButton(
                   onPressed: _continuar,
-                  child: const Text('Continuar'),
+                  child: Text(t.continuar),
                 ),
                 const SizedBox(width: 12),
                 FilledButton(
                   onPressed: _finalizar,
-                  child: const Text('Finalizar lcp'),
+                  child: Text(t.finalizarLcp),
                 ),
               ],
             ),

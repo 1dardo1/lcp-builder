@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/crear/crear_menu_screen.dart';
 import 'package:lcp_builder/presentation/session/crear_session.dart';
+
+import '../../../support/test_app.dart';
 
 /// Test de aceptación del flujo multi-entidad de principio a fin (desde la
 /// perspectiva del cliente, ver ADR-002): crea un arma, referencia un
@@ -21,7 +24,9 @@ void main() {
 
       final session = CrearSession();
       await tester.pumpWidget(
-        MaterialApp(home: CrearMenuScreen(session: session)),
+        wrapWithLocalization(
+          CrearMenuScreen(session: session, localeController: LocaleController()),
+        ),
       );
 
       // Menú → Crear arma.

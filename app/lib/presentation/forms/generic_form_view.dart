@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/gen/app_localizations.dart';
+import '../i18n/field_translations.dart';
 import 'field_spec.dart';
 import 'generic_form_controller.dart';
 
@@ -43,6 +45,15 @@ class GenericFormView extends StatelessWidget {
   final List<FieldSpec> fields;
   final GenericFormController controller;
 
+  /// Idioma activo — traduce `FieldSpec.label`/`helpText`/`patternHint` y
+  /// `ShapeChoiceOption.label` en el punto de render (ver
+  /// `field_translations.dart`); el texto de ayuda fijo del propio motor
+  /// (botones "Ayuda"/"Cerrar"/"Quitar"...) usa `AppLocalizations` en su
+  /// lugar, ya que es un conjunto finito de cadenas, no contenido por
+  /// entidad. Default `es` para no romper los tests existentes que no lo
+  /// pasan explícitamente.
+  final Locale locale;
+
   /// Callback para el botón "Crear `referencia`" de un [TextFieldSpec] con
   /// `referenceEntityKey` — recibe ese key y devuelve el id de la entidad
   /// creada (o `null` si el usuario cancela). El motor no sabe qué pantalla
@@ -55,8 +66,11 @@ class GenericFormView extends StatelessWidget {
     super.key,
     required this.fields,
     required this.controller,
+    this.locale = const Locale('es'),
     this.onCreateReference,
   });
+
+  String _tr(String text) => translateFieldText(text, locale);
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +89,7 @@ class GenericFormView extends StatelessWidget {
   Widget _buildField(BuildContext context, FieldSpec field, _FieldContext ctx) {
     final content = switch (field) {
       TextFieldSpec f => _buildText(
+        context,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
@@ -95,6 +110,7 @@ class GenericFormView extends StatelessWidget {
         (v) => ctx.set(f.key, v),
       ),
       PatternTextFieldSpec f => _buildPatternText(
+        context,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
@@ -116,13 +132,14 @@ class GenericFormView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: content),
-              _buildHelpButton(context, field.helpText!),
+              _buildHelpButton(context, _tr(field.helpText!)),
             ],
           );
 
     if (field is TextFieldSpec &&
         field.referenceEntityKey != null &&
         onCreateReference != null) {
+      final t = AppLocalizations.of(context);
       wrapped = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -130,7 +147,9 @@ class GenericFormView extends StatelessWidget {
           TextButton.icon(
             icon: const Icon(Icons.add, size: 18),
             label: Text(
-              'Crear ${field.referenceLabel ?? field.referenceEntityKey}',
+              t.crearReferencia(
+                _tr(field.referenceLabel ?? field.referenceEntityKey!),
+              ),
             ),
             onPressed: () async {
               final id = await onCreateReference!(field.referenceEntityKey!);
@@ -147,24 +166,28 @@ class GenericFormView extends StatelessWidget {
     );
   }
 
-  Widget _buildHelpButton(BuildContext context, String helpText) => IconButton(
-    icon: const Icon(Icons.help_outline, size: 18),
-    tooltip: 'Ayuda',
-    onPressed: () => showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        content: Text(helpText),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cerrar'),
-          ),
-        ],
+  Widget _buildHelpButton(BuildContext context, String helpText) {
+    final t = AppLocalizations.of(context);
+    return IconButton(
+      icon: const Icon(Icons.help_outline, size: 18),
+      tooltip: t.ayuda,
+      onPressed: () => showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          content: Text(helpText),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(t.cerrar),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   Widget _buildText(
+    BuildContext context,
     TextFieldSpec f,
     dynamic current,
     ValueChanged<String> onChanged,
@@ -179,7 +202,7 @@ class GenericFormView extends StatelessWidget {
       key: ValueKey(f.key),
       current: current as String?,
       maxLines: f.maxLines,
-      labelText: f.label + (f.required ? ' *' : ''),
+      labelText: _tr(f.label) + (f.required ? ' *' : ''),
       onChanged: onChanged,
     );
   }
@@ -194,7 +217,7 @@ class GenericFormView extends StatelessWidget {
       initialValue: current?.toString(),
       keyboardType: TextInputType.numberWithOptions(decimal: f.allowDecimal),
       decoration: InputDecoration(
-        labelText: f.label + (f.required ? ' *' : ''),
+        labelText: _tr(f.label) + (f.required ? ' *' : ''),
       ),
       onChanged: (text) => onChanged(num.tryParse(text)),
     );
@@ -208,7 +231,7 @@ class GenericFormView extends StatelessWidget {
     return CheckboxListTile(
       key: ValueKey(f.key),
       value: (current as bool?) ?? false,
-      title: Text(f.label),
+      title: Text(_tr(f.label)),
       onChanged: (v) => onChanged(v ?? false),
     );
   }
@@ -222,7 +245,7 @@ class GenericFormView extends StatelessWidget {
       key: ValueKey(f.key),
       initialValue: current,
       decoration: InputDecoration(
-        labelText: f.label + (f.required ? ' *' : ''),
+        labelText: _tr(f.label) + (f.required ? ' *' : ''),
       ),
       items: [
         for (final option in f.options)
@@ -233,24 +256,25 @@ class GenericFormView extends StatelessWidget {
   }
 
   Widget _buildPatternText(
+    BuildContext context,
     PatternTextFieldSpec f,
     dynamic current,
     ValueChanged<String> onChanged,
   ) {
+    final t = AppLocalizations.of(context);
+    final hint = _tr(f.patternHint);
     return TextFormField(
       key: ValueKey(f.key),
       initialValue: current as String?,
       decoration: InputDecoration(
-        labelText: f.label + (f.required ? ' *' : ''),
-        helperText: f.patternHint,
+        labelText: _tr(f.label) + (f.required ? ' *' : ''),
+        helperText: hint,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return f.required ? 'Requerido' : null;
+          return f.required ? t.requerido : null;
         }
-        return f.pattern.hasMatch(value)
-            ? null
-            : 'No coincide con: ${f.patternHint}';
+        return f.pattern.hasMatch(value) ? null : t.noCoincidePattern(hint);
       },
       onChanged: onChanged,
     );
@@ -270,11 +294,11 @@ class GenericFormView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(f.label, style: Theme.of(context).textTheme.labelLarge),
+        Text(_tr(f.label), style: Theme.of(context).textTheme.labelLarge),
         SegmentedButton<String>(
           segments: [
             for (final o in f.options)
-              ButtonSegment(value: o.value, label: Text(o.label)),
+              ButtonSegment(value: o.value, label: Text(_tr(o.label))),
           ],
           selected: {choice},
           onSelectionChanged: (s) => ctx.set('${f.key}.choice', s.first),
@@ -298,7 +322,7 @@ class GenericFormView extends StatelessWidget {
           key: ValueKey('${f.key}.id'),
           initialValue: selectedId,
           decoration: InputDecoration(
-            labelText: f.label + (f.required ? ' *' : ''),
+            labelText: _tr(f.label) + (f.required ? ' *' : ''),
           ),
           items: [
             for (final id in f.catalogIds)
@@ -321,7 +345,7 @@ class GenericFormView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(f.label + (f.required ? ' *' : '')),
+        Text(_tr(f.label) + (f.required ? ' *' : '')),
         Wrap(
           spacing: 8,
           children: [
@@ -355,7 +379,7 @@ class GenericFormView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(f.label, style: Theme.of(context).textTheme.labelLarge),
+        Text(_tr(f.label), style: Theme.of(context).textTheme.labelLarge),
         for (final field in f.fields) _buildField(context, field, groupCtx),
       ],
     );
@@ -378,11 +402,12 @@ class GenericFormView extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context, ListFieldSpec f, _FieldContext ctx) {
+    final t = AppLocalizations.of(context);
     final items = (ctx.get(f.key) as List<Map<String, dynamic>>?) ?? const [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(f.label, style: Theme.of(context).textTheme.labelLarge),
+        Text(_tr(f.label), style: Theme.of(context).textTheme.labelLarge),
         for (var i = 0; i < items.length; i++)
           Card(
             margin: const EdgeInsets.symmetric(vertical: 4),
@@ -400,7 +425,7 @@ class GenericFormView extends StatelessWidget {
                   TextButton.icon(
                     onPressed: () => _removeListItem(f.key, i, ctx),
                     icon: const Icon(Icons.delete_outline),
-                    label: const Text('Quitar'),
+                    label: Text(t.quitar),
                   ),
                 ],
               ),
@@ -409,7 +434,7 @@ class GenericFormView extends StatelessWidget {
         TextButton.icon(
           onPressed: () => _addListItem(f.key, ctx),
           icon: const Icon(Icons.add),
-          label: Text('Añadir ${f.label}'),
+          label: Text(t.anadirCampo(_tr(f.label))),
         ),
       ],
     );

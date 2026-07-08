@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/forms/manufacturer_form_schema.dart';
+import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/crear/crear_entidad_screen.dart';
 import 'package:lcp_builder/presentation/session/crear_session.dart';
+
+import '../../../support/test_app.dart';
 
 /// Prueba que `CrearEntidadScreen` es genuinamente genérica: renderiza el
 /// esquema de una entidad *distinta* de arma (fabricante) sin ningún
@@ -17,10 +20,11 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: CrearEntidadScreen(
+      wrapWithLocalization(
+        CrearEntidadScreen(
           config: manufacturerCrearConfig,
           session: CrearSession(),
+          localeController: LocaleController(),
         ),
       ),
     );
@@ -43,10 +47,11 @@ void main() {
 
       final session = CrearSession();
       await tester.pumpWidget(
-        MaterialApp(
-          home: CrearEntidadScreen(
+        wrapWithLocalization(
+          CrearEntidadScreen(
             config: manufacturerCrearConfig,
             session: session,
+            localeController: LocaleController(),
           ),
         ),
       );
