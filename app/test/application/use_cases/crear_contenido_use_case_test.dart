@@ -56,8 +56,9 @@ void main() {
 
     try {
       await useCase(
-        contentKey: 'weapons',
-        content: weapon,
+        content: {
+          'weapons': [weapon],
+        },
         manifest: manifest,
         outputPath: outputPath,
       );
@@ -101,6 +102,120 @@ void main() {
       expect(weaponsJson.first['mount'], 'Main');
       expect(weaponsJson.first['damage'][0]['type'], 'Kinetic');
       expect(weaponsJson.first['bonuses'][0]['id'], 'accuracy');
+    } finally {
+      await tempDir.delete(recursive: true);
+    }
+  });
+
+  test('Crear admite varias entidades de varios tipos en el mismo .lcp '
+      '(sesión multi-entidad)', () async {
+    final tempDir = await Directory.systemTemp.createTemp('lcp_builder_test');
+    final outputPath = '${tempDir.path}/batch.lcp';
+
+    final useCase = CrearContenidoUseCase(
+      exporter: ZipContentPackExporter(),
+      fileWriter: LocalFileWriter(),
+    );
+
+    const manifest = ILcpManifestData(
+      name: 'Paquete multi-entidad',
+      author: 'Test',
+      description: 'desc',
+      version: '1.0.0',
+    );
+
+    try {
+      await useCase(
+        content: {
+          'weapons': [
+            IWeaponData(
+              id: 'mw_uno',
+              name: 'Arma 1',
+              source: 'GMS',
+              license: 'GMS Everest',
+              licenseId: 'mf_everest',
+              licenseLevel: 0,
+              effect: 'e',
+              description: 'd',
+              mount: MountType.main,
+              type: WeaponType.rifle,
+            ),
+            IWeaponData(
+              id: 'mw_dos',
+              name: 'Arma 2',
+              source: 'GMS',
+              license: 'GMS Everest',
+              licenseId: 'mf_everest',
+              licenseLevel: 0,
+              effect: 'e',
+              description: 'd',
+              mount: MountType.main,
+              type: WeaponType.rifle,
+            ),
+          ],
+          'frames': [
+            IFrameData(
+              id: 'mf_uno',
+              name: 'Frame 1',
+              source: 'GMS',
+              licenseLevel: 0,
+              mechtype: const ['Striker'],
+              description: 'd',
+              mounts: const [MountType.main],
+              stats: const IFrameStats(
+                size: 1,
+                structure: 4,
+                stress: 4,
+                armor: 0,
+                hp: 8,
+                evasion: 8,
+                edef: 8,
+                heatcap: 5,
+                repcap: 5,
+                sensorRange: 10,
+                techAttack: 0,
+                save: 10,
+                speed: 5,
+                sp: 5,
+              ),
+              traits: const [],
+              coreSystem: const ICoreSystemData(
+                name: 'Core',
+                activeName: 'Active',
+                activeEffect: 'e',
+                activation: ActivationType.quick,
+              ),
+            ),
+          ],
+        },
+        manifest: manifest,
+        outputPath: outputPath,
+      );
+
+      final bytes = await File(outputPath).readAsBytes();
+      final archive = ZipDecoder().decodeBytes(bytes);
+      expect(
+        archive.files.map((f) => f.name),
+        containsAll(['lcp_manifest.json', 'weapons.json', 'frames.json']),
+      );
+
+      final weaponsJson =
+          jsonDecode(
+                utf8.decode(
+                  archive.findFile('weapons.json')!.content as List<int>,
+                ),
+              )
+              as List;
+      expect(weaponsJson, hasLength(2));
+
+      final framesJson =
+          jsonDecode(
+                utf8.decode(
+                  archive.findFile('frames.json')!.content as List<int>,
+                ),
+              )
+              as List;
+      expect(framesJson, hasLength(1));
     } finally {
       await tempDir.delete(recursive: true);
     }

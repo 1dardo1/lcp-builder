@@ -43,10 +43,19 @@ class GenericFormView extends StatelessWidget {
   final List<FieldSpec> fields;
   final GenericFormController controller;
 
+  /// Callback para el botón "Crear `referencia`" de un [TextFieldSpec] con
+  /// `referenceEntityKey` — recibe ese key y devuelve el id de la entidad
+  /// creada (o `null` si el usuario cancela). El motor no sabe qué pantalla
+  /// abrir ni qué es un `EntityCrearConfig`; solo pinta el botón y escribe
+  /// el resultado en el campo — quien resuelve la navegación real es
+  /// `CrearEntidadScreen`, que sí conoce el registro de configs.
+  final Future<String?> Function(String referenceEntityKey)? onCreateReference;
+
   const GenericFormView({
     super.key,
     required this.fields,
     required this.controller,
+    this.onCreateReference,
   });
 
   @override
@@ -64,59 +73,113 @@ class GenericFormView extends StatelessWidget {
   }
 
   Widget _buildField(BuildContext context, FieldSpec field, _FieldContext ctx) {
+    final content = switch (field) {
+      TextFieldSpec f => _buildText(
+        f,
+        ctx.get(f.key),
+        (v) => ctx.set(f.key, v),
+      ),
+      NumberFieldSpec f => _buildNumber(
+        f,
+        ctx.get(f.key),
+        (v) => ctx.set(f.key, v),
+      ),
+      BoolFieldSpec f => _buildBool(
+        f,
+        ctx.get(f.key),
+        (v) => ctx.set(f.key, v),
+      ),
+      EnumFieldSpec f => _buildEnum(
+        f,
+        ctx.get(f.key),
+        (v) => ctx.set(f.key, v),
+      ),
+      PatternTextFieldSpec f => _buildPatternText(
+        f,
+        ctx.get(f.key),
+        (v) => ctx.set(f.key, v),
+      ),
+      ShapeChoiceFieldSpec f => _buildShapeChoice(context, f, ctx),
+      CatalogFieldSpec f => _buildCatalog(context, f, ctx),
+      ListFieldSpec f => _buildList(context, f, ctx),
+      MultiEnumFieldSpec f => _buildMultiEnum(
+        f,
+        ctx.get(f.key),
+        (v) => ctx.set(f.key, v),
+      ),
+      GroupFieldSpec f => _buildGroup(context, f, ctx),
+    };
+
+    Widget wrapped = field.helpText == null
+        ? content
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: content),
+              _buildHelpButton(context, field.helpText!),
+            ],
+          );
+
+    if (field is TextFieldSpec &&
+        field.referenceEntityKey != null &&
+        onCreateReference != null) {
+      wrapped = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          wrapped,
+          TextButton.icon(
+            icon: const Icon(Icons.add, size: 18),
+            label: Text(
+              'Crear ${field.referenceLabel ?? field.referenceEntityKey}',
+            ),
+            onPressed: () async {
+              final id = await onCreateReference!(field.referenceEntityKey!);
+              if (id != null) ctx.set(field.key, id);
+            },
+          ),
+        ],
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: switch (field) {
-        TextFieldSpec f => _buildText(
-          f,
-          ctx.get(f.key),
-          (v) => ctx.set(f.key, v),
-        ),
-        NumberFieldSpec f => _buildNumber(
-          f,
-          ctx.get(f.key),
-          (v) => ctx.set(f.key, v),
-        ),
-        BoolFieldSpec f => _buildBool(
-          f,
-          ctx.get(f.key),
-          (v) => ctx.set(f.key, v),
-        ),
-        EnumFieldSpec f => _buildEnum(
-          f,
-          ctx.get(f.key),
-          (v) => ctx.set(f.key, v),
-        ),
-        PatternTextFieldSpec f => _buildPatternText(
-          f,
-          ctx.get(f.key),
-          (v) => ctx.set(f.key, v),
-        ),
-        ShapeChoiceFieldSpec f => _buildShapeChoice(context, f, ctx),
-        CatalogFieldSpec f => _buildCatalog(context, f, ctx),
-        ListFieldSpec f => _buildList(context, f, ctx),
-        MultiEnumFieldSpec f => _buildMultiEnum(
-          f,
-          ctx.get(f.key),
-          (v) => ctx.set(f.key, v),
-        ),
-        GroupFieldSpec f => _buildGroup(context, f, ctx),
-      },
+      child: wrapped,
     );
   }
+
+  Widget _buildHelpButton(BuildContext context, String helpText) => IconButton(
+    icon: const Icon(Icons.help_outline, size: 18),
+    tooltip: 'Ayuda',
+    onPressed: () => showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        content: Text(helpText),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _buildText(
     TextFieldSpec f,
     dynamic current,
     ValueChanged<String> onChanged,
   ) {
-    return TextFormField(
+    // `TextFormField.initialValue` solo se aplica en la primera
+    // construcción del Element — no refleja cambios posteriores del valor
+    // "desde fuera" (ej. el botón "Crear <referencia>" escribiendo un id
+    // recién creado en el campo). Un `TextEditingController` propio, con
+    // key estable por campo, sí se sincroniza en rebuilds posteriores (ver
+    // `_ControlledTextField`).
+    return _ControlledTextField(
       key: ValueKey(f.key),
-      initialValue: current as String?,
+      current: current as String?,
       maxLines: f.maxLines,
-      decoration: InputDecoration(
-        labelText: f.label + (f.required ? ' *' : ''),
-      ),
+      labelText: f.label + (f.required ? ' *' : ''),
       onChanged: onChanged,
     );
   }
@@ -385,5 +448,57 @@ class GenericFormView extends StatelessWidget {
     );
     items.removeAt(index);
     ctx.set(key, items);
+  }
+}
+
+/// `TextFormField` con un `TextEditingController` propio, sincronizado con
+/// [current] en cada rebuild (no solo en el primero, a diferencia de
+/// `TextFormField.initialValue`). Necesario para que un valor escrito
+/// "desde fuera" del propio campo — ej. el botón "Crear `referencia`"
+/// rellenando el id de la entidad recién creada — se refleje en pantalla.
+class _ControlledTextField extends StatefulWidget {
+  final String? current;
+  final int maxLines;
+  final String labelText;
+  final ValueChanged<String> onChanged;
+
+  const _ControlledTextField({
+    super.key,
+    required this.current,
+    required this.maxLines,
+    required this.labelText,
+    required this.onChanged,
+  });
+
+  @override
+  State<_ControlledTextField> createState() => _ControlledTextFieldState();
+}
+
+class _ControlledTextFieldState extends State<_ControlledTextField> {
+  late final _controller = TextEditingController(text: widget.current);
+
+  @override
+  void didUpdateWidget(covariant _ControlledTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.current != oldWidget.current &&
+        widget.current != _controller.text) {
+      _controller.text = widget.current ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: _controller,
+      maxLines: widget.maxLines,
+      decoration: InputDecoration(labelText: widget.labelText),
+      onChanged: widget.onChanged,
+    );
   }
 }

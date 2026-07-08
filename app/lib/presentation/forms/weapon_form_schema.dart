@@ -199,47 +199,89 @@ Object _weaponTypeFromValues(Map<String, dynamic> values) {
 }
 
 List<FieldSpec> buildWeaponFormSchema() => [
-  const TextFieldSpec(key: 'id', label: 'ID', required: true),
-  const TextFieldSpec(key: 'name', label: 'Nombre', required: true),
   const TextFieldSpec(
+    key: 'id',
+    label: 'ID',
+    required: true,
+    helpText:
+        'Identificador único del arma dentro de todo el .lcp (y, en la '
+        'práctica, dentro de todo COMP/CON). Minúsculas, sin espacios — ej. '
+        '"mw_rifle_pesado". No es el nombre visible, eso va en "Nombre".',
+  ),
+  const TextFieldSpec(
+    key: 'name',
+    label: 'Nombre',
+    required: true,
+    helpText: 'El nombre que verá el jugador en COMP/CON, ej. "Rifle pesado".',
+  ),
+  TextFieldSpec(
     key: 'source',
     label: 'Fabricante (source)',
     required: true,
+    helpText:
+        'El ID del fabricante (Manufacturer), NO su nombre visible. Ej.: '
+        'si el fabricante se llama "General Manufacturing Systems" pero su '
+        'ID es "GMS", aquí va "GMS". Si el fabricante todavía no existe, '
+        'usa el botón de abajo para crearlo sin salir de este formulario.',
+    referenceEntityKey: 'manufacturers',
+    referenceLabel: 'fabricante',
   ),
   const TextFieldSpec(
     key: 'license',
     label: 'Licencia (nombre de display)',
     required: true,
+    helpText:
+        'El nombre visible de la licencia (normalmente el nombre del frame '
+        'al que pertenece el arma), ej. "GMS Everest". A diferencia de '
+        '"ID de la licencia" de abajo, aquí va el nombre, no el id.',
   ),
-  const TextFieldSpec(
+  TextFieldSpec(
     key: 'licenseId',
     label: 'ID de la licencia (frame)',
     required: true,
+    helpText:
+        'El ID del frame (Frame) al que pertenece esta arma — no su '
+        'nombre visible. Si el frame todavía no existe, créalo con el '
+        'botón de abajo; el id que le pongas ahí es el que va aquí.',
+    referenceEntityKey: 'frames',
+    referenceLabel: 'frame',
   ),
   const NumberFieldSpec(
     key: 'licenseLevel',
     label: 'Nivel de licencia (0-3)',
     required: true,
+    helpText:
+        'Rango de la licencia del frame que el piloto necesita desbloqueado '
+        'para poder usar esta arma. 0 = disponible desde el rango base.',
   ),
   const TextFieldSpec(
     key: 'effect',
     label: 'Efecto',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de reglas del arma — lo que hace mecánicamente.',
   ),
   const TextFieldSpec(
     key: 'description',
     label: 'Descripción',
     required: true,
     maxLines: 3,
+    helpText: 'Texto de sabor/ambientación, sin efecto mecánico.',
   ),
-  const NumberFieldSpec(key: 'sp', label: 'SP'),
+  const NumberFieldSpec(
+    key: 'sp',
+    label: 'SP',
+    helpText: 'Coste en System Points del arma. Si se omite, cuenta como 0.',
+  ),
   EnumFieldSpec<MountType>(
     key: 'mount',
     label: 'Mount',
     required: true,
     options: MountType.values,
     displayLabel: (m) => m.jsonValue,
+    helpText:
+        'El tipo de mount que ocupa el arma en el frame (Main, Heavy, '
+        'Aux, Flex...). Determina en qué hueco del mech se puede instalar.',
   ),
   _weaponTypeField,
   ListFieldSpec(key: 'ammo', label: 'Ammo', itemFields: _ammoItemFields()),

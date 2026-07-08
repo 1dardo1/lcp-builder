@@ -28,20 +28,47 @@ sealed class FieldSpec {
   key; // debe coincidir con el nombre de campo del dominio (camelCase)
   final String label;
   final bool required;
+
+  /// Texto de ayuda para el usuario sin conocimientos técnicos ("¿qué pongo
+  /// aquí?") — si no es `null`, el motor pinta un botón de ayuda junto al
+  /// campo que lo muestra en un diálogo. Disponible en cualquier [FieldSpec]
+  /// (vive en la clase base), no solo en campos de texto.
+  final String? helpText;
+
   const FieldSpec({
     required this.key,
     required this.label,
     this.required = false,
+    this.helpText,
   });
 }
 
 class TextFieldSpec extends FieldSpec {
   final int maxLines;
+
+  /// `contentKey` (ver [EntityCrearConfig]) de la entidad que este campo
+  /// referencia por id (ej. `'manufacturers'` para `IWeaponData.source`).
+  /// Si no es `null`, el motor pinta un botón "Crear `referenceLabel`" junto
+  /// al campo — al pulsarlo, navega a crear esa entidad y, si el usuario la
+  /// completa, rellena este campo con su id. `field_spec.dart` no conoce
+  /// `EntityCrearConfig` (evita el import circular con
+  /// `entity_crear_config.dart`) — la resolución real de qué pantalla abrir
+  /// vive en `CrearEntidadScreen`, inyectada en `GenericFormView` como
+  /// callback (`onCreateReference`).
+  final String? referenceEntityKey;
+
+  /// Texto legible para el botón de creación (ej. `'fabricante'` →
+  /// "Crear fabricante"). Requerido solo si `referenceEntityKey` no es nulo.
+  final String? referenceLabel;
+
   const TextFieldSpec({
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
     this.maxLines = 1,
+    this.referenceEntityKey,
+    this.referenceLabel,
   });
 }
 
@@ -51,6 +78,7 @@ class NumberFieldSpec extends FieldSpec {
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
     this.allowDecimal = false,
   });
 }
@@ -60,6 +88,7 @@ class BoolFieldSpec extends FieldSpec {
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
   });
 }
 
@@ -72,6 +101,7 @@ class EnumFieldSpec<T> extends FieldSpec {
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
     required this.options,
     required this.displayLabel,
   });
@@ -111,6 +141,7 @@ class ShapeChoiceFieldSpec extends FieldSpec {
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
     required this.options,
   });
 }
@@ -124,6 +155,7 @@ class PatternTextFieldSpec extends FieldSpec {
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
     required this.pattern,
     required this.patternHint,
   });
@@ -137,6 +169,7 @@ class ListFieldSpec extends FieldSpec {
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
     required this.itemFields,
   });
 }
@@ -153,6 +186,7 @@ class MultiEnumFieldSpec<T> extends FieldSpec {
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
     required this.options,
     required this.displayLabel,
   });
@@ -177,6 +211,7 @@ class GroupFieldSpec extends FieldSpec {
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
     required this.fields,
   });
 }
@@ -199,6 +234,7 @@ class CatalogFieldSpec<TId> extends FieldSpec {
     required super.key,
     required super.label,
     super.required,
+    super.helpText,
     required this.catalogIds,
     required this.idLabel,
     required this.valueFieldFor,

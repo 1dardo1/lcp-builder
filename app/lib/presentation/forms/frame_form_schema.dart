@@ -259,6 +259,8 @@ FieldSpec _specialtyField() => const ShapeChoiceFieldSpec(
             key: 'source',
             label: 'Fabricante (Manufacturer ID)',
             required: true,
+            referenceEntityKey: 'manufacturers',
+            referenceLabel: 'fabricante',
           ),
           NumberFieldSpec(
             key: 'minRank',
@@ -293,10 +295,18 @@ List<FieldSpec> buildFrameFormSchema() => [
     key: 'source',
     label: 'Fabricante (debe coincidir con un Manufacturer ID)',
     required: true,
+    helpText: 'El ID del fabricante (Manufacturer), no su nombre visible.',
+    referenceEntityKey: 'manufacturers',
+    referenceLabel: 'fabricante',
   ),
   const TextFieldSpec(
     key: 'licenseId',
     label: 'ID de la licencia principal (requerido si es variante)',
+    helpText:
+        'Solo si este frame es variante de otro — el ID del frame '
+        'principal de esa licencia.',
+    referenceEntityKey: 'frames',
+    referenceLabel: 'frame',
   ),
   const NumberFieldSpec(
     key: 'licenseLevel',

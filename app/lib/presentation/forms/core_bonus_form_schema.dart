@@ -14,6 +14,9 @@ List<FieldSpec> buildCoreBonusFormSchema() => [
     key: 'source',
     label: 'Fabricante (debe coincidir con un Manufacturer ID)',
     required: true,
+    helpText: 'El ID del fabricante (Manufacturer), no su nombre visible.',
+    referenceEntityKey: 'manufacturers',
+    referenceLabel: 'fabricante',
   ),
   const TextFieldSpec(
     key: 'effect',
