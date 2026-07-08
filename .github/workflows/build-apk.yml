@@ -1,0 +1,41 @@
+name: Build APK
+
+# Solo manual (workflow_dispatch): este proyecto es una build de prueba,
+# no tiene sentido compilar un .apk en cada commit todavía — se lanza a
+# demanda desde la pestaña Actions de GitHub (funciona igual desde el
+# móvil que desde el ordenador).
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+
+      - run: flutter pub get
+
+      - run: flutter analyze
+
+      - run: flutter test
+
+      - run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcp-builder-apk
+          path: app/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
