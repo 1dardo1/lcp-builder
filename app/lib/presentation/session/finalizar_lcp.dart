@@ -27,11 +27,19 @@ import 'crear_session.dart';
 /// por el nombre de archivo (bug real ya documentado en vault "Principios y
 /// decisiones clave"), así que se pide explícitamente en vez de usar un
 /// valor fijo que colisionaría entre varias sesiones de Crear.
+///
+/// [useCase] es opcional y por defecto usa los adapters reales (zip +
+/// escritura a disco) — parametrizable solo para poder inyectar un doble en
+/// tests, sin escritura real a disco (ver `finalizar_lcp_test.dart`): un
+/// `FileWriter`/`ContentPackExporter` reales dentro de un test de widget
+/// arrastran E/S real de `dart:io`, que no se resuelve de forma fiable con
+/// `pump`/`pumpAndSettle` (ver discusión en ese archivo de test).
 Future<void> finalizarLcp(
   BuildContext context,
   CrearSession session, {
   String? pendingContentKey,
   Object? pendingContent,
+  CrearContenidoUseCase? useCase,
 }) async {
   final packName = await showDialog<String>(
     context: context,
@@ -55,13 +63,15 @@ Future<void> finalizarLcp(
     v3: true,
   );
 
-  final useCase = CrearContenidoUseCase(
-    exporter: ZipContentPackExporter(),
-    fileWriter: LocalFileWriter(),
-  );
+  final resolvedUseCase =
+      useCase ??
+      CrearContenidoUseCase(
+        exporter: ZipContentPackExporter(),
+        fileWriter: LocalFileWriter(),
+      );
 
   try {
-    await useCase(
+    await resolvedUseCase(
       content: session.content,
       manifest: manifest,
       outputPath: outputPath,
