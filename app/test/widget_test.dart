@@ -16,6 +16,11 @@ void main() {
 
       await tester.pumpWidget(LcpBuilderApp());
 
+      // Pantalla de inicio (Crear/Mostrar/Editar) antes de llegar al menú.
+      expect(find.text('Crear'), findsOneWidget);
+      await tester.tap(find.text('Crear'));
+      await tester.pumpAndSettle();
+
       // Menú con al menos arma y una de las entidades simples nuevas.
       expect(find.text('Crear arma'), findsOneWidget);
       expect(find.text('Crear fabricante'), findsOneWidget);
