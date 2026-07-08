@@ -14,7 +14,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(const LcpBuilderApp());
+      await tester.pumpWidget(LcpBuilderApp());
 
       // Menú con al menos arma y una de las entidades simples nuevas.
       expect(find.text('Crear arma'), findsOneWidget);
@@ -23,7 +23,8 @@ void main() {
       await tester.tap(find.text('Crear arma'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Crear .lcp'), findsOneWidget);
+      expect(find.text('Continuar'), findsOneWidget);
+      expect(find.text('Finalizar lcp'), findsOneWidget);
     },
   );
 }

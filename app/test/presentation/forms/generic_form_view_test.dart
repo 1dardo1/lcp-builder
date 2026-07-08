@@ -8,14 +8,19 @@ import 'package:lcp_builder/presentation/forms/weapon_form_schema.dart';
 
 Future<GenericFormController> _pumpFields(
   WidgetTester tester,
-  List<FieldSpec> fields,
-) async {
+  List<FieldSpec> fields, {
+  Future<String?> Function(String)? onCreateReference,
+}) async {
   final controller = GenericFormController();
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(
         body: SingleChildScrollView(
-          child: GenericFormView(fields: fields, controller: controller),
+          child: GenericFormView(
+            fields: fields,
+            controller: controller,
+            onCreateReference: onCreateReference,
+          ),
         ),
       ),
     ),
@@ -182,6 +187,85 @@ void main() {
       expect(find.text('Número'), findsNWidgets(2));
       expect(find.text('Fórmula'), findsOneWidget);
       expect(find.byKey(const ValueKey('bonus.value.a')), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'FieldSpec.helpText: pinta un botón de ayuda que abre un diálogo con el texto',
+    (tester) async {
+      await _pumpFields(tester, [
+        const TextFieldSpec(
+          key: 'source',
+          label: 'Fabricante',
+          helpText: 'Aquí va el ID del fabricante, no su nombre.',
+        ),
+      ]);
+
+      expect(find.byIcon(Icons.help_outline), findsOneWidget);
+      expect(
+        find.text('Aquí va el ID del fabricante, no su nombre.'),
+        findsNothing,
+      );
+
+      await tester.tap(find.byIcon(Icons.help_outline));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Aquí va el ID del fabricante, no su nombre.'),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'TextFieldSpec.referenceEntityKey: pinta un botón "Crear X" que rellena '
+    'el campo con el id devuelto por onCreateReference',
+    (tester) async {
+      final controller = await _pumpFields(
+        tester,
+        [
+          const TextFieldSpec(
+            key: 'source',
+            label: 'Fabricante',
+            referenceEntityKey: 'manufacturers',
+            referenceLabel: 'fabricante',
+          ),
+        ],
+        onCreateReference: (key) async {
+          expect(key, 'manufacturers');
+          return 'TEST_MFR';
+        },
+      );
+
+      expect(find.text('Crear fabricante'), findsOneWidget);
+      expect(controller.get('source'), isNull);
+
+      await tester.tap(find.text('Crear fabricante'));
+      await tester.pumpAndSettle();
+
+      expect(controller.get('source'), 'TEST_MFR');
+      // No solo el valor interno del controlador: el propio TextFormField
+      // debe mostrar el id relleno "desde fuera" (regresión del bug de
+      // `TextFormField.initialValue`, que solo se aplica en el primer
+      // build — ver `_ControlledTextField` en `generic_form_view.dart`).
+      expect(find.text('TEST_MFR'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'sin onCreateReference, un TextFieldSpec con referenceEntityKey no pinta '
+    'el botón de creación',
+    (tester) async {
+      await _pumpFields(tester, [
+        const TextFieldSpec(
+          key: 'source',
+          label: 'Fabricante',
+          referenceEntityKey: 'manufacturers',
+          referenceLabel: 'fabricante',
+        ),
+      ]);
+
+      expect(find.text('Crear fabricante'), findsNothing);
     },
   );
 }

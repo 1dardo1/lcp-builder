@@ -1275,14 +1275,21 @@ List<FieldSpec> mechSystemBaseFields() => [
   const TextFieldSpec(
     key: 'source',
     label: 'Fabricante (source; opcional solo en License Collection)',
+    helpText: 'El ID del fabricante (Manufacturer), no su nombre visible.',
+    referenceEntityKey: 'manufacturers',
+    referenceLabel: 'fabricante',
   ),
   const TextFieldSpec(
     key: 'license',
     label: 'Licencia (opcional solo en License Collection)',
+    helpText: 'Nombre visible de la licencia (normalmente el del frame).',
   ),
   const TextFieldSpec(
     key: 'licenseId',
     label: 'ID de la licencia (frame; opcional solo en License Collection)',
+    helpText: 'El ID del frame al que pertenece, no su nombre visible.',
+    referenceEntityKey: 'frames',
+    referenceLabel: 'frame',
   ),
   const NumberFieldSpec(
     key: 'licenseLevel',
