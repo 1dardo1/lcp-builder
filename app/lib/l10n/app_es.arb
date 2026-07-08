@@ -1,0 +1,44 @@
+{
+  "@@locale": "es",
+  "appTitle": "LCP Builder",
+  "@appTitle": {"description": "Título de la app, nombre propio, no se traduce."},
+  "homeCrear": "Crear",
+  "homeMostrar": "Mostrar",
+  "homeEditar": "Editar",
+  "noImplementado": "Aún no se ha implementado.",
+  "crearMenuTitle": "Crear",
+  "entidadCount": "{count, plural, one{1 entidad en el .lcp actual} other{{count} entidades en el .lcp actual}}",
+  "@entidadCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "finalizarLcp": "Finalizar lcp",
+  "continuar": "Continuar",
+  "errorPrefix": "Error: {message}",
+  "@errorPrefix": {
+    "placeholders": {"message": {"type": "String"}}
+  },
+  "nombrePaqueteTitle": "Nombre del paquete",
+  "nombrePaqueteLabel": "Nombre (identifica el .lcp en COMP/CON)",
+  "cancelar": "Cancelar",
+  "generadoSnackbar": "Generado: {path}",
+  "@generadoSnackbar": {
+    "placeholders": {"path": {"type": "String"}}
+  },
+  "ayuda": "Ayuda",
+  "cerrar": "Cerrar",
+  "requerido": "Requerido",
+  "noCoincidePattern": "No coincide con: {hint}",
+  "@noCoincidePattern": {
+    "placeholders": {"hint": {"type": "String"}}
+  },
+  "quitar": "Quitar",
+  "anadirCampo": "Añadir {label}",
+  "@anadirCampo": {
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "crearReferencia": "Crear {label}",
+  "@crearReferencia": {
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "idioma": "Idioma"
+}

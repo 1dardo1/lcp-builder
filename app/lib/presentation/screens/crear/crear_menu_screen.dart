@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/gen/app_localizations.dart';
 import '../../forms/crear_entidad_configs.dart';
+import '../../i18n/field_translations.dart';
+import '../../i18n/locale_controller.dart';
 import '../../session/crear_session.dart';
 import '../../session/finalizar_lcp.dart';
+import '../../widgets/language_switcher.dart';
 import 'crear_entidad_screen.dart';
 
 /// Pantalla de inicio del flujo Crear: menú de entidades disponibles. Sin
@@ -18,13 +22,23 @@ import 'crear_entidad_screen.dart';
 /// la pantalla entera a mano.
 class CrearMenuScreen extends StatelessWidget {
   final CrearSession session;
+  final LocaleController localeController;
 
-  const CrearMenuScreen({super.key, required this.session});
+  const CrearMenuScreen({
+    super.key,
+    required this.session,
+    required this.localeController,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+    final locale = localeController.locale;
     return Scaffold(
-      appBar: AppBar(title: const Text('Crear')),
+      appBar: AppBar(
+        title: Text(t.crearMenuTitle),
+        actions: [LanguageSwitcher(controller: localeController)],
+      ),
       body: ListenableBuilder(
         listenable: session,
         builder: (context, _) => Column(
@@ -35,13 +49,11 @@ class CrearMenuScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Text(
-                        '${session.entityCount} entidad(es) en el .lcp actual',
-                      ),
+                      child: Text(t.entidadCount(session.entityCount)),
                     ),
                     FilledButton(
                       onPressed: () => finalizarLcp(context, session),
-                      child: const Text('Finalizar lcp'),
+                      child: Text(t.finalizarLcp),
                     ),
                   ],
                 ),
@@ -51,12 +63,13 @@ class CrearMenuScreen extends StatelessWidget {
                 children: [
                   for (final config in crearEntidadConfigs)
                     ListTile(
-                      title: Text(config.title),
+                      title: Text(translateFieldText(config.title, locale)),
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => CrearEntidadScreen(
                             config: config,
                             session: session,
+                            localeController: localeController,
                           ),
                         ),
                       ),
