@@ -451,8 +451,8 @@ Map<String, dynamic> manufacturerDataToJson(IManufacturerData v) => _clean({
   'quote': v.quote,
   'light': v.light,
   'dark': v.dark,
-  'icon_svg': v.iconSvg,
-  'icon_url': v.iconUrl,
+  'svg': v.iconSvg,
+  'logo_url': v.iconUrl,
 });
 
 // --- Sección 6 (Tags, catálogo) ---
@@ -484,7 +484,7 @@ Map<String, dynamic> statusConditionDataToJson(IStatusConditionData v) =>
       'type': v.type.name,
       'effects': v.effects,
       'terse': v.terse,
-      'icon_svg': v.iconSvg,
+      'svg': v.iconSvg,
       'icon_url': v.iconUrl,
       'exclusive': v.exclusive?.name,
     });

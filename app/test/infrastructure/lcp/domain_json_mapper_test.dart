@@ -167,7 +167,7 @@ void main() {
 
       expect(json['id'], 'GMS');
       expect(json['light'], '#FFFFFF');
-      expect(json.containsKey('icon_svg'), isFalse);
+      expect(json.containsKey('svg'), isFalse);
     });
   });
 
