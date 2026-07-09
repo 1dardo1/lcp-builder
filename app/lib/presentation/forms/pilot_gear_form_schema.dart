@@ -24,20 +24,24 @@ List<FieldSpec> _pilotWeaponFields() => [
     key: 'effect',
     label: 'Efecto',
     maxLines: 3,
-    helpText: 'Texto de reglas — lo que hace mecánicamente esta arma de piloto.',
+    helpText:
+        'Texto de reglas — lo que hace mecánicamente esta arma de piloto.',
   ),
   ListFieldSpec(key: 'range', label: 'Alcance', itemFields: rangeItemFields()),
   ListFieldSpec(key: 'damage', label: 'Daño', itemFields: damageItemFields()),
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(
+    itemFields: [
+      TextFieldSpec(
         key: 'id',
         label: 'ID del tag',
         required: true,
-        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+        helpText:
+            'El ID del tag (Tag), no su nombre visible. Si el tag '
             'todavía no existe, usa el botón de crear tag desde el menú.',
-      )],
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'actions',
@@ -66,6 +70,7 @@ List<FieldSpec> _pilotWeaponFields() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects (se aplican al piloto, no al mech)',
     itemFields: activeEffectFields(),
   ),
@@ -81,13 +86,16 @@ List<FieldSpec> _pilotArmorOrGearFields() => [
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(
+    itemFields: [
+      TextFieldSpec(
         key: 'id',
         label: 'ID del tag',
         required: true,
-        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+        helpText:
+            'El ID del tag (Tag), no su nombre visible. Si el tag '
             'todavía no existe, usa el botón de crear tag desde el menú.',
-      )],
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'actions',
@@ -131,6 +139,7 @@ List<FieldSpec> buildPilotGearFormSchema() => [
   ),
   ShapeChoiceFieldSpec(
     key: 'kind',
+    jsonKey: 'type',
     label: 'Tipo de gear',
     required: true,
     options: [

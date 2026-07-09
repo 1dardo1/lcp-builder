@@ -106,7 +106,8 @@ List<FieldSpec> buildEidolonLayerFormSchema() => [
     key: 'id',
     label: 'ID',
     required: true,
-    helpText: 'Identificador único del eidolon layer. Minúsculas, sin espacios.',
+    helpText:
+        'Identificador único del eidolon layer. Minúsculas, sin espacios.',
   ),
   const TextFieldSpec(
     key: 'name',
@@ -145,6 +146,7 @@ List<FieldSpec> buildEidolonLayerFormSchema() => [
   GroupFieldSpec(key: 'shards', label: 'Shards', fields: _shardFields()),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),

@@ -22,45 +22,55 @@ List<FieldSpec> buildWeaponModFormSchema() => [
   activeEffectGroupField('onCrit', 'Al crítico'),
   MultiEnumFieldSpec<WeaponType>(
     key: 'allowedTypes',
+    jsonKey: 'allowed_types',
     label: 'Tipos permitidos (vacío = todos)',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'allowedSizes',
+    jsonKey: 'allowed_sizes',
     label: 'Tamaños permitidos (vacío = todos)',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,
   ),
   const ListFieldSpec(
     key: 'addedTags',
+    jsonKey: 'added_tags',
     label: 'Tags añadidos (se quitan si el mod se quita)',
-    itemFields: [TextFieldSpec(
+    itemFields: [
+      TextFieldSpec(
         key: 'id',
         label: 'ID del tag',
         required: true,
-        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+        helpText:
+            'El ID del tag (Tag), no su nombre visible. Si el tag '
             'todavía no existe, usa el botón de crear tag desde el menú.',
-      )],
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'addedDamage',
+    jsonKey: 'added_damage',
     label: 'Daño añadido (regla de fusión por tipo, ver vault §13.5)',
     itemFields: damageItemFields(),
   ),
   ListFieldSpec(
     key: 'addedRange',
+    jsonKey: 'added_range',
     label: 'Alcance añadido',
     itemFields: rangeItemFields(),
   ),
   MultiEnumFieldSpec<WeaponType>(
     key: 'restrictedTypes',
+    jsonKey: 'restricted_types',
     label: 'Tipos restringidos (DEPRECADO)',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'restrictedSizes',
+    jsonKey: 'restricted_sizes',
     label: 'Tamaños restringidos (DEPRECADO)',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,

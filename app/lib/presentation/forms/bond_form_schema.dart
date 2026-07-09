@@ -21,6 +21,7 @@ List<FieldSpec> buildBondFormSchema() => [
   ),
   const ListFieldSpec(
     key: 'majorIdeals',
+    jsonKey: 'major_ideals',
     label: 'Ideales mayores (2-5 típicamente)',
     itemFields: [
       TextFieldSpec(
@@ -33,6 +34,7 @@ List<FieldSpec> buildBondFormSchema() => [
   ),
   const ListFieldSpec(
     key: 'minorIdeals',
+    jsonKey: 'minor_ideals',
     label: 'Ideales menores (2-5 típicamente)',
     itemFields: [
       TextFieldSpec(

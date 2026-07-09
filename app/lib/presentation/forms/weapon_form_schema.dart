@@ -38,24 +38,28 @@ List<FieldSpec> _ammoItemFields() => [
   const NumberFieldSpec(key: 'cost', label: 'Coste'),
   MultiEnumFieldSpec<WeaponType>(
     key: 'allowedTypes',
+    jsonKey: 'allowed_types',
     label: 'Tipos permitidos (vacío = todos)',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'allowedSizes',
+    jsonKey: 'allowed_sizes',
     label: 'Tamaños permitidos (vacío = todos)',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,
   ),
   MultiEnumFieldSpec<WeaponType>(
     key: 'restrictedTypes',
+    jsonKey: 'restricted_types',
     label: 'Tipos restringidos',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'restrictedSizes',
+    jsonKey: 'restricted_sizes',
     label: 'Tamaños restringidos',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,
@@ -86,6 +90,7 @@ IAmmoData _ammoFromItem(Map<String, dynamic> item) => IAmmoData(
 List<FieldSpec> _weaponEffectFields() => [
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),
@@ -130,6 +135,7 @@ List<FieldSpec> _weaponEffectFields() => [
   ),
   ListFieldSpec(
     key: 'specialEquipment',
+    jsonKey: 'special_equipment',
     label: 'Special equipment (IDs)',
     itemFields: [
       TextFieldSpec(
@@ -262,6 +268,7 @@ List<FieldSpec> buildWeaponFormSchema() => [
   ),
   TextFieldSpec(
     key: 'licenseId',
+    jsonKey: 'license_id',
     label: 'ID de la licencia (frame)',
     required: true,
     helpText:
@@ -273,6 +280,7 @@ List<FieldSpec> buildWeaponFormSchema() => [
   ),
   const NumberFieldSpec(
     key: 'licenseLevel',
+    jsonKey: 'license_level',
     label: 'Nivel de licencia (0-3)',
     required: true,
     helpText:
@@ -321,14 +329,31 @@ List<FieldSpec> buildWeaponFormSchema() => [
       ),
     ],
   ),
-  const BoolFieldSpec(key: 'noAttack', label: 'No genera acciones de ataque'),
-  const BoolFieldSpec(key: 'noMods', label: 'No admite mods'),
+  const BoolFieldSpec(
+    key: 'noAttack',
+    jsonKey: 'no_attack',
+    label: 'No genera acciones de ataque',
+  ),
+  const BoolFieldSpec(
+    key: 'noMods',
+    jsonKey: 'no_mods',
+    label: 'No admite mods',
+  ),
   const BoolFieldSpec(
     key: 'noCoreBonus',
+    jsonKey: 'no_core_bonus',
     label: 'Ignora core bonuses de mount',
   ),
-  const BoolFieldSpec(key: 'noBonus', label: 'Ignora bonuses'),
-  const BoolFieldSpec(key: 'noSynergy', label: 'Ignora synergies'),
+  const BoolFieldSpec(
+    key: 'noBonus',
+    jsonKey: 'no_bonus',
+    label: 'Ignora bonuses',
+  ),
+  const BoolFieldSpec(
+    key: 'noSynergy',
+    jsonKey: 'no_synergy',
+    label: 'Ignora synergies',
+  ),
   ..._weaponEffectFields(),
   ListFieldSpec(
     key: 'profiles',

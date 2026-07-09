@@ -81,7 +81,8 @@ List<FieldSpec> buildNpcClassFormSchema() => [
     key: 'id',
     label: 'ID',
     required: true,
-    helpText: 'Identificador único de la clase de NPC. Minúsculas, sin espacios.',
+    helpText:
+        'Identificador único de la clase de NPC. Minúsculas, sin espacios.',
   ),
   const TextFieldSpec(
     key: 'name',
@@ -109,6 +110,7 @@ List<FieldSpec> buildNpcClassFormSchema() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),

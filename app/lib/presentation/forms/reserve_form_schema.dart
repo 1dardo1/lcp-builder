@@ -30,7 +30,8 @@ List<FieldSpec> buildReserveFormSchema() => [
   const TextFieldSpec(
     key: 'label',
     label: 'Etiqueta (default: el nombre)',
-    helpText: 'Texto corto que sustituye al nombre en la UI de COMP/CON, si hace falta.',
+    helpText:
+        'Texto corto que sustituye al nombre en la UI de COMP/CON, si hace falta.',
   ),
   const TextFieldSpec(
     key: 'description',
@@ -78,6 +79,7 @@ List<FieldSpec> buildReserveFormSchema() => [
   ),
   ListFieldSpec(
     key: 'specialEquipment',
+    jsonKey: 'special_equipment',
     label: 'Special equipment (IDs)',
     itemFields: [
       TextFieldSpec(
@@ -90,6 +92,7 @@ List<FieldSpec> buildReserveFormSchema() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),

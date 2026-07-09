@@ -21,8 +21,18 @@ List<FieldSpec> _frameStatsFields() => const [
   NumberFieldSpec(key: 'edef', label: 'E-Defense', required: true),
   NumberFieldSpec(key: 'heatcap', label: 'Heat cap', required: true),
   NumberFieldSpec(key: 'repcap', label: 'Repair cap', required: true),
-  NumberFieldSpec(key: 'sensorRange', label: 'Sensor range', required: true),
-  NumberFieldSpec(key: 'techAttack', label: 'Tech attack', required: true),
+  NumberFieldSpec(
+    key: 'sensorRange',
+    jsonKey: 'sensor_range',
+    label: 'Sensor range',
+    required: true,
+  ),
+  NumberFieldSpec(
+    key: 'techAttack',
+    jsonKey: 'tech_attack',
+    label: 'Tech attack',
+    required: true,
+  ),
   NumberFieldSpec(key: 'save', label: 'Save', required: true),
   NumberFieldSpec(key: 'speed', label: 'Speed', required: true),
   NumberFieldSpec(key: 'sp', label: 'SP', required: true),
@@ -98,6 +108,7 @@ List<FieldSpec> _frameTraitItemFields() => [
   ),
   ListFieldSpec(
     key: 'specialEquipment',
+    jsonKey: 'special_equipment',
     label: 'Special equipment (IDs)',
     itemFields: [
       TextFieldSpec(
@@ -110,6 +121,7 @@ List<FieldSpec> _frameTraitItemFields() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),
@@ -144,12 +156,15 @@ List<FieldSpec> _coreSystemFields() => [
   ),
   const TextFieldSpec(
     key: 'activeName',
+    jsonKey: 'active_name',
     label: 'Nombre (activo)',
     required: true,
-    helpText: 'El nombre de la parte activa del core system (la que se activa).',
+    helpText:
+        'El nombre de la parte activa del core system (la que se activa).',
   ),
   const TextFieldSpec(
     key: 'activeEffect',
+    jsonKey: 'active_effect',
     label: 'Efecto (activo)',
     required: true,
     maxLines: 3,
@@ -176,47 +191,56 @@ List<FieldSpec> _coreSystemFields() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects (al activar)',
     itemFields: activeEffectFields(),
   ),
   ListFieldSpec(
     key: 'activeActions',
+    jsonKey: 'active_actions',
     label: 'Actions (activo)',
     itemFields: actionItemFields(),
   ),
   ListFieldSpec(
     key: 'activeBonuses',
+    jsonKey: 'active_bonuses',
     label: 'Bonuses (activo)',
     itemFields: bonusItemFields(),
   ),
   ListFieldSpec(
     key: 'activeSynergies',
+    jsonKey: 'active_synergies',
     label: 'Synergies (activo)',
     itemFields: synergyItemFields(),
   ),
   const TextFieldSpec(
     key: 'passiveName',
+    jsonKey: 'passive_name',
     label: 'Nombre (pasivo)',
     helpText: 'El nombre de la parte pasiva del core system, si tiene una.',
   ),
   const TextFieldSpec(
     key: 'passiveEffect',
+    jsonKey: 'passive_effect',
     label: 'Efecto (pasivo)',
     maxLines: 3,
     helpText: 'Texto de reglas de la parte pasiva, siempre activa.',
   ),
   ListFieldSpec(
     key: 'passiveActions',
+    jsonKey: 'passive_actions',
     label: 'Actions (siempre disponibles)',
     itemFields: actionItemFields(),
   ),
   ListFieldSpec(
     key: 'passiveBonuses',
+    jsonKey: 'passive_bonuses',
     label: 'Bonuses (siempre activos)',
     itemFields: bonusItemFields(),
   ),
   ListFieldSpec(
     key: 'passiveSynergies',
+    jsonKey: 'passive_synergies',
     label: 'Synergies (siempre activas)',
     itemFields: synergyItemFields(),
   ),
@@ -244,6 +268,7 @@ List<FieldSpec> _coreSystemFields() => [
   ),
   ListFieldSpec(
     key: 'specialEquipment',
+    jsonKey: 'special_equipment',
     label: 'Special equipment (IDs)',
     itemFields: [
       TextFieldSpec(
@@ -257,13 +282,16 @@ List<FieldSpec> _coreSystemFields() => [
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(
+    itemFields: [
+      TextFieldSpec(
         key: 'id',
         label: 'ID del tag',
         required: true,
-        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+        helpText:
+            'El ID del tag (Tag), no su nombre visible. Si el tag '
             'todavía no existe, usa el botón de crear tag desde el menú.',
-      )],
+      ),
+    ],
   ),
 ];
 
@@ -324,6 +352,7 @@ FieldSpec _specialtyField() => const ShapeChoiceFieldSpec(
           ),
           NumberFieldSpec(
             key: 'minRank',
+            jsonKey: 'min_rank',
             label: 'Rango mínimo',
             required: true,
           ),
@@ -371,6 +400,7 @@ List<FieldSpec> buildFrameFormSchema() => [
   ),
   const TextFieldSpec(
     key: 'licenseId',
+    jsonKey: 'license_id',
     label: 'ID de la licencia principal (requerido si es variante)',
     helpText:
         'Solo si este frame es variante de otro — el ID del frame '
@@ -380,6 +410,7 @@ List<FieldSpec> buildFrameFormSchema() => [
   ),
   const NumberFieldSpec(
     key: 'licenseLevel',
+    jsonKey: 'license_level',
     label: 'Nivel de licencia (0-3)',
     required: true,
   ),
@@ -391,7 +422,8 @@ List<FieldSpec> buildFrameFormSchema() => [
         key: 'id',
         label: 'Mechtype',
         required: true,
-        helpText: 'Etiqueta libre para agrupar en la UI, ej. "Striker", "Tank".',
+        helpText:
+            'Etiqueta libre para agrupar en la UI, ej. "Striker", "Tank".',
       ),
     ],
   ),
@@ -423,6 +455,7 @@ List<FieldSpec> buildFrameFormSchema() => [
   ),
   GroupFieldSpec(
     key: 'coreSystem',
+    jsonKey: 'core_system',
     label: 'Core system',
     fields: _coreSystemFields(),
   ),
@@ -436,10 +469,15 @@ List<FieldSpec> buildFrameFormSchema() => [
   ),
   const TextFieldSpec(
     key: 'imageUrl',
+    jsonKey: 'image_url',
     label: 'Imagen (URL)',
     helpText: 'URL a la imagen/banner del frame. Opcional.',
   ),
-  const NumberFieldSpec(key: 'yPos', label: 'Alineación vertical (banner UI)'),
+  const NumberFieldSpec(
+    key: 'yPos',
+    jsonKey: 'y_pos',
+    label: 'Alineación vertical (banner UI)',
+  ),
 ];
 
 String _mountLabel(MountType m) => m.jsonValue;

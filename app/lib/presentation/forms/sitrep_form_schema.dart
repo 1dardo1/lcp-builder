@@ -63,18 +63,21 @@ List<FieldSpec> buildSitrepFormSchema() => [
   ),
   const TextFieldSpec(
     key: 'pcVictory',
+    jsonKey: 'pc_victory',
     label: 'Victoria de los PCs',
     maxLines: 2,
     helpText: 'Qué pasa en la narrativa si ganan los jugadores.',
   ),
   const TextFieldSpec(
     key: 'enemyVictory',
+    jsonKey: 'enemy_victory',
     label: 'Victoria enemiga',
     maxLines: 2,
     helpText: 'Qué pasa en la narrativa si gana el bando enemigo.',
   ),
   const TextFieldSpec(
     key: 'noVictory',
+    jsonKey: 'no_victory',
     label: 'Sin victoria',
     maxLines: 2,
     helpText: 'Qué pasa si la misión termina sin un ganador claro.',
