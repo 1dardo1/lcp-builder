@@ -9,26 +9,31 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * Canal nativo mínimo de los flujos Crear/Mostrar en Android — ver
+ * Canal nativo mínimo de los flujos Crear/Mostrar/Editar en Android — ver
  * `lib/presentation/platform/lcp_save_location.dart`,
+ * `lib/presentation/platform/lcp_edit_location.dart`,
  * `lib/infrastructure/file_system/android_saf_file_writer.dart` y
  * `lib/infrastructure/file_system/android_saf_file_reader.dart` /
  * `android_saf_directory_lister.dart`.
  *
- * `file_selector` no implementa guardado en Android, y tampoco sabe
- * recorrer el contenido de una carpeta elegida con `getDirectoryPath`
- * (esa parte SÍ la resuelve `file_selector`, solo falta listar lo que
- * hay dentro) — así que se habla directamente con el Storage Access
- * Framework: `ACTION_CREATE_DOCUMENT` para elegir dónde guardar,
- * `DocumentsContract` para listar los `.lcp` de una carpeta ya elegida,
- * y `ContentResolver` para leer/escribir esas URIs `content://`, ya que
- * `dart:io` no sabe hacerlo.
+ * `file_selector` no implementa guardado en Android, y su `openFile()`
+ * solo entrega una copia local en caché (útil para leer, pero sin URI
+ * `content://` viva para escribir de vuelta) — así que se habla
+ * directamente con el Storage Access Framework: `ACTION_CREATE_DOCUMENT`
+ * para elegir dónde guardar, `ACTION_OPEN_DOCUMENT` para elegir un `.lcp`
+ * existente conservando permiso de escritura (necesario para Editar,
+ * no para Mostrar — ver `lcp_edit_location.dart`), `DocumentsContract`
+ * para listar los `.lcp` de una carpeta ya elegida, y `ContentResolver`
+ * para leer/escribir esas URIs `content://`, ya que `dart:io` no sabe
+ * hacerlo.
  */
 class MainActivity : FlutterActivity() {
     private val channelName = "com.example.lcp_builder/saf"
     private val createDocumentRequestCode = 4173
+    private val openDocumentRequestCode = 4174
 
     private var pendingCreateDocumentResult: MethodChannel.Result? = null
+    private var pendingOpenDocumentResult: MethodChannel.Result? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -39,6 +44,7 @@ class MainActivity : FlutterActivity() {
                         val suggestedName = call.argument<String>("suggestedName") ?: "paquete.lcp"
                         startCreateDocument(suggestedName, result)
                     }
+                    "openDocument" -> startOpenDocument(result)
                     "writeBytes" -> {
                         val uriString = call.argument<String>("uri")
                         val bytes = call.argument<ByteArray>("bytes")
@@ -107,7 +113,60 @@ class MainActivity : FlutterActivity() {
             }
             return
         }
+        if (requestCode == openDocumentRequestCode) {
+            val result = pendingOpenDocumentResult
+            pendingOpenDocumentResult = null
+            if (resultCode == Activity.RESULT_OK) {
+                val uri: Uri? = data?.data
+                if (uri != null) {
+                    try {
+                        // Persiste el permiso de lectura/escritura más
+                        // allá de esta única `Activity.RESULT_OK` — sin
+                        // esto, Editar podría perder el permiso si el
+                        // proceso se recicla entre abrir el `.lcp` y
+                        // guardarlo. Algunos proveedores de documentos no
+                        // soportan permiso persistente; si falla, el
+                        // permiso temporal de esta sesión sigue siendo
+                        // válido mientras la app no se reinicie.
+                        contentResolver.takePersistableUriPermission(
+                            uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+                        )
+                    } catch (e: SecurityException) {
+                        // Ver comentario de arriba.
+                    }
+                }
+                result?.success(uri?.toString())
+            } else {
+                result?.success(null)
+            }
+            return
+        }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun startOpenDocument(result: MethodChannel.Result) {
+        if (pendingOpenDocumentResult != null) {
+            result.error("already_in_progress", "Ya hay un selector de apertura abierto", null)
+            return
+        }
+        pendingOpenDocumentResult = result
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            // "*/*" en vez de un tipo MIME concreto: ".lcp" no tiene un
+            // tipo MIME registrado, y distintos proveedores de documentos
+            // lo reportan de forma distinta (application/octet-stream,
+            // application/zip...) — filtrar por tipo aquí arriesgaría
+            // excluir el propio archivo que el usuario quiere abrir.
+            type = "*/*"
+        }
+        try {
+            startActivityForResult(intent, openDocumentRequestCode)
+        } catch (e: Exception) {
+            pendingOpenDocumentResult = null
+            result.error("open_document_failed", e.message, null)
+        }
     }
 
     private fun writeBytes(uriString: String, bytes: ByteArray, result: MethodChannel.Result) {

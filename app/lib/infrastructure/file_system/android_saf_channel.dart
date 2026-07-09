@@ -1,17 +1,20 @@
 import 'package:flutter/services.dart';
 
-/// Canal nativo compartido entre [pickLcpSaveLocation] (Android) y
-/// [AndroidSafFileWriter] — el mismo `MethodChannel`, no uno por archivo,
-/// porque ambos hablan con el mismo código nativo mínimo en
+/// Canal nativo compartido entre [pickLcpSaveLocation]/`pickLcpEditLocation`
+/// (Android) y [AndroidSafFileWriter] — el mismo `MethodChannel`, no uno
+/// por archivo, porque todos hablan con el mismo código nativo mínimo en
 /// `MainActivity.kt` (sin registrar un plugin de verdad, no hace falta
 /// para un único canal de una app, no de un paquete reutilizable).
 ///
-/// Existe porque `file_selector` no implementa guardado en Android (ver
-/// `lcp_save_location.dart`) — aquí se habla directamente con el Storage
+/// Existe porque `file_selector` no implementa guardado en Android, y su
+/// `openFile()` no deja una URI `content://` escribible para editar un
+/// documento existente (ver `lcp_save_location.dart`/
+/// `lcp_edit_location.dart`) — aquí se habla directamente con el Storage
 /// Access Framework: `createDocument` (selector nativo "guardar como",
-/// `ACTION_CREATE_DOCUMENT`) y `writeBytes` (escribe en la URI
-/// `content://` resultante vía `ContentResolver`, algo que `dart:io` no
-/// sabe hacer).
+/// `ACTION_CREATE_DOCUMENT`), `openDocument` (selector nativo "abrir",
+/// `ACTION_OPEN_DOCUMENT`, con permiso persistente de lectura/escritura)
+/// y `writeBytes`/`readBytes` (leen/escriben la URI `content://`
+/// resultante vía `ContentResolver`, algo que `dart:io` no sabe hacer).
 const MethodChannel androidSafChannel = MethodChannel(
   'com.example.lcp_builder/saf',
 );

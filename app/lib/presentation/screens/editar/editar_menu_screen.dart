@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/gen/app_localizations.dart';
 import '../../i18n/locale_controller.dart';
+import '../../platform/lcp_edit_location.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import 'editar_entity_types_screen.dart';
@@ -24,17 +25,13 @@ class EditarMenuScreen extends StatelessWidget {
   });
 
   Future<void> _abrirLcp(BuildContext context) async {
-    final file = await openFile(
-      acceptedTypeGroups: const [
-        XTypeGroup(label: 'Lancer Content Pack', extensions: ['lcp']),
-      ],
-    );
-    if (file == null || !context.mounted) return;
+    final path = await pickLcpEditLocation();
+    if (path == null || !context.mounted) return;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => EditarEntityTypesScreen(
           session: session,
-          lcpPath: file.path,
+          lcpPath: path,
           localeController: localeController,
         ),
       ),
