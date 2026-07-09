@@ -938,3 +938,37 @@ Map<String, dynamic> eidolonLayerDataToJson(IEidolonLayerData v) => _clean({
   'shards': v.shards == null ? null : eidolonShardDataToJson(v.shards!),
   'active_effects': _list(v.activeEffects, activeEffectDataToJson),
 });
+
+/// Despacho por tipo runtime a la función `xDataToJson` de cada una de
+/// las 24 entidades — un único punto compartido por `ZipContentPackExporter`
+/// (Crear) y por el guardado de Editar (una entidad editada se reconstruye
+/// como objeto de dominio tipado vía `fromFormValues` y vuelve a pasar por
+/// aquí antes de sustituir su JSON crudo en el paquete).
+Map<String, dynamic> entityDataToJson(Object item) => switch (item) {
+  IWeaponData v => weaponDataToJson(v),
+  IManufacturerData v => manufacturerDataToJson(v),
+  ITagData v => tagDataToJson(v),
+  ISkillData v => skillDataToJson(v),
+  IStatusConditionData v => statusConditionDataToJson(v),
+  ISitrepData v => sitrepDataToJson(v),
+  IEnvironmentData v => environmentDataToJson(v),
+  IBackgroundData v => backgroundDataToJson(v),
+  IBondData v => bondDataToJson(v),
+  IReserveData v => reserveDataToJson(v),
+  ICoreBonusData v => coreBonusDataToJson(v),
+  ITalentData v => talentDataToJson(v),
+  // IWeaponModData extiende IMechSystemData — su case debe ir antes, si no
+  // el switch nunca lo alcanzaría (coincidiría primero con el caso del
+  // tipo base).
+  IWeaponModData v => weaponModDataToJson(v),
+  IMechSystemData v => mechSystemDataToJson(v),
+  IPilotGearData v => pilotGearDataToJson(v),
+  IFrameData v => frameDataToJson(v),
+  INpcFeatureData v => npcFeatureDataToJson(v),
+  INpcClassData v => npcClassDataToJson(v),
+  INpcTemplateData v => npcTemplateDataToJson(v),
+  IEidolonLayerData v => eidolonLayerDataToJson(v),
+  _ => throw ArgumentError(
+    'Tipo de contenido sin mapeo JSON: ${item.runtimeType}',
+  ),
+};
