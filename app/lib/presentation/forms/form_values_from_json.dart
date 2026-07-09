@@ -53,6 +53,13 @@ void _hydrateField(
       _hydrateField(f.fieldFor(id), json, values);
       return;
 
+    // Grupo cuyos campos son hermanos directos en el JSON del contenedor
+    // (ver [GroupFieldSpec.inline]) — se recorre sobre el mismo `json`
+    // recibido, no sobre `json[jsonKey]`.
+    case GroupFieldSpec f when f.inline:
+      values[field.key] = formValuesFromJson(f.fields, json);
+      return;
+
     default:
       break;
   }

@@ -264,6 +264,19 @@ class MultiEnumFieldSpec<T> extends FieldSpec {
 /// (lista).
 class GroupFieldSpec extends FieldSpec {
   final List<FieldSpec> fields;
+
+  /// `true` cuando este grupo, en el JSON real, no vive envuelto bajo su
+  /// propia clave — sus campos son hermanos directos de los del
+  /// contenedor (ej. las 3 variantes de `IPilotGearData`/`INpcFeatureData`:
+  /// `description`/`tags`/... están al mismo nivel que `id`/`name`/`type`,
+  /// no bajo un objeto `weapon`). Solo afecta a Editar (`form_values_from
+  /// _json.dart`): cuando es `true`, el hydrator recorre este grupo sobre
+  /// el JSON del contenedor tal cual, en vez de buscarlo primero por
+  /// [FieldSpec.jsonKey]. El formulario/`GenericFormView` no cambia — ahí
+  /// este grupo se sigue anidando bajo su `key` igual que cualquier otro
+  /// (ver `_groupContext`), la diferencia es solo de lectura de JSON.
+  final bool inline;
+
   const GroupFieldSpec({
     required super.key,
     required super.label,
@@ -271,6 +284,7 @@ class GroupFieldSpec extends FieldSpec {
     super.helpText,
     super.jsonKey,
     required this.fields,
+    this.inline = false,
   });
 }
 

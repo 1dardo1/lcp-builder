@@ -333,17 +333,23 @@ ICoreSystemData _coreSystemFromGroup(Map<String, dynamic> group) =>
 FieldSpec _specialtyField() => const ShapeChoiceFieldSpec(
   key: 'specialty',
   label: 'Specialty',
+  branchFromJson: _specialtyBranchFromJson,
   options: [
     ShapeChoiceOption(
       value: 'bool',
       label: 'Oculta la licencia base',
-      field: BoolFieldSpec(key: 'specialty.bool', label: 'Specialty'),
+      field: BoolFieldSpec(
+        key: 'specialty.bool',
+        jsonKey: 'specialty',
+        label: 'Specialty',
+      ),
     ),
     ShapeChoiceOption(
       value: 'prerequisite',
       label: 'Condición de gating',
       field: GroupFieldSpec(
         key: 'specialty.prerequisite',
+        jsonKey: 'specialty',
         label: 'Prerequisite',
         fields: [
           TextFieldSpec(
@@ -368,6 +374,15 @@ FieldSpec _specialtyField() => const ShapeChoiceFieldSpec(
     ),
   ],
 );
+
+/// `specialty` es un bool o el objeto de `prerequisiteToJson` — la forma
+/// del propio valor ya dice qué rama es.
+String? _specialtyBranchFromJson(Map<String, dynamic> json) {
+  final raw = json['specialty'];
+  if (raw is bool) return 'bool';
+  if (raw is Map) return 'prerequisite';
+  return null;
+}
 
 Object? _specialtyFromValues(Map<String, dynamic> values) {
   final choice = values['specialty.choice'] as String?;
