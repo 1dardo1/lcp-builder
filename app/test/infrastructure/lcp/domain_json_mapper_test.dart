@@ -105,6 +105,53 @@ void main() {
     });
   });
 
+  group('lcpManifestDataFromJson', () {
+    test('lee los campos requeridos y deja los opcionales en null si no '
+        'están', () {
+      final manifest = lcpManifestDataFromJson({
+        'name': 'Paquete',
+        'author': 'Autor',
+        'description': 'desc',
+        'version': '1.0.0',
+      });
+
+      expect(manifest.name, 'Paquete');
+      expect(manifest.version, '1.0.0');
+      expect(manifest.dependencies, isNull);
+      expect(manifest.versionHistory, isNull);
+    });
+
+    test('roundtrip: toJson -> fromJson conserva todos los campos, '
+        'incluidos dependencies/version_history anidados', () {
+      final original = ILcpManifestData(
+        name: 'Paquete',
+        author: 'Autor',
+        description: 'desc',
+        version: '1.0.0',
+        imageUrl: 'https://example.com/img.png',
+        website: 'https://example.com',
+        v3: true,
+        dependencies: [
+          ILcpDependency(name: 'otro-paquete', version: SemverConstraint('1.2.3')),
+        ],
+        versionHistory: const [
+          IChangelogItem(version: '1.0.0', date: '2026-01-01', changes: ['Primera versión']),
+        ],
+      );
+
+      final roundtripped = lcpManifestDataFromJson(lcpManifestDataToJson(original));
+
+      expect(roundtripped.name, original.name);
+      expect(roundtripped.imageUrl, original.imageUrl);
+      expect(roundtripped.v3, isTrue);
+      expect(roundtripped.dependencies, hasLength(1));
+      expect(roundtripped.dependencies!.first.name, 'otro-paquete');
+      expect(roundtripped.dependencies!.first.version.value, '1.2.3');
+      expect(roundtripped.versionHistory, hasLength(1));
+      expect(roundtripped.versionHistory!.first.changes, ['Primera versión']);
+    });
+  });
+
   group('manufacturerDataToJson', () {
     test('mapea id/name y omite campos opcionales ausentes', () {
       final json = manufacturerDataToJson(
