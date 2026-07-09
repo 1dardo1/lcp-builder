@@ -33,9 +33,7 @@ void main() {
     expect(find.text('Crear arma'), findsOneWidget);
   });
 
-  testWidgets('Mostrar navega a la pantalla de "aún no implementado"', (
-    tester,
-  ) async {
+  testWidgets('Mostrar navega al menú de Mostrar', (tester) async {
     await tester.pumpWidget(
       wrapWithLocalization(
         HomeScreen(session: CrearSession(), localeController: LocaleController()),
@@ -45,7 +43,8 @@ void main() {
     await tester.tap(find.text('Mostrar'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Aún no se ha implementado.'), findsOneWidget);
+    expect(find.text('Abrir un .lcp'), findsOneWidget);
+    expect(find.text('Abrir una carpeta'), findsOneWidget);
   });
 
   testWidgets('Editar navega a la pantalla de "aún no implementado"', (
