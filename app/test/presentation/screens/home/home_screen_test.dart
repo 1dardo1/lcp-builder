@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/home/home_screen.dart';
 import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../../../support/test_app.dart';
 
@@ -11,7 +12,11 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        HomeScreen(session: CrearSession(), localeController: LocaleController()),
+        HomeScreen(
+          session: CrearSession(),
+          editSession: EditSession(),
+          localeController: LocaleController(),
+        ),
       ),
     );
 
@@ -23,7 +28,11 @@ void main() {
   testWidgets('Crear navega al menú de Crear', (tester) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        HomeScreen(session: CrearSession(), localeController: LocaleController()),
+        HomeScreen(
+          session: CrearSession(),
+          editSession: EditSession(),
+          localeController: LocaleController(),
+        ),
       ),
     );
 
@@ -36,7 +45,11 @@ void main() {
   testWidgets('Mostrar navega al menú de Mostrar', (tester) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        HomeScreen(session: CrearSession(), localeController: LocaleController()),
+        HomeScreen(
+          session: CrearSession(),
+          editSession: EditSession(),
+          localeController: LocaleController(),
+        ),
       ),
     );
 
@@ -47,18 +60,21 @@ void main() {
     expect(find.text('Abrir una carpeta'), findsOneWidget);
   });
 
-  testWidgets('Editar navega a la pantalla de "aún no implementado"', (
-    tester,
-  ) async {
+  testWidgets('Editar navega al menú de Editar', (tester) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        HomeScreen(session: CrearSession(), localeController: LocaleController()),
+        HomeScreen(
+          session: CrearSession(),
+          editSession: EditSession(),
+          localeController: LocaleController(),
+        ),
       ),
     );
 
     await tester.tap(find.text('Editar'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Aún no se ha implementado.'), findsOneWidget);
+    expect(find.text('Abrir un .lcp'), findsOneWidget);
+    expect(find.text('Abrir una carpeta'), findsOneWidget);
   });
 }

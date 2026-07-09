@@ -130,4 +130,26 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get editar => 'Edit';
+
+  @override
+  String get eliminar => 'Delete';
+
+  @override
+  String get confirmarEliminarTitulo => 'Delete entity';
+
+  @override
+  String get confirmarEliminarMensaje =>
+      'Are you sure you want to delete this entity? This action cannot be undone.';
+
+  @override
+  String get guardarCambios => 'Save changes';
+
+  @override
+  String get guardarLcp => 'Save .lcp';
+
+  @override
+  String get sinEntidades => 'No entities of this type left.';
 }

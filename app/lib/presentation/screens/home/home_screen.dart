@@ -3,22 +3,24 @@ import 'package:flutter/material.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/crear_session.dart';
+import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import '../crear/crear_menu_screen.dart';
+import '../editar/editar_menu_screen.dart';
 import '../mostrar/mostrar_menu_screen.dart';
-import '../no_implementado_screen.dart';
 
 /// Pantalla de inicio: las 3 fases del plan (ver ADR-003 — Crear →
-/// Mostrar/localizar → Editar/eliminar). "Crear" y "Mostrar" navegan a
-/// pantallas funcionales; "Editar" va a [NoImplementadoScreen] hasta que
-/// le toque su turno en el plan de fases.
+/// Mostrar/localizar → Editar/eliminar). Las 3 navegan ya a pantallas
+/// funcionales.
 class HomeScreen extends StatelessWidget {
   final CrearSession session;
+  final EditSession editSession;
   final LocaleController localeController;
 
   const HomeScreen({
     super.key,
     required this.session,
+    required this.editSession,
     required this.localeController,
   });
 
@@ -57,8 +59,8 @@ class HomeScreen extends StatelessWidget {
             title: Text(t.homeEditar),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => NoImplementadoScreen(
-                  title: t.homeEditar,
+                builder: (_) => EditarMenuScreen(
+                  session: editSession,
                   localeController: localeController,
                 ),
               ),

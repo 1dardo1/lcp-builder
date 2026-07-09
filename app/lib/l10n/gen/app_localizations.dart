@@ -271,6 +271,48 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'{count, plural, one{1 entidad} other{{count} entidades}}'**
   String tipoCount(int count);
+
+  /// No description provided for @editar.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get editar;
+
+  /// No description provided for @eliminar.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get eliminar;
+
+  /// No description provided for @confirmarEliminarTitulo.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar entidad'**
+  String get confirmarEliminarTitulo;
+
+  /// No description provided for @confirmarEliminarMensaje.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Seguro que quieres eliminar esta entidad? Esta acción no se puede deshacer.'**
+  String get confirmarEliminarMensaje;
+
+  /// No description provided for @guardarCambios.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar cambios'**
+  String get guardarCambios;
+
+  /// No description provided for @guardarLcp.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar .lcp'**
+  String get guardarLcp;
+
+  /// No description provided for @sinEntidades.
+  ///
+  /// In es, this message translates to:
+  /// **'No quedan entidades de este tipo.'**
+  String get sinEntidades;
 }
 
 class _AppLocalizationsDelegate

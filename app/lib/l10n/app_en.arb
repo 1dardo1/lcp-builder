@@ -28,5 +28,12 @@
   "carpetaSinLcp": "This folder has no .lcp files.",
   "campoFaltante": "Missing: {label}",
   "nElementos": "{count, plural, one{1 item} other{{count} items}}",
-  "tipoCount": "{count, plural, one{1 entity} other{{count} entities}}"
+  "tipoCount": "{count, plural, one{1 entity} other{{count} entities}}",
+  "editar": "Edit",
+  "eliminar": "Delete",
+  "confirmarEliminarTitulo": "Delete entity",
+  "confirmarEliminarMensaje": "Are you sure you want to delete this entity? This action cannot be undone.",
+  "guardarCambios": "Save changes",
+  "guardarLcp": "Save .lcp",
+  "sinEntidades": "No entities of this type left."
 }
