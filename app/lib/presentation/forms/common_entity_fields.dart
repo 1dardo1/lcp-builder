@@ -96,12 +96,14 @@ NumericOrFormulaValue? numericOrFormulaFromItem(
 FieldSpec damageSaveField() => const ShapeChoiceFieldSpec(
   key: 'save',
   label: 'Save',
+  branchFromJson: _damageSaveBranchFromJson,
   options: [
     ShapeChoiceOption(
       value: 'A',
       label: 'Texto',
       field: TextFieldSpec(
         key: 'save.a',
+        jsonKey: 'save',
         label: 'Save (texto libre)',
         helpText:
             'Texto de reglas tal cual aparece en la tarjeta, ej. "On a hit, '
@@ -113,6 +115,7 @@ FieldSpec damageSaveField() => const ShapeChoiceFieldSpec(
       label: 'Estructurado',
       field: GroupFieldSpec(
         key: 'save.b',
+        jsonKey: 'save',
         label: 'Save estructurado',
         fields: [
           TextFieldSpec(
@@ -129,6 +132,15 @@ FieldSpec damageSaveField() => const ShapeChoiceFieldSpec(
     ),
   ],
 );
+
+/// `save` es un string suelto o un objeto `{stat, aoe}` — la forma del
+/// propio valor ya dice qué rama es.
+String? _damageSaveBranchFromJson(Map<String, dynamic> json) {
+  final raw = json['save'];
+  if (raw is String) return 'A';
+  if (raw is Map) return 'B';
+  return null;
+}
 
 Object? damageSaveFromItem(Map<String, dynamic> item) {
   final choice = item['save.choice'] as String? ?? 'A';
@@ -148,12 +160,14 @@ Object? damageSaveFromItem(Map<String, dynamic> item) {
 FieldSpec aoeField() => const ShapeChoiceFieldSpec(
   key: 'aoe',
   label: 'AoE',
+  branchFromJson: _aoeBranchFromJson,
   options: [
     ShapeChoiceOption(
       value: 'A',
       label: 'Texto',
       field: TextFieldSpec(
         key: 'aoe.a',
+        jsonKey: 'aoe',
         label: 'AoE (texto)',
         helpText:
             'Forma del área de efecto, como aparece en la tarjeta — ej. '
@@ -163,10 +177,19 @@ FieldSpec aoeField() => const ShapeChoiceFieldSpec(
     ShapeChoiceOption(
       value: 'B',
       label: 'Sí/No',
-      field: BoolFieldSpec(key: 'aoe.b', label: 'AoE'),
+      field: BoolFieldSpec(key: 'aoe.b', jsonKey: 'aoe', label: 'AoE'),
     ),
   ],
 );
+
+/// `aoe` es un string o un bool directamente (`stringOrBoolToJson`) — la
+/// forma del propio valor ya dice qué rama es.
+String? _aoeBranchFromJson(Map<String, dynamic> json) {
+  final raw = json['aoe'];
+  if (raw is String) return 'A';
+  if (raw is bool) return 'B';
+  return null;
+}
 
 List<FieldSpec> damageItemFields() => [
   EnumFieldSpec<DamageType>(
@@ -333,9 +356,19 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
   label: 'Tipo',
   catalogIds: ResistanceKind.values,
   idLabel: (k) => k.name,
+  // El JSON no envuelve nada bajo una clave `resistance` — el id del
+  // catálogo es directamente la clave presente (`resist`/`vulnerability`/
+  // `immunity`, ver `resistanceDataToJson`), no un campo `id` aparte.
+  idFromJson: (json) {
+    for (final kind in ResistanceKind.values) {
+      if (json.containsKey(kind.name)) return kind;
+    }
+    return null;
+  },
   valueFieldFor: (k) => switch (k) {
     ResistanceKind.resist => EnumFieldSpec<ResistanceValue>(
       key: 'resistance.value',
+      jsonKey: 'resist',
       label: 'Resist',
       required: true,
       options: ResistanceValue.values,
@@ -344,6 +377,7 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
     ),
     ResistanceKind.vulnerability => EnumFieldSpec<ResistanceValue>(
       key: 'resistance.value',
+      jsonKey: 'vulnerability',
       label: 'Vulnerability',
       required: true,
       options: ResistanceValue.values,
@@ -352,14 +386,17 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
     ),
     ResistanceKind.immunity => const ShapeChoiceFieldSpec(
       key: 'resistance.value',
+      jsonKey: 'immunity',
       label: 'Immunity',
       required: true,
+      branchFromJson: _immunityBranchFromJson,
       options: [
         ShapeChoiceOption(
           value: 'A',
           label: 'Valor conocido',
           field: EnumFieldSpec<ResistanceValue>(
             key: 'resistance.value.a',
+            jsonKey: 'immunity',
             label: 'Valor',
             options: ResistanceValue.values,
             displayLabel: resistanceValueLabel,
@@ -371,6 +408,7 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
           label: 'ID de status/condition',
           field: TextFieldSpec(
             key: 'resistance.value.b',
+            jsonKey: 'immunity',
             label: 'ID',
             helpText:
                 'El ID del status/condition al que es inmune, no su nombre.',
@@ -384,6 +422,16 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
 String resistanceValueLabel(ResistanceValue v) => v.name;
 
 ResistanceValue resistanceValueFromJson(String v) => ResistanceValue.values.byName(v);
+
+/// `immunity` es el nombre de un `ResistanceValue` conocido o un id de
+/// status/condition arbitrario — ambos son strings, así que a diferencia
+/// de `aoe`/`save` la forma no basta: hay que comprobar si el valor
+/// coincide con uno de los nombres conocidos (ver `immunityValueToJson`).
+String? _immunityBranchFromJson(Map<String, dynamic> json) {
+  final raw = json['immunity'] as String?;
+  if (raw == null) return null;
+  return ResistanceValue.values.asNameMap().containsKey(raw) ? 'A' : 'B';
+}
 
 List<FieldSpec> resistanceItemFields() => [
   resistanceCatalogField(),
@@ -846,22 +894,37 @@ IActionData actionFromItem(Map<String, dynamic> item) {
 
 // --- Sección 4: IBonusData (con todos sus filtros, no solo id/val) ---
 
+final _bonusIdByJsonValue = {
+  for (final id in BonusId.values) id.jsonValue: id,
+};
+
 FieldSpec bonusCatalogField() => CatalogFieldSpec<BonusId>(
   key: 'bonus',
   label: 'Bonus',
   catalogIds: BonusId.values,
   idLabel: (id) => id.jsonValue,
+  // A diferencia de `resistance`/`otherEffect`, aquí sí hay un campo `id`
+  // real (ver `bonusDataToJson`) — no hay que adivinar la clave presente.
+  idFromJson: (json) => _bonusIdByJsonValue[json['id']],
   valueFieldFor: (id) => switch (id.valueKind) {
-    BonusValueKind.numericOrFormula => const ShapeChoiceFieldSpec(
+    BonusValueKind.numericOrFormula => ShapeChoiceFieldSpec(
       key: 'bonus.value',
+      jsonKey: 'val',
       label: 'Valor',
       required: true,
-      options: [
+      branchFromJson: (json) {
+        final raw = json['val'];
+        if (raw is num) return 'A';
+        if (raw is String) return 'B';
+        return null;
+      },
+      options: const [
         ShapeChoiceOption(
           value: 'A',
           label: 'Número',
           field: NumberFieldSpec(
             key: 'bonus.value.a',
+            jsonKey: 'val',
             label: 'Número',
             allowDecimal: true,
           ),
@@ -871,6 +934,7 @@ FieldSpec bonusCatalogField() => CatalogFieldSpec<BonusId>(
           label: 'Fórmula',
           field: TextFieldSpec(
             key: 'bonus.value.b',
+            jsonKey: 'val',
             label: 'Fórmula (ej. {grit}+2)',
             helpText:
                 'Fórmula en vez de número fijo — usa llaves para referirte a '
@@ -881,8 +945,17 @@ FieldSpec bonusCatalogField() => CatalogFieldSpec<BonusId>(
     ),
     BonusValueKind.boolean => const BoolFieldSpec(
       key: 'bonus.value',
+      jsonKey: 'val',
       label: 'Activo',
     ),
+    // dieRollList/mountAssignment/unverified quedan sin jsonKey a
+    // propósito: el formulario los representa como un único string (una
+    // progresión separada por comas, o "tipo:max"), pero el JSON real es
+    // una lista (`dieRollToJson`) o un objeto `{mount_type, max_mounts}`
+    // (`mountAssignmentToJson`) — asignárselo tal cual a un TextFieldSpec
+    // rompería el campo en vez de precargarlo. Necesitan una conversión
+    // de forma que el hydrator genérico todavía no sabe hacer (ver
+    // conversación pendiente).
     BonusValueKind.dieRollList => const TextFieldSpec(
       key: 'bonus.value',
       label: 'Progresión, separada por comas (ej. 1d6, 1d6+1d8, 2d6+1d10)',
@@ -1197,12 +1270,12 @@ List<FieldSpec> deployableItemFields() => [
   numericOrFormulaField('edef', 'E-Defense'),
   numericOrFormulaField('heatcap', 'Heat cap'),
   numericOrFormulaField('repcap', 'Repair cap'),
-  numericOrFormulaField('sensorRange', 'Sensor range'),
-  numericOrFormulaField('techAttack', 'Tech attack'),
+  numericOrFormulaField('sensorRange', 'Sensor range', jsonKey: 'sensor_range'),
+  numericOrFormulaField('techAttack', 'Tech attack', jsonKey: 'tech_attack'),
   numericOrFormulaField('save', 'Save'),
   numericOrFormulaField('speed', 'Speed'),
   numericOrFormulaField('grapple', 'Grapple'),
-  numericOrFormulaField('attackBonus', 'Attack bonus'),
+  numericOrFormulaField('attackBonus', 'Attack bonus', jsonKey: 'attack_bonus'),
   ListFieldSpec(key: 'damage', label: 'Daño', itemFields: damageItemFields()),
   ListFieldSpec(key: 'range', label: 'Alcance', itemFields: rangeItemFields()),
   ListFieldSpec(

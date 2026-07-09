@@ -146,6 +146,7 @@ FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
   jsonKey: 'type',
   label: 'Tipo de feature',
   required: true,
+  branchFromJson: (json) => json['type'] as String?,
   options: [
     const ShapeChoiceOption(value: 'trait', label: 'Trait'),
     const ShapeChoiceOption(value: 'system', label: 'System'),
@@ -155,6 +156,7 @@ FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
       field: GroupFieldSpec(
         key: 'kind.reaction',
         label: 'Datos de reaction',
+        inline: true,
         fields: [
           TextFieldSpec(
             key: 'trigger',
@@ -170,6 +172,7 @@ FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
       field: GroupFieldSpec(
         key: 'kind.tech',
         label: 'Datos de tech',
+        inline: true,
         fields: [
           tierValueField('attackBonus', 'Attack bonus'),
           tierValueField('accuracy', 'Accuracy'),
@@ -182,6 +185,7 @@ FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
       field: GroupFieldSpec(
         key: 'kind.weapon',
         label: 'Datos de weapon',
+        inline: true,
         fields: [
           const TextFieldSpec(
             key: 'weaponType',

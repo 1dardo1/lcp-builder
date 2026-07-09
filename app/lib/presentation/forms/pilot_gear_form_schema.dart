@@ -142,6 +142,10 @@ List<FieldSpec> buildPilotGearFormSchema() => [
     jsonKey: 'type',
     label: 'Tipo de gear',
     required: true,
+    // El JSON trae "Weapon"/"Armor"/"Gear" (case-sensitive, ver
+    // `pilotGearDataToJson`); las ramas del formulario usan la versión en
+    // minúsculas.
+    branchFromJson: (json) => (json['type'] as String?)?.toLowerCase(),
     options: [
       ShapeChoiceOption(
         value: 'weapon',
@@ -149,6 +153,9 @@ List<FieldSpec> buildPilotGearFormSchema() => [
         field: GroupFieldSpec(
           key: 'kind.weapon',
           label: 'Datos del arma de piloto',
+          // Los campos de cada variante son hermanos de id/name/type en
+          // el JSON, no van bajo una clave "weapon"/"armor"/"gear".
+          inline: true,
           fields: _pilotWeaponFields(),
         ),
       ),
@@ -158,6 +165,7 @@ List<FieldSpec> buildPilotGearFormSchema() => [
         field: GroupFieldSpec(
           key: 'kind.armor',
           label: 'Datos de la armadura de piloto',
+          inline: true,
           fields: _pilotArmorOrGearFields(),
         ),
       ),
@@ -167,6 +175,7 @@ List<FieldSpec> buildPilotGearFormSchema() => [
         field: GroupFieldSpec(
           key: 'kind.gear',
           label: 'Datos del gear de piloto',
+          inline: true,
           fields: _pilotArmorOrGearFields(),
         ),
       ),
