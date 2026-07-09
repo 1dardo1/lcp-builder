@@ -3,7 +3,9 @@ package com.example.lcp_builder
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
+import android.system.Os
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -160,6 +162,11 @@ class MainActivity : FlutterActivity() {
             // application/zip...) — filtrar por tipo aquí arriesgaría
             // excluir el propio archivo que el usuario quiere abrir.
             type = "*/*"
+            // Editar necesita escribir de vuelta en el mismo documento
+            // (a diferencia de Mostrar, que solo lee) — pedirlo aquí,
+            // antes de lanzar el selector, es lo que hace que la URI que
+            // devuelva tenga de verdad permiso de escritura concedido.
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         }
         try {
             startActivityForResult(intent, openDocumentRequestCode)
@@ -169,12 +176,36 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    /**
+     * Escribe [bytes] en [uriString], sustituyendo el contenido anterior
+     * por completo. No basta con el modo `"wt"` de
+     * `ContentResolver.openOutputStream` (que en teoría ya trunca antes
+     * de escribir): algunos proveedores de documentos no lo respetan del
+     * todo, y si el contenido nuevo es más corto que el anterior quedan
+     * bytes viejos al final del archivo — que para un `.zip` (formato de
+     * `.lcp`) corrompe justo el directorio central del final, haciendo
+     * que `lcp_manifest.json` deje de encontrarse al releer. Se trunca
+     * explícitamente vía `Os.ftruncate` (la propia syscall POSIX, no
+     * sujeta a cómo cada proveedor interprete la cadena de modo) antes de
+     * escribir, como refuerzo.
+     */
     private fun writeBytes(uriString: String, bytes: ByteArray, result: MethodChannel.Result) {
         try {
             val uri = Uri.parse(uriString)
-            val stream = contentResolver.openOutputStream(uri, "wt")
+            val pfd = contentResolver.openFileDescriptor(uri, "rwt")
                 ?: throw IllegalStateException("No se pudo abrir el destino para escritura")
-            stream.use { it.write(bytes) }
+            pfd.use {
+                try {
+                    Os.ftruncate(it.fileDescriptor, 0)
+                } catch (e: Exception) {
+                    // Si el descriptor no soporta ftruncate, seguimos con
+                    // el truncado que ya pide el propio modo "rwt" —
+                    // mejor esfuerzo, no bloqueante.
+                }
+                ParcelFileDescriptor.AutoCloseOutputStream(it).use { stream ->
+                    stream.write(bytes)
+                }
+            }
             result.success(null)
         } catch (e: Exception) {
             result.error("write_failed", e.message, null)
