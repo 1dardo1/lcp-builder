@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../application/use_cases/crear_contenido_use_case.dart';
 import '../../domain/domain.dart';
-import '../../infrastructure/file_system/local_file_writer.dart';
+import '../../infrastructure/file_system/platform_file_writer.dart';
 import '../../infrastructure/lcp/zip_content_pack_exporter.dart';
 import '../platform/lcp_save_location.dart';
 import 'crear_session.dart';
@@ -67,7 +67,7 @@ Future<void> finalizarLcp(
       useCase ??
       CrearContenidoUseCase(
         exporter: ZipContentPackExporter(),
-        fileWriter: LocalFileWriter(),
+        fileWriter: createPlatformFileWriter(),
       );
 
   try {
