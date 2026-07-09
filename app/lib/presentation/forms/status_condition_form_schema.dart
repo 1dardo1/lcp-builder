@@ -43,7 +43,7 @@ List<FieldSpec> buildStatusConditionFormSchema() => [
   ),
   const TextFieldSpec(
     key: 'iconSvg',
-    jsonKey: 'icon_svg',
+    jsonKey: 'svg',
     label: 'Icono (SVG)',
     helpText: 'Contenido SVG del icono. Opcional.',
   ),

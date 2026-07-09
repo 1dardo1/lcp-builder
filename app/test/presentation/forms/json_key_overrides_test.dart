@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/forms/field_spec.dart';
 import 'package:lcp_builder/presentation/forms/frame_form_schema.dart';
+import 'package:lcp_builder/presentation/forms/manufacturer_form_schema.dart';
 import 'package:lcp_builder/presentation/forms/npc_feature_form_schema.dart';
 import 'package:lcp_builder/presentation/forms/pilot_gear_form_schema.dart';
+import 'package:lcp_builder/presentation/forms/status_condition_form_schema.dart';
 import 'package:lcp_builder/presentation/forms/weapon_form_schema.dart';
 
 /// Busca un [FieldSpec] por `key` en cualquier profundidad del árbol
@@ -62,4 +64,26 @@ void main() {
     final fields = buildNpcFeatureFormSchema();
     expect(_findByKey(fields, 'kind').jsonKey, 'type');
   });
+
+  test(
+    'manufacturer: iconSvg/iconUrl usan jsonKey "svg"/"logo_url" — la spec '
+    'real de COMP/CON (IManufacturerData en Manufacturer.ts) no usa '
+    '"icon_svg"/"icon_url" pese a que así lo documentaba el vault; '
+    'verificado contra el código fuente real de massif-press/compcon, no '
+    'solo la Wiki',
+    () {
+      final fields = buildManufacturerFormSchema();
+      expect(_findByKey(fields, 'iconSvg').jsonKey, 'svg');
+      expect(_findByKey(fields, 'iconUrl').jsonKey, 'logo_url');
+    },
+  );
+
+  test(
+    'statusCondition: iconSvg usa jsonKey "svg" — mismo motivo que '
+    'manufacturer (IStatusData.svg en Status.ts)',
+    () {
+      final fields = buildStatusConditionFormSchema();
+      expect(_findByKey(fields, 'iconSvg').jsonKey, 'svg');
+    },
+  );
 }
