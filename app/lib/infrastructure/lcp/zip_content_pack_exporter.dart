@@ -11,10 +11,10 @@ import 'domain_json_mapper.dart';
 /// `lcp_manifest.json` y un archivo por tipo de contenido, tal como lo
 /// espera COMP/CON.
 ///
-/// Aquí (y solo aquí, en infraestructura) se conoce el tipo concreto de
-/// cada entidad y cómo mapearla a JSON — el puerto (`ContentPackExporter`)
-/// no lo sabe, por eso `content` llega como `Object` y se despacha en
-/// tiempo de ejecución con un `switch` sobre el tipo real.
+/// El puerto (`ContentPackExporter`) no conoce el tipo concreto de cada
+/// entidad, por eso `content` llega como `Object` — el despacho por tipo
+/// runtime vive en `entityDataToJson` (`domain_json_mapper.dart`),
+/// compartido con el guardado de Editar.
 class ZipContentPackExporter implements ContentPackExporter {
   @override
   List<int> export({
@@ -32,38 +32,12 @@ class ZipContentPackExporter implements ContentPackExporter {
 
     addJsonFile('lcp_manifest.json', lcpManifestDataToJson(manifest));
     for (final entry in content.entries) {
-      addJsonFile('${entry.key}.json', entry.value.map(_toJson).toList());
+      addJsonFile(
+        '${entry.key}.json',
+        entry.value.map(entityDataToJson).toList(),
+      );
     }
 
     return ZipEncoder().encode(archive);
   }
-
-  Object _toJson(Object item) => switch (item) {
-    IWeaponData v => weaponDataToJson(v),
-    IManufacturerData v => manufacturerDataToJson(v),
-    ITagData v => tagDataToJson(v),
-    ISkillData v => skillDataToJson(v),
-    IStatusConditionData v => statusConditionDataToJson(v),
-    ISitrepData v => sitrepDataToJson(v),
-    IEnvironmentData v => environmentDataToJson(v),
-    IBackgroundData v => backgroundDataToJson(v),
-    IBondData v => bondDataToJson(v),
-    IReserveData v => reserveDataToJson(v),
-    ICoreBonusData v => coreBonusDataToJson(v),
-    ITalentData v => talentDataToJson(v),
-    // IWeaponModData extiende IMechSystemData — su case debe ir antes, si
-    // no el switch nunca lo alcanzaría (coincidiría primero con el caso
-    // del tipo base).
-    IWeaponModData v => weaponModDataToJson(v),
-    IMechSystemData v => mechSystemDataToJson(v),
-    IPilotGearData v => pilotGearDataToJson(v),
-    IFrameData v => frameDataToJson(v),
-    INpcFeatureData v => npcFeatureDataToJson(v),
-    INpcClassData v => npcClassDataToJson(v),
-    INpcTemplateData v => npcTemplateDataToJson(v),
-    IEidolonLayerData v => eidolonLayerDataToJson(v),
-    _ => throw ArgumentError(
-      'Tipo de contenido sin mapeo JSON: ${item.runtimeType}',
-    ),
-  };
 }
