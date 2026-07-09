@@ -400,6 +400,48 @@ Map<String, dynamic> lcpManifestDataToJson(ILcpManifestData v) => _clean({
   'version_history': _list(v.versionHistory, changelogItemToJson),
 });
 
+// --- Lectura (Mostrar) ---
+//
+// Único `fromJson` de todo este archivo por ahora: Mostrar necesita el
+// manifest tipado (nombre del paquete, autor...) para las pantallas de
+// listado, pero el contenido por tipo de entidad (armas, frames...) se
+// queda en JSON crudo — no hace falta reconstruir los 24 tipos de
+// dominio solo para pintarlos en pantalla, ver
+// `infrastructure/lcp/zip_content_pack_reader.dart`.
+
+IChangelogItem changelogItemFromJson(Map<String, dynamic> json) =>
+    IChangelogItem(
+      version: json['version'] as String,
+      date: json['date'] as String,
+      changes: (json['changes'] as List).cast<String>(),
+    );
+
+ILcpDependency lcpDependencyFromJson(Map<String, dynamic> json) =>
+    ILcpDependency(
+      name: json['name'] as String,
+      version: SemverConstraint(json['version'] as String),
+      link: json['link'] as String?,
+    );
+
+ILcpManifestData lcpManifestDataFromJson(Map<String, dynamic> json) =>
+    ILcpManifestData(
+      name: json['name'] as String,
+      author: json['author'] as String,
+      description: json['description'] as String,
+      version: json['version'] as String,
+      imageUrl: json['image_url'] as String?,
+      website: json['website'] as String?,
+      dependencies: (json['dependencies'] as List?)
+          ?.cast<Map<String, dynamic>>()
+          .map(lcpDependencyFromJson)
+          .toList(),
+      v3: json['v3'] as bool?,
+      versionHistory: (json['version_history'] as List?)
+          ?.cast<Map<String, dynamic>>()
+          .map(changelogItemFromJson)
+          .toList(),
+    );
+
 // --- Sección 13.1 (Manufacturers) ---
 
 Map<String, dynamic> manufacturerDataToJson(IManufacturerData v) => _clean({
