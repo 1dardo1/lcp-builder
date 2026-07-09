@@ -35,12 +35,24 @@ sealed class FieldSpec {
   /// (vive en la clase base), no solo en campos de texto.
   final String? helpText;
 
+  /// Nombre real del campo en el JSON del `.lcp` — usado por Mostrar
+  /// (`GenericFormView`/Crear no lo necesita, solo escribe). Por defecto
+  /// es igual a [key], que cubre la mayoría de campos; se sobreescribe
+  /// explícitamente solo donde de verdad difieren (ej. `key: 'licenseId'`
+  /// pero `jsonKey: 'license_id'`) — ver `domain_json_mapper.dart` para
+  /// los nombres reales. En un [ShapeChoiceFieldSpec], [jsonKey] es la
+  /// única clave real (sus ramas, ej. `type.a`/`type.b`, son puramente
+  /// internas al formulario y nunca aparecen así en el JSON — Mostrar no
+  /// debe recorrerlas).
+  final String jsonKey;
+
   const FieldSpec({
     required this.key,
     required this.label,
     this.required = false,
     this.helpText,
-  });
+    String? jsonKey,
+  }) : jsonKey = jsonKey ?? key;
 }
 
 class TextFieldSpec extends FieldSpec {
@@ -66,6 +78,7 @@ class TextFieldSpec extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
     this.maxLines = 1,
     this.referenceEntityKey,
     this.referenceLabel,
@@ -79,6 +92,7 @@ class NumberFieldSpec extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
     this.allowDecimal = false,
   });
 }
@@ -89,6 +103,7 @@ class BoolFieldSpec extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
   });
 }
 
@@ -102,6 +117,7 @@ class EnumFieldSpec<T> extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
     required this.options,
     required this.displayLabel,
   });
@@ -142,6 +158,7 @@ class ShapeChoiceFieldSpec extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
     required this.options,
   });
 }
@@ -156,6 +173,7 @@ class PatternTextFieldSpec extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
     required this.pattern,
     required this.patternHint,
   });
@@ -170,6 +188,7 @@ class ListFieldSpec extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
     required this.itemFields,
   });
 }
@@ -187,6 +206,7 @@ class MultiEnumFieldSpec<T> extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
     required this.options,
     required this.displayLabel,
   });
@@ -212,6 +232,7 @@ class GroupFieldSpec extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
     required this.fields,
   });
 }
@@ -235,6 +256,7 @@ class CatalogFieldSpec<TId> extends FieldSpec {
     required super.label,
     super.required,
     super.helpText,
+    super.jsonKey,
     required this.catalogIds,
     required this.idLabel,
     required this.valueFieldFor,
