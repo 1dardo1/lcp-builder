@@ -229,7 +229,7 @@ const _weaponTypeField = ShapeChoiceFieldSpec(
 
 String _weaponTypeLabel(WeaponType t) => t.jsonValue;
 
-WeaponType _weaponTypeFromJson(String v) =>
+WeaponType _weaponTypeFromJson(dynamic v) =>
     WeaponType.values.firstWhere((t) => t.jsonValue == v);
 
 /// `type` es un único `WeaponType` (string) o una lista — la propia forma

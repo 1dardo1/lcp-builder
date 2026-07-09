@@ -23,21 +23,38 @@ import 'npc_feature_form_schema.dart';
 /// razonable pendiente de verificar contra un LCP real si el cliente usa
 /// el suplemento de Eidolons (contenido condicionado, ver vault MdD §15.3).
 
+/// `eidolonShardCountToJson`: el literal `'hostile_characters'`, un
+/// número suelto, o un array de 3 — la forma del propio valor ya dice la
+/// rama.
+String? _shardCountBranchFromJson(Map<String, dynamic> json) {
+  final raw = json['count'];
+  if (raw == 'hostile_characters') return 'hostile';
+  if (raw is List) return 'perTier';
+  if (raw is num) return 'single';
+  return null;
+}
+
 FieldSpec _shardCountField() => const ShapeChoiceFieldSpec(
   key: 'count',
   label: 'Shard count',
   required: true,
+  branchFromJson: _shardCountBranchFromJson,
   options: [
     ShapeChoiceOption(
       value: 'single',
       label: 'Único (los 3 tiers)',
-      field: NumberFieldSpec(key: 'count.single', label: 'Nº de shards'),
+      field: NumberFieldSpec(
+        key: 'count.single',
+        jsonKey: 'count',
+        label: 'Nº de shards',
+      ),
     ),
     ShapeChoiceOption(
       value: 'perTier',
       label: 'Por tier',
       field: GroupFieldSpec(
         key: 'count.perTier',
+        jsonKey: 'count',
         label: 'Nº de shards por tier',
         fields: [
           NumberFieldSpec(key: 'tier1', label: 'Tier 1', required: true),

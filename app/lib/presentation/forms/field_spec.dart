@@ -231,8 +231,11 @@ class MultiEnumFieldSpec<T> extends FieldSpec {
   final String Function(T) displayLabel;
 
   /// Mismo motivo y mismo criterio de "nullable mientras se audita" que
-  /// [EnumFieldSpec.fromJsonValue].
-  final T Function(String)? fromJsonValue;
+  /// [EnumFieldSpec.fromJsonValue]. Recibe `dynamic`, no `String` — la
+  /// mayoría de usos parsean un string (`jsonValue`/`.name`), pero
+  /// `NpcSize` (caso 6) guarda directamente números crudos en su array
+  /// (ver `npcSizeField`), sin ningún string que parsear.
+  final T Function(dynamic)? fromJsonValue;
 
   const MultiEnumFieldSpec({
     required super.key,
@@ -250,7 +253,7 @@ class MultiEnumFieldSpec<T> extends FieldSpec {
   String labelFor(dynamic value) => displayLabel(value as T);
 
   /// Mismo motivo que [EnumFieldSpec.valueFromJson].
-  dynamic valueFromJson(String raw) => fromJsonValue?.call(raw);
+  dynamic valueFromJson(dynamic raw) => fromJsonValue?.call(raw);
 }
 
 /// Sub-formulario de forma fija (ej. `IEffectSaveData` = `stat` + `aoe`):

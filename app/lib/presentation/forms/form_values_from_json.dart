@@ -80,16 +80,18 @@ void _hydrateField(
 
     case MultiEnumFieldSpec f:
       final parsed = (raw as List)
-          .map((v) => f.valueFromJson(v as String))
+          .map((v) => f.valueFromJson(v))
           .where((v) => v != null)
           .toList();
       if (parsed.isNotEmpty) values[field.key] = parsed;
 
     case GroupFieldSpec f:
-      values[field.key] = formValuesFromJson(
-        f.fields,
-        raw as Map<String, dynamic>,
-      );
+      values[field.key] = raw is List
+          // Caso 6 (TierValue.perTier/NpcSize): el JSON es un array
+          // posicional, no un objeto — cada posición corresponde al campo
+          // de [f.fields] en el mismo índice, no a una clave con nombre.
+          ? _hydratePositionalGroup(f.fields, raw)
+          : formValuesFromJson(f.fields, raw as Map<String, dynamic>);
 
     case ListFieldSpec f:
       values[field.key] = [
@@ -101,4 +103,22 @@ void _hydrateField(
     case CatalogFieldSpec():
       break; // ya resueltos arriba, inalcanzable aquí.
   }
+}
+
+/// Hidrata un [GroupFieldSpec] cuyo JSON es un array posicional (ej.
+/// `[4, 6, 8]` para `tier1`/`tier2`/`tier3`) en vez de un objeto con
+/// nombres de clave — cada campo de [fields] lee de `raw[i]`, no de
+/// `raw[field.jsonKey]`. Envuelve cada posición en un mapa de una sola
+/// clave (la propia `jsonKey` del campo) para poder reutilizar
+/// [_hydrateField] sin duplicar su lógica por tipo de campo.
+Map<String, dynamic> _hydratePositionalGroup(
+  List<FieldSpec> fields,
+  List<dynamic> raw,
+) {
+  final values = <String, dynamic>{};
+  for (var i = 0; i < fields.length && i < raw.length; i++) {
+    final field = fields[i];
+    _hydrateField(field, {field.jsonKey: raw[i]}, values);
+  }
+  return values;
 }
