@@ -42,6 +42,7 @@ List<FieldSpec> _ammoItemFields() => [
     label: 'Tipos permitidos (vacío = todos)',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
+    fromJsonValue: (s) => WeaponType.values.firstWhere((t) => t.jsonValue == s),
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'allowedSizes',
@@ -49,6 +50,7 @@ List<FieldSpec> _ammoItemFields() => [
     label: 'Tamaños permitidos (vacío = todos)',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,
+    fromJsonValue: (s) => WeaponSize.values.firstWhere((w) => w.jsonValue == s),
   ),
   MultiEnumFieldSpec<WeaponType>(
     key: 'restrictedTypes',
@@ -56,6 +58,7 @@ List<FieldSpec> _ammoItemFields() => [
     label: 'Tipos restringidos',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
+    fromJsonValue: (s) => WeaponType.values.firstWhere((t) => t.jsonValue == s),
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'restrictedSizes',
@@ -63,6 +66,7 @@ List<FieldSpec> _ammoItemFields() => [
     label: 'Tamaños restringidos',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,
+    fromJsonValue: (s) => WeaponSize.values.firstWhere((w) => w.jsonValue == s),
   ),
 ];
 
@@ -203,6 +207,7 @@ const _weaponTypeField = ShapeChoiceFieldSpec(
         label: 'Tipo',
         options: WeaponType.values,
         displayLabel: _weaponTypeLabel,
+        fromJsonValue: _weaponTypeFromJson,
       ),
     ),
     ShapeChoiceOption(
@@ -213,12 +218,16 @@ const _weaponTypeField = ShapeChoiceFieldSpec(
         label: 'Tipos',
         options: WeaponType.values,
         displayLabel: _weaponTypeLabel,
+        fromJsonValue: _weaponTypeFromJson,
       ),
     ),
   ],
 );
 
 String _weaponTypeLabel(WeaponType t) => t.jsonValue;
+
+WeaponType _weaponTypeFromJson(String v) =>
+    WeaponType.values.firstWhere((t) => t.jsonValue == v);
 
 Object _weaponTypeFromValues(Map<String, dynamic> values) {
   final choice = values['type.choice'] as String? ?? 'A';
@@ -312,6 +321,7 @@ List<FieldSpec> buildWeaponFormSchema() => [
     required: true,
     options: MountType.values,
     displayLabel: (m) => m.jsonValue,
+    fromJsonValue: (s) => MountType.values.firstWhere((m) => m.jsonValue == s),
     helpText:
         'El tipo de mount que ocupa el arma en el frame (Main, Heavy, '
         'Aux, Flex...). Determina en qué hueco del mech se puede instalar.',

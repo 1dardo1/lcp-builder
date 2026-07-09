@@ -25,6 +25,7 @@ List<FieldSpec> buildStatusConditionFormSchema() => [
     required: true,
     options: StatusConditionType.values,
     displayLabel: (t) => t.name,
+    fromJsonValue: (s) => StatusConditionType.values.byName(s),
   ),
   const TextFieldSpec(
     key: 'effects',
@@ -57,6 +58,7 @@ List<FieldSpec> buildStatusConditionFormSchema() => [
     label: 'Restringido a (opcional)',
     options: ExclusiveTarget.values,
     displayLabel: (t) => t.name,
+    fromJsonValue: (s) => ExclusiveTarget.values.byName(s),
   ),
 ];
 

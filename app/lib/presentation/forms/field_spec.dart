@@ -112,6 +112,17 @@ class BoolFieldSpec extends FieldSpec {
 class EnumFieldSpec<T> extends FieldSpec {
   final List<T> options;
   final String Function(T) displayLabel;
+
+  /// Inverso de [displayLabel] pero para el valor real del `.lcp`, no para
+  /// la etiqueta de UI: dado el string que hay en el JSON (ej. `"Heavy"`),
+  /// devuelve la instancia de [T] de [options] que le corresponde — lo
+  /// necesita Editar para precargar el formulario de Crear con datos ya
+  /// escritos (ver `form_values_from_json.dart`). Nullable y por defecto
+  /// `null` mientras se audita entidad por entidad (mismo criterio que
+  /// [FieldSpec.jsonKey] al principio) — un campo sin rellenar aquí
+  /// significa que Editar no puede precargarlo todavía.
+  final T Function(String)? fromJsonValue;
+
   const EnumFieldSpec({
     required super.key,
     required super.label,
@@ -120,6 +131,7 @@ class EnumFieldSpec<T> extends FieldSpec {
     super.jsonKey,
     required this.options,
     required this.displayLabel,
+    this.fromJsonValue,
   });
 
   /// El motor genérico solo conoce `FieldSpec` (sin el argumento de tipo
@@ -127,6 +139,10 @@ class EnumFieldSpec<T> extends FieldSpec {
   /// perder T por variance. Este método sí puede — T está fijado en el
   /// propio objeto desde su construcción, no en el punto de llamada.
   String labelFor(dynamic value) => displayLabel(value as T);
+
+  /// Mismo motivo que [labelFor], para la dirección inversa. `null` si
+  /// [fromJsonValue] todavía no se ha rellenado para este campo.
+  dynamic valueFromJson(String raw) => fromJsonValue?.call(raw);
 }
 
 /// Una rama de un [ShapeChoiceFieldSpec]: `value` es el identificador
@@ -201,6 +217,11 @@ class ListFieldSpec extends FieldSpec {
 class MultiEnumFieldSpec<T> extends FieldSpec {
   final List<T> options;
   final String Function(T) displayLabel;
+
+  /// Mismo motivo y mismo criterio de "nullable mientras se audita" que
+  /// [EnumFieldSpec.fromJsonValue].
+  final T Function(String)? fromJsonValue;
+
   const MultiEnumFieldSpec({
     required super.key,
     required super.label,
@@ -209,11 +230,15 @@ class MultiEnumFieldSpec<T> extends FieldSpec {
     super.jsonKey,
     required this.options,
     required this.displayLabel,
+    this.fromJsonValue,
   });
 
   /// Mismo motivo que [EnumFieldSpec.labelFor] — evita el problema de
   /// variance de funciones al invocar desde el motor genérico.
   String labelFor(dynamic value) => displayLabel(value as T);
+
+  /// Mismo motivo que [EnumFieldSpec.valueFromJson].
+  dynamic valueFromJson(String raw) => fromJsonValue?.call(raw);
 }
 
 /// Sub-formulario de forma fija (ej. `IEffectSaveData` = `stat` + `aoe`):

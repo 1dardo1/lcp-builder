@@ -159,6 +159,7 @@ List<FieldSpec> damageItemFields() => [
     required: true,
     options: DamageType.values,
     displayLabel: (d) => d.jsonValue,
+    fromJsonValue: (s) => DamageType.values.firstWhere((d) => d.jsonValue == s),
   ),
   PatternTextFieldSpec(
     key: 'val',
@@ -180,6 +181,7 @@ List<FieldSpec> damageItemFields() => [
     label: 'Target',
     options: TargetType.values,
     displayLabel: (t) => t.name,
+    fromJsonValue: (s) => TargetType.values.byName(s),
   ),
 ];
 
@@ -210,6 +212,7 @@ List<FieldSpec> rangeItemFields() => [
     required: true,
     options: RangeType.values,
     displayLabel: (r) => r.jsonValue,
+    fromJsonValue: (s) => RangeType.values.firstWhere((r) => r.jsonValue == s),
   ),
   PatternTextFieldSpec(
     key: 'val',
@@ -265,6 +268,7 @@ List<FieldSpec> statusEffectItemFields() => [
     label: 'Save (stat)',
     options: MechStat.values,
     displayLabel: (s) => s.name,
+    fromJsonValue: (s) => MechStat.values.byName(s),
   ),
   aoeField(),
   EnumFieldSpec<TargetType>(
@@ -272,6 +276,7 @@ List<FieldSpec> statusEffectItemFields() => [
     label: 'Target',
     options: TargetType.values,
     displayLabel: (t) => t.name,
+    fromJsonValue: (s) => TargetType.values.byName(s),
   ),
 ];
 
@@ -319,6 +324,7 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
       required: true,
       options: ResistanceValue.values,
       displayLabel: (v) => v.name,
+      fromJsonValue: (s) => ResistanceValue.values.byName(s),
     ),
     ResistanceKind.vulnerability => EnumFieldSpec<ResistanceValue>(
       key: 'resistance.value',
@@ -326,6 +332,7 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
       required: true,
       options: ResistanceValue.values,
       displayLabel: (v) => v.name,
+      fromJsonValue: (s) => ResistanceValue.values.byName(s),
     ),
     ResistanceKind.immunity => const ShapeChoiceFieldSpec(
       key: 'resistance.value',
@@ -340,6 +347,7 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
             label: 'Valor',
             options: ResistanceValue.values,
             displayLabel: resistanceValueLabel,
+            fromJsonValue: resistanceValueFromJson,
           ),
         ),
         ShapeChoiceOption(
@@ -359,6 +367,8 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
 
 String resistanceValueLabel(ResistanceValue v) => v.name;
 
+ResistanceValue resistanceValueFromJson(String v) => ResistanceValue.values.byName(v);
+
 List<FieldSpec> resistanceItemFields() => [
   resistanceCatalogField(),
   EnumFieldSpec<TargetType>(
@@ -366,6 +376,7 @@ List<FieldSpec> resistanceItemFields() => [
     label: 'Target',
     options: TargetType.values,
     displayLabel: (t) => t.name,
+    fromJsonValue: (s) => TargetType.values.byName(s),
   ),
 ];
 
@@ -419,6 +430,7 @@ List<FieldSpec> specialStatusItemFields() => [
     label: 'Target',
     options: TargetType.values,
     displayLabel: (t) => t.name,
+    fromJsonValue: (s) => TargetType.values.byName(s),
   ),
   PatternTextFieldSpec(
     key: 'duration',
@@ -457,6 +469,7 @@ FieldSpec otherEffectCatalogField() => CatalogFieldSpec<OtherEffectKind>(
       required: true,
       options: CoverLevel.values,
       displayLabel: (c) => c.name,
+      fromJsonValue: (s) => CoverLevel.values.byName(s),
     ),
   },
 );
@@ -468,6 +481,7 @@ List<FieldSpec> otherEffectItemFields() => [
     label: 'Target',
     options: TargetType.values,
     displayLabel: (t) => t.name,
+    fromJsonValue: (s) => TargetType.values.byName(s),
   ),
   aoeField(),
 ];
@@ -509,6 +523,7 @@ FieldSpec effectSaveGroupField(String key) => GroupFieldSpec(
       required: true,
       options: MechStat.values,
       displayLabel: (s) => s.name,
+      fromJsonValue: (s) => MechStat.values.byName(s),
     ),
     const BoolFieldSpec(key: 'aoe', label: 'AoE'),
   ],
@@ -546,6 +561,8 @@ List<FieldSpec> activeEffectFields() => [
     label: 'Frecuencia',
     options: ActionFrequency.values,
     displayLabel: (f) => f.jsonValue,
+    fromJsonValue: (s) =>
+        ActionFrequency.values.firstWhere((f) => f.jsonValue == s),
   ),
   PatternTextFieldSpec(
     key: 'duration',
@@ -607,6 +624,7 @@ List<FieldSpec> activeEffectFields() => [
     label: 'Tipo de ataque',
     options: AttackType.values,
     displayLabel: (a) => a.name,
+    fromJsonValue: (s) => AttackType.values.byName(s),
   ),
   const BoolFieldSpec(key: 'pilot', label: 'Pilot'),
   const BoolFieldSpec(key: 'mech', label: 'Mech'),
@@ -672,6 +690,8 @@ List<FieldSpec> actionItemFields() => [
     required: true,
     options: ActivationType.values,
     displayLabel: (a) => a.jsonValue,
+    fromJsonValue: (s) =>
+        ActivationType.values.firstWhere((a) => a.jsonValue == s),
   ),
   const TextFieldSpec(
     key: 'detail',
@@ -685,6 +705,8 @@ List<FieldSpec> actionItemFields() => [
     label: 'Frecuencia',
     options: ActionFrequency.values,
     displayLabel: (f) => f.jsonValue,
+    fromJsonValue: (s) =>
+        ActionFrequency.values.firstWhere((f) => f.jsonValue == s),
   ),
   const TextFieldSpec(
     key: 'trigger',
@@ -862,6 +884,7 @@ List<FieldSpec> bonusItemFields() => [
     label: 'Tipos de daño (vacío = todos)',
     options: DamageType.values,
     displayLabel: (d) => d.jsonValue,
+    fromJsonValue: (s) => DamageType.values.firstWhere((d) => d.jsonValue == s),
   ),
   MultiEnumFieldSpec<BonusRangeTypeFilter>(
     key: 'rangeTypes',
@@ -869,6 +892,8 @@ List<FieldSpec> bonusItemFields() => [
     label: 'Tipos de alcance (vacío = todos)',
     options: BonusRangeTypeFilter.values,
     displayLabel: (r) => r.jsonValue,
+    fromJsonValue: (s) =>
+        BonusRangeTypeFilter.values.firstWhere((r) => r.jsonValue == s),
   ),
   MultiEnumFieldSpec<BonusWeaponTypeFilter>(
     key: 'weaponTypes',
@@ -876,6 +901,8 @@ List<FieldSpec> bonusItemFields() => [
     label: 'Tipos de arma (vacío = any)',
     options: BonusWeaponTypeFilter.values,
     displayLabel: (t) => t.jsonValue,
+    fromJsonValue: (s) =>
+        BonusWeaponTypeFilter.values.firstWhere((t) => t.jsonValue == s),
   ),
   MultiEnumFieldSpec<BonusWeaponSizeFilter>(
     key: 'weaponSizes',
@@ -883,6 +910,8 @@ List<FieldSpec> bonusItemFields() => [
     label: 'Tamaños de arma (vacío = any)',
     options: BonusWeaponSizeFilter.values,
     displayLabel: (s) => s.jsonValue,
+    fromJsonValue: (s) =>
+        BonusWeaponSizeFilter.values.firstWhere((f) => f.jsonValue == s),
   ),
   const BoolFieldSpec(key: 'overwrite', label: 'Overwrite'),
   const BoolFieldSpec(key: 'replace', label: 'Replace'),
@@ -991,6 +1020,7 @@ List<FieldSpec> synergyItemFields() => [
     label: 'Tipos de arma (vacío = todos)',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
+    fromJsonValue: (s) => WeaponType.values.firstWhere((t) => t.jsonValue == s),
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'weaponSizes',
@@ -998,6 +1028,7 @@ List<FieldSpec> synergyItemFields() => [
     label: 'Tamaños de arma (vacío = todos)',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,
+    fromJsonValue: (s) => WeaponSize.values.firstWhere((w) => w.jsonValue == s),
   ),
   MultiEnumFieldSpec<SystemType>(
     key: 'systemTypes',
@@ -1005,6 +1036,7 @@ List<FieldSpec> synergyItemFields() => [
     label: 'Tipos de sistema (vacío = todos)',
     options: SystemType.values,
     displayLabel: (s) => s.jsonValue,
+    fromJsonValue: (s) => SystemType.values.firstWhere((t) => t.jsonValue == s),
   ),
 ];
 
@@ -1088,24 +1120,32 @@ List<FieldSpec> deployableItemFields() => [
     label: 'Activación',
     options: ActivationType.values,
     displayLabel: (a) => a.jsonValue,
+    fromJsonValue: (s) =>
+        ActivationType.values.firstWhere((a) => a.jsonValue == s),
   ),
   EnumFieldSpec<ActivationType>(
     key: 'deactivation',
     label: 'Desactivación',
     options: ActivationType.values,
     displayLabel: (a) => a.jsonValue,
+    fromJsonValue: (s) =>
+        ActivationType.values.firstWhere((a) => a.jsonValue == s),
   ),
   EnumFieldSpec<ActivationType>(
     key: 'recall',
     label: 'Recall',
     options: ActivationType.values,
     displayLabel: (a) => a.jsonValue,
+    fromJsonValue: (s) =>
+        ActivationType.values.firstWhere((a) => a.jsonValue == s),
   ),
   EnumFieldSpec<ActivationType>(
     key: 'redeploy',
     label: 'Redeploy',
     options: ActivationType.values,
     displayLabel: (a) => a.jsonValue,
+    fromJsonValue: (s) =>
+        ActivationType.values.firstWhere((a) => a.jsonValue == s),
   ),
   const NumberFieldSpec(key: 'instances', label: 'Instancias'),
   const NumberFieldSpec(key: 'cost', label: 'Coste (si el padre es limited)'),
@@ -1436,6 +1476,14 @@ FieldSpec npcSizeField() => GroupFieldSpec(
   label: 'Tamaño (uno o más valores válidos por tier: 0.5, 1, 2, 3)',
   fields: [
     for (final n in [1, 2, 3])
+      // Sin fromJsonValue a propósito: NpcSize se serializa como un array
+      // de 3 sub-arrays sueltos (ver domain_json_mapper_test.dart), no
+      // como un objeto {tier1, tier2, tier3} — el jsonKey de este grupo ya
+      // no encaja 1:1 con la forma real del JSON, así que el hydrator
+      // genérico (form_values_from_json.dart) no puede alcanzar este
+      // campo de todos modos. Mismo cajón que ShapeChoiceFieldSpec/
+      // CatalogFieldSpec (ver conversación pendiente antes de dar por
+      // completa la hidratación de Editar).
       MultiEnumFieldSpec<num>(
         key: 'tier$n',
         label: 'Tier $n',
@@ -1509,6 +1557,7 @@ List<FieldSpec> mechSystemBaseFields() => [
     label: 'Tipo (default: System)',
     options: SystemType.values,
     displayLabel: (t) => t.jsonValue,
+    fromJsonValue: (s) => SystemType.values.firstWhere((t) => t.jsonValue == s),
   ),
   const TextFieldSpec(
     key: 'effect',

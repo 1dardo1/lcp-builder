@@ -96,6 +96,7 @@ List<FieldSpec> buildNpcClassFormSchema() => [
     required: true,
     options: NpcRole.values,
     displayLabel: (r) => r.name,
+    fromJsonValue: (s) => NpcRole.values.byName(s),
   ),
   GroupFieldSpec(key: 'info', label: 'Info', fields: _npcClassInfoFields()),
   GroupFieldSpec(key: 'stats', label: 'Stats', fields: _npcClassStatsFields()),
