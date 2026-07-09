@@ -33,6 +33,7 @@ List<FieldSpec> buildTagFormSchema() => [
   const BoolFieldSpec(key: 'hidden', label: 'Oculto (uso interno de UI)'),
   const BoolFieldSpec(
     key: 'filterIgnore',
+    jsonKey: 'filter_ignore',
     label: 'No aparece en filtros de equipo',
   ),
 ];

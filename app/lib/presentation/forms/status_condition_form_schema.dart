@@ -31,20 +31,24 @@ List<FieldSpec> buildStatusConditionFormSchema() => [
     label: 'Efectos',
     required: true,
     maxLines: 3,
-    helpText: 'Texto de reglas — qué le pasa a quien tiene este status/condition.',
+    helpText:
+        'Texto de reglas — qué le pasa a quien tiene este status/condition.',
   ),
   const TextFieldSpec(
     key: 'terse',
     label: 'Descripción corta',
-    helpText: 'Resumen de una línea, si hace falta un texto más corto que "Efectos".',
+    helpText:
+        'Resumen de una línea, si hace falta un texto más corto que "Efectos".',
   ),
   const TextFieldSpec(
     key: 'iconSvg',
+    jsonKey: 'icon_svg',
     label: 'Icono (SVG)',
     helpText: 'Contenido SVG del icono. Opcional.',
   ),
   const TextFieldSpec(
     key: 'iconUrl',
+    jsonKey: 'icon_url',
     label: 'Icono (URL, si no hay SVG)',
     helpText: 'URL a una imagen de icono, solo si no hay SVG. Opcional.',
   ),

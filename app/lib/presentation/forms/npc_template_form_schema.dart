@@ -66,6 +66,7 @@ List<FieldSpec> buildNpcTemplateFormSchema() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),

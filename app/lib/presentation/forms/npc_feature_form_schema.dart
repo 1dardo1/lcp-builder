@@ -38,9 +38,14 @@ List<FieldSpec> npcFeatureBaseFields() => [
   const BoolFieldSpec(key: 'base', label: 'Asignada automáticamente'),
   const BoolFieldSpec(key: 'deprecated', label: 'Deprecated'),
   textOrActiveEffectField('effect', 'Efecto'),
-  const BoolFieldSpec(key: 'hideActive', label: 'Ocultar en Active Mode'),
+  const BoolFieldSpec(
+    key: 'hideActive',
+    jsonKey: 'hide_active',
+    label: 'Ocultar en Active Mode',
+  ),
   const BoolFieldSpec(
     key: 'buildFeature',
+    jsonKey: 'build_feature',
     label: 'Build feature (sin efecto en combate)',
   ),
   const TextFieldSpec(
@@ -51,13 +56,16 @@ List<FieldSpec> npcFeatureBaseFields() => [
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(
+    itemFields: [
+      TextFieldSpec(
         key: 'id',
         label: 'ID del tag',
         required: true,
-        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+        helpText:
+            'El ID del tag (Tag), no su nombre visible. Si el tag '
             'todavía no existe, usa el botón de crear tag desde el menú.',
-      )],
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'actions',
@@ -100,7 +108,11 @@ List<FieldSpec> _npcDamageItemFields() => [
   ),
   aoeField(),
   damageSaveField(),
-  const BoolFieldSpec(key: 'saveHalf', label: 'Mitad de daño con save'),
+  const BoolFieldSpec(
+    key: 'saveHalf',
+    jsonKey: 'save_half',
+    label: 'Mitad de daño con save',
+  ),
   const BoolFieldSpec(key: 'ap', label: 'AP (ignora armadura)'),
   EnumFieldSpec<TargetType>(
     key: 'target',
@@ -129,6 +141,7 @@ INpcDamageData _npcDamageFromItem(Map<String, dynamic> item) {
 
 FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
   key: 'kind',
+  jsonKey: 'type',
   label: 'Tipo de feature',
   required: true,
   options: [
@@ -170,6 +183,7 @@ FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
         fields: [
           const TextFieldSpec(
             key: 'weaponType',
+            jsonKey: 'weapon_type',
             label: 'Tipo de arma ("{Size} {Type}", ej. "Superheavy Rifle")',
             required: true,
             helpText:

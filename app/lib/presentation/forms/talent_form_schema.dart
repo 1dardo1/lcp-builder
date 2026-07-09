@@ -66,6 +66,7 @@ List<FieldSpec> _rankItemFields() => [
   ),
   ListFieldSpec(
     key: 'specialEquipment',
+    jsonKey: 'special_equipment',
     label: 'Special equipment (IDs)',
     itemFields: [
       TextFieldSpec(
@@ -78,6 +79,7 @@ List<FieldSpec> _rankItemFields() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),
@@ -124,11 +126,13 @@ List<FieldSpec> buildTalentFormSchema() => [
   ),
   const TextFieldSpec(
     key: 'iconSvg',
+    jsonKey: 'icon_svg',
     label: 'Icono (SVG)',
     helpText: 'Contenido SVG del icono. Opcional.',
   ),
   const TextFieldSpec(
     key: 'iconUrl',
+    jsonKey: 'icon_url',
     label: 'Icono (URL, si no hay SVG)',
     helpText: 'URL a una imagen de icono, solo si no hay SVG. Opcional.',
   ),

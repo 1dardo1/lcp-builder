@@ -52,11 +52,13 @@ List<FieldSpec> buildManufacturerFormSchema() => [
   ),
   const TextFieldSpec(
     key: 'iconSvg',
+    jsonKey: 'icon_svg',
     label: 'Icono (SVG)',
     helpText: 'Contenido SVG del icono del fabricante. Opcional.',
   ),
   const TextFieldSpec(
     key: 'iconUrl',
+    jsonKey: 'icon_url',
     label: 'Icono (URL, si no hay SVG)',
     helpText: 'URL a una imagen de icono, solo si no hay SVG. Opcional.',
   ),

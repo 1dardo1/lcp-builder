@@ -44,6 +44,7 @@ List<FieldSpec> buildCoreBonusFormSchema() => [
   ),
   const TextFieldSpec(
     key: 'mountedEffect',
+    jsonKey: 'mounted_effect',
     label: 'Efecto al instalar en un mount',
     maxLines: 2,
     helpText:
@@ -52,6 +53,7 @@ List<FieldSpec> buildCoreBonusFormSchema() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),
@@ -88,13 +90,15 @@ List<FieldSpec> buildCoreBonusFormSchema() => [
         key: 'id',
         label: 'ID',
         required: true,
-        helpText: 'El ID de otro sistema/equipo que se instala automáticamente '
+        helpText:
+            'El ID de otro sistema/equipo que se instala automáticamente '
             'con este core bonus, no su nombre visible.',
       ),
     ],
   ),
   ListFieldSpec(
     key: 'specialEquipment',
+    jsonKey: 'special_equipment',
     label: 'Special equipment (IDs, disponible en el selector)',
     itemFields: [
       TextFieldSpec(

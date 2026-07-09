@@ -169,7 +169,11 @@ List<FieldSpec> damageItemFields() => [
   ),
   aoeField(),
   damageSaveField(),
-  const BoolFieldSpec(key: 'saveHalf', label: 'Mitad de daño con save'),
+  const BoolFieldSpec(
+    key: 'saveHalf',
+    jsonKey: 'save_half',
+    label: 'Mitad de daño con save',
+  ),
   const BoolFieldSpec(key: 'ap', label: 'AP (ignora armadura)'),
   EnumFieldSpec<TargetType>(
     key: 'target',
@@ -344,7 +348,8 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
           field: TextFieldSpec(
             key: 'resistance.value.b',
             label: 'ID',
-            helpText: 'El ID del status/condition al que es inmune, no su nombre.',
+            helpText:
+                'El ID del status/condition al que es inmune, no su nombre.',
           ),
         ),
       ],
@@ -406,7 +411,8 @@ List<FieldSpec> specialStatusItemFields() => [
     key: 'detail',
     label: 'Detalle',
     maxLines: 2,
-    helpText: 'Texto de reglas de ese efecto especial, si hace falta explicarlo.',
+    helpText:
+        'Texto de reglas de ese efecto especial, si hace falta explicarlo.',
   ),
   EnumFieldSpec<TargetType>(
     key: 'target',
@@ -549,6 +555,7 @@ List<FieldSpec> activeEffectFields() => [
   ),
   PatternTextFieldSpec(
     key: 'bonusDamage',
+    jsonKey: 'bonus_damage',
     label: 'Daño extra',
     pattern: diceExpressionPattern,
     patternHint: 'ej. 1d6',
@@ -557,34 +564,40 @@ List<FieldSpec> activeEffectFields() => [
   ListFieldSpec(key: 'range', label: 'Alcance', itemFields: rangeItemFields()),
   ListFieldSpec(
     key: 'addStatus',
+    jsonKey: 'add_status',
     label: 'Añade status/condition',
     itemFields: statusEffectItemFields(),
   ),
   ListFieldSpec(
     key: 'addResist',
+    jsonKey: 'add_resist',
     label: 'Añade resist/vulnerability/immunity',
     itemFields: resistanceItemFields(),
   ),
   ListFieldSpec(
     key: 'addSpecial',
+    jsonKey: 'add_special',
     label: 'Añade special status',
     itemFields: specialStatusItemFields(),
   ),
   const ListFieldSpec(
     key: 'removeSpecial',
+    jsonKey: 'remove_special',
     label: 'Quita special status',
     itemFields: [
       TextFieldSpec(
         key: 'id',
         label: 'Atributo',
         required: true,
-        helpText: 'El nombre del atributo especial a quitar (debe coincidir '
+        helpText:
+            'El nombre del atributo especial a quitar (debe coincidir '
             'exactamente con el que se añadió en otro sitio).',
       ),
     ],
   ),
   ListFieldSpec(
     key: 'addOther',
+    jsonKey: 'add_other',
     label: 'Añade otro efecto',
     itemFields: otherEffectItemFields(),
   ),
@@ -598,7 +611,11 @@ List<FieldSpec> activeEffectFields() => [
   const BoolFieldSpec(key: 'pilot', label: 'Pilot'),
   const BoolFieldSpec(key: 'mech', label: 'Mech'),
   const NumberFieldSpec(key: 'accuracy', label: 'Accuracy'),
-  const NumberFieldSpec(key: 'attackBonus', label: 'Attack bonus'),
+  const NumberFieldSpec(
+    key: 'attackBonus',
+    jsonKey: 'attack_bonus',
+    label: 'Attack bonus',
+  ),
 ];
 
 IActiveEffectData activeEffectFromGroup(Map<String, dynamic> item) =>
@@ -679,9 +696,14 @@ List<FieldSpec> actionItemFields() => [
   const NumberFieldSpec(key: 'cost', label: 'Coste (si es limited)'),
   const BoolFieldSpec(key: 'pilot', label: 'Pilot'),
   const BoolFieldSpec(key: 'mech', label: 'Mech'),
-  const BoolFieldSpec(key: 'hideActive', label: 'Ocultar acción activa'),
+  const BoolFieldSpec(
+    key: 'hideActive',
+    jsonKey: 'hide_active',
+    label: 'Ocultar acción activa',
+  ),
   PatternTextFieldSpec(
     key: 'bonusDamage',
+    jsonKey: 'bonus_damage',
     label: 'Daño extra',
     pattern: diceExpressionPattern,
     patternHint: 'ej. 1d6',
@@ -690,39 +712,46 @@ List<FieldSpec> actionItemFields() => [
   GroupFieldSpec(key: 'range', label: 'Alcance', fields: rangeItemFields()),
   ListFieldSpec(
     key: 'addStatus',
+    jsonKey: 'add_status',
     label: 'Añade status/condition',
     itemFields: statusEffectItemFields(),
   ),
   ListFieldSpec(
     key: 'addResist',
+    jsonKey: 'add_resist',
     label: 'Añade resist/vulnerability/immunity',
     itemFields: resistanceItemFields(),
   ),
   ListFieldSpec(
     key: 'addSpecial',
+    jsonKey: 'add_special',
     label: 'Añade special status',
     itemFields: specialStatusItemFields(),
   ),
   const ListFieldSpec(
     key: 'removeSpecial',
+    jsonKey: 'remove_special',
     label: 'Quita special status',
     itemFields: [
       TextFieldSpec(
         key: 'id',
         label: 'Atributo',
         required: true,
-        helpText: 'El nombre del atributo especial a quitar (debe coincidir '
+        helpText:
+            'El nombre del atributo especial a quitar (debe coincidir '
             'exactamente con el que se añadió en otro sitio).',
       ),
     ],
   ),
   ListFieldSpec(
     key: 'addOther',
+    jsonKey: 'add_other',
     label: 'Añade otro efecto',
     itemFields: otherEffectItemFields(),
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),
@@ -829,24 +858,28 @@ List<FieldSpec> bonusItemFields() => [
   const NumberFieldSpec(key: 'accuracy', label: 'Accuracy asociado'),
   MultiEnumFieldSpec<DamageType>(
     key: 'damageTypes',
+    jsonKey: 'damage_types',
     label: 'Tipos de daño (vacío = todos)',
     options: DamageType.values,
     displayLabel: (d) => d.jsonValue,
   ),
   MultiEnumFieldSpec<BonusRangeTypeFilter>(
     key: 'rangeTypes',
+    jsonKey: 'range_types',
     label: 'Tipos de alcance (vacío = todos)',
     options: BonusRangeTypeFilter.values,
     displayLabel: (r) => r.jsonValue,
   ),
   MultiEnumFieldSpec<BonusWeaponTypeFilter>(
     key: 'weaponTypes',
+    jsonKey: 'weapon_types',
     label: 'Tipos de arma (vacío = any)',
     options: BonusWeaponTypeFilter.values,
     displayLabel: (t) => t.jsonValue,
   ),
   MultiEnumFieldSpec<BonusWeaponSizeFilter>(
     key: 'weaponSizes',
+    jsonKey: 'weapon_sizes',
     label: 'Tamaños de arma (vacío = any)',
     options: BonusWeaponSizeFilter.values,
     displayLabel: (s) => s.jsonValue,
@@ -954,18 +987,21 @@ List<FieldSpec> synergyItemFields() => [
   ),
   MultiEnumFieldSpec<WeaponType>(
     key: 'weaponTypes',
+    jsonKey: 'weapon_types',
     label: 'Tipos de arma (vacío = todos)',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'weaponSizes',
+    jsonKey: 'weapon_sizes',
     label: 'Tamaños de arma (vacío = todos)',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,
   ),
   MultiEnumFieldSpec<SystemType>(
     key: 'systemTypes',
+    jsonKey: 'system_types',
     label: 'Tipos de sistema (vacío = todos)',
     options: SystemType.values,
     displayLabel: (s) => s.jsonValue,
@@ -1076,6 +1112,7 @@ List<FieldSpec> deployableItemFields() => [
   const NumberFieldSpec(key: 'size', label: 'Tamaño', allowDecimal: true),
   const TextFieldSpec(
     key: 'sizeSpecial',
+    jsonKey: 'size_special',
     label: 'Tamaño especial',
     helpText:
         'Solo si el tamaño no es un número fijo (ej. "1 por punto de '
@@ -1118,52 +1155,62 @@ List<FieldSpec> deployableItemFields() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),
   ListFieldSpec(
     key: 'addStatus',
+    jsonKey: 'add_status',
     label: 'Añade status/condition',
     itemFields: statusEffectItemFields(),
   ),
   ListFieldSpec(
     key: 'addSpecial',
+    jsonKey: 'add_special',
     label: 'Añade special status',
     itemFields: specialStatusItemFields(),
   ),
   const ListFieldSpec(
     key: 'removeSpecial',
+    jsonKey: 'remove_special',
     label: 'Quita special status',
     itemFields: [
       TextFieldSpec(
         key: 'id',
         label: 'Atributo',
         required: true,
-        helpText: 'El nombre del atributo especial a quitar (debe coincidir '
+        helpText:
+            'El nombre del atributo especial a quitar (debe coincidir '
             'exactamente con el que se añadió en otro sitio).',
       ),
     ],
   ),
   ListFieldSpec(
     key: 'addOther',
+    jsonKey: 'add_other',
     label: 'Añade otro efecto',
     itemFields: otherEffectItemFields(),
   ),
   ListFieldSpec(
     key: 'addResist',
+    jsonKey: 'add_resist',
     label: 'Añade resist/vulnerability/immunity',
     itemFields: resistanceItemFields(),
   ),
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(
+    itemFields: [
+      TextFieldSpec(
         key: 'id',
         label: 'ID del tag',
         required: true,
-        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+        helpText:
+            'El ID del tag (Tag), no su nombre visible. Si el tag '
             'todavía no existe, usa el botón de crear tag desde el menú.',
-      )],
+      ),
+    ],
   ),
   const BoolFieldSpec(
     key: 'pilot',
@@ -1235,7 +1282,8 @@ List<FieldSpec> counterItemFields() => [
     key: 'id',
     label: 'ID',
     required: true,
-    helpText: 'Identificador interno de este contador. Minúsculas, sin espacios.',
+    helpText:
+        'Identificador interno de este contador. Minúsculas, sin espacios.',
   ),
   const TextFieldSpec(
     key: 'name',
@@ -1243,7 +1291,11 @@ List<FieldSpec> counterItemFields() => [
     required: true,
     helpText: 'El nombre visible del contador, ej. "Cargas de granada".',
   ),
-  const NumberFieldSpec(key: 'defaultValue', label: 'Valor por defecto'),
+  const NumberFieldSpec(
+    key: 'defaultValue',
+    jsonKey: 'default_value',
+    label: 'Valor por defecto',
+  ),
   const NumberFieldSpec(key: 'min', label: 'Mínimo'),
   const NumberFieldSpec(key: 'max', label: 'Máximo'),
 ];
@@ -1274,7 +1326,8 @@ FieldSpec textOrActiveEffectField(String key, String label) =>
           field: TextFieldSpec(
             key: '$key.a',
             label: '$label (texto)',
-            helpText: 'Texto de reglas libre, para cuando no hace falta la '
+            helpText:
+                'Texto de reglas libre, para cuando no hace falta la '
                 'forma estructurada de "Active effect".',
           ),
         ),
@@ -1439,6 +1492,7 @@ List<FieldSpec> mechSystemBaseFields() => [
   ),
   const TextFieldSpec(
     key: 'licenseId',
+    jsonKey: 'license_id',
     label: 'ID de la licencia (frame; opcional solo en License Collection)',
     helpText: 'El ID del frame al que pertenece, no su nombre visible.',
     referenceEntityKey: 'frames',
@@ -1446,6 +1500,7 @@ List<FieldSpec> mechSystemBaseFields() => [
   ),
   const NumberFieldSpec(
     key: 'licenseLevel',
+    jsonKey: 'license_level',
     label: 'Nivel de licencia (0-3)',
     required: true,
   ),
@@ -1471,13 +1526,16 @@ List<FieldSpec> mechSystemBaseFields() => [
   const ListFieldSpec(
     key: 'tags',
     label: 'Tags',
-    itemFields: [TextFieldSpec(
+    itemFields: [
+      TextFieldSpec(
         key: 'id',
         label: 'ID del tag',
         required: true,
-        helpText: 'El ID del tag (Tag), no su nombre visible. Si el tag '
+        helpText:
+            'El ID del tag (Tag), no su nombre visible. Si el tag '
             'todavía no existe, usa el botón de crear tag desde el menú.',
-      )],
+      ),
+    ],
   ),
   ListFieldSpec(
     key: 'actions',
@@ -1489,13 +1547,21 @@ List<FieldSpec> mechSystemBaseFields() => [
     label: 'Bonuses',
     itemFields: bonusItemFields(),
   ),
-  const BoolFieldSpec(key: 'noBonus', label: 'Ignora bonuses'),
+  const BoolFieldSpec(
+    key: 'noBonus',
+    jsonKey: 'no_bonus',
+    label: 'Ignora bonuses',
+  ),
   ListFieldSpec(
     key: 'synergies',
     label: 'Synergies',
     itemFields: synergyItemFields(),
   ),
-  const BoolFieldSpec(key: 'noSynergy', label: 'Ignora synergies'),
+  const BoolFieldSpec(
+    key: 'noSynergy',
+    jsonKey: 'no_synergy',
+    label: 'Ignora synergies',
+  ),
   ListFieldSpec(
     key: 'deployables',
     label: 'Deployables',
@@ -1514,13 +1580,15 @@ List<FieldSpec> mechSystemBaseFields() => [
         key: 'id',
         label: 'ID',
         required: true,
-        helpText: 'El ID de otro sistema/equipo que viene incluido gratis '
+        helpText:
+            'El ID de otro sistema/equipo que viene incluido gratis '
             'con este, no su nombre visible.',
       ),
     ],
   ),
   ListFieldSpec(
     key: 'specialEquipment',
+    jsonKey: 'special_equipment',
     label: 'Special equipment (IDs)',
     itemFields: [
       TextFieldSpec(
@@ -1533,6 +1601,7 @@ List<FieldSpec> mechSystemBaseFields() => [
   ),
   ListFieldSpec(
     key: 'activeEffects',
+    jsonKey: 'active_effects',
     label: 'Active effects',
     itemFields: activeEffectFields(),
   ),
