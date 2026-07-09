@@ -14,6 +14,21 @@ import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import 'editar_entity_cards_screen.dart';
 
+/// Adapter real por defecto de [EditarEntityTypesScreen.saveContent] —
+/// extraído a función propia (en vez de vivir inline en `_guardar()`) para
+/// poder darle un tipo estático explícito y así poder probarlo sin montar
+/// el widget completo (evita el problema ya documentado de E/S real de
+/// `dart:io` dentro de un test de `pump`/`pumpAndSettle`, ver
+/// `editar_contenido_use_case_test.dart`). `EditarContenidoUseCase.call`
+/// usa parámetros nombrados; este adapter expone la forma posicional que
+/// pide el campo `saveContent` de la pantalla.
+Future<void> Function(ParsedContentPack pack, String outputPath)
+defaultEditarSaveContent() =>
+    (pack, outputPath) => EditarContenidoUseCase(
+      exporter: ZipRawContentPackExporter(),
+      fileWriter: createPlatformFileWriter(),
+    ).call(pack: pack, outputPath: outputPath);
+
 /// Carga (si hace falta) el `.lcp` de [lcpPath] en [session] y lista sus
 /// tipos de entidad con recuento — mismo rol que `LcpEntityTypesScreen`
 /// de Mostrar, pero:
@@ -68,12 +83,7 @@ class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
     final pack = widget.session.packFor(widget.lcpPath);
     if (pack == null) return;
     final t = AppLocalizations.of(context);
-    final saveContent =
-        widget.saveContent ??
-        EditarContenidoUseCase(
-          exporter: ZipRawContentPackExporter(),
-          fileWriter: createPlatformFileWriter(),
-        ).call;
+    final saveContent = widget.saveContent ?? defaultEditarSaveContent();
     try {
       await saveContent(pack, widget.lcpPath);
       widget.session.markSaved(widget.lcpPath);
