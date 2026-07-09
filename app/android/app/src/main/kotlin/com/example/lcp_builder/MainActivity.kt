@@ -3,21 +3,26 @@ package com.example.lcp_builder
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.provider.DocumentsContract
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * Canal nativo mínimo del flujo "Finalizar lcp" en Android — ver
- * `lib/presentation/platform/lcp_save_location.dart` y
- * `lib/infrastructure/file_system/android_saf_file_writer.dart`.
+ * Canal nativo mínimo de los flujos Crear/Mostrar en Android — ver
+ * `lib/presentation/platform/lcp_save_location.dart`,
+ * `lib/infrastructure/file_system/android_saf_file_writer.dart` y
+ * `lib/infrastructure/file_system/android_saf_file_reader.dart` /
+ * `android_saf_directory_lister.dart`.
  *
- * `file_selector` no implementa guardado en Android, así que se habla
- * directamente con el Storage Access Framework: `ACTION_CREATE_DOCUMENT`
- * para elegir dónde guardar (con selector nativo, sin permisos de
- * almacenamiento en tiempo de ejecución — SAF los concede solo para la
- * URI elegida), y `ContentResolver` para escribir ahí, ya que `dart:io`
- * no sabe leer URIs `content://`.
+ * `file_selector` no implementa guardado en Android, y tampoco sabe
+ * recorrer el contenido de una carpeta elegida con `getDirectoryPath`
+ * (esa parte SÍ la resuelve `file_selector`, solo falta listar lo que
+ * hay dentro) — así que se habla directamente con el Storage Access
+ * Framework: `ACTION_CREATE_DOCUMENT` para elegir dónde guardar,
+ * `DocumentsContract` para listar los `.lcp` de una carpeta ya elegida,
+ * y `ContentResolver` para leer/escribir esas URIs `content://`, ya que
+ * `dart:io` no sabe hacerlo.
  */
 class MainActivity : FlutterActivity() {
     private val channelName = "com.example.lcp_builder/saf"
@@ -41,6 +46,22 @@ class MainActivity : FlutterActivity() {
                             result.error("invalid_arguments", "Faltan uri o bytes", null)
                         } else {
                             writeBytes(uriString, bytes, result)
+                        }
+                    }
+                    "readBytes" -> {
+                        val uriString = call.argument<String>("uri")
+                        if (uriString == null) {
+                            result.error("invalid_arguments", "Falta uri", null)
+                        } else {
+                            readBytes(uriString, result)
+                        }
+                    }
+                    "listLcpFiles" -> {
+                        val treeUriString = call.argument<String>("treeUri")
+                        if (treeUriString == null) {
+                            result.error("invalid_arguments", "Falta treeUri", null)
+                        } else {
+                            listLcpFiles(treeUriString, result)
                         }
                     }
                     else -> result.notImplemented()
@@ -98,6 +119,53 @@ class MainActivity : FlutterActivity() {
             result.success(null)
         } catch (e: Exception) {
             result.error("write_failed", e.message, null)
+        }
+    }
+
+    private fun readBytes(uriString: String, result: MethodChannel.Result) {
+        try {
+            val uri = Uri.parse(uriString)
+            val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                ?: throw IllegalStateException("No se pudo abrir el origen para lectura")
+            result.success(bytes)
+        } catch (e: Exception) {
+            result.error("read_failed", e.message, null)
+        }
+    }
+
+    /**
+     * Lista los `.lcp` directos dentro de la carpeta [treeUriString] — la
+     * URI de árbol que devuelve `file_selector`'s `getDirectoryPath` en
+     * Android. No recorre subcarpetas (mismo criterio que
+     * `LocalLcpDirectoryLister` en Linux).
+     */
+    private fun listLcpFiles(treeUriString: String, result: MethodChannel.Result) {
+        try {
+            val treeUri = Uri.parse(treeUriString)
+            val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
+                treeUri,
+                DocumentsContract.getTreeDocumentId(treeUri),
+            )
+            val projection = arrayOf(
+                DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+            )
+            val items = mutableListOf<Map<String, String>>()
+            contentResolver.query(childrenUri, projection, null, null, null)?.use { cursor ->
+                val idIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
+                val nameIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
+                while (cursor.moveToNext()) {
+                    val name = cursor.getString(nameIndex) ?: continue
+                    if (!name.lowercase().endsWith(".lcp")) continue
+                    val docId = cursor.getString(idIndex)
+                    val docUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, docId)
+                    items.add(mapOf("uri" to docUri.toString(), "name" to name))
+                }
+            }
+            items.sortBy { it["name"] }
+            result.success(items)
+        } catch (e: Exception) {
+            result.error("list_failed", e.message, null)
         }
     }
 }
