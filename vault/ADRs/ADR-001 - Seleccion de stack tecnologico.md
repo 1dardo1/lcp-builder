@@ -97,7 +97,7 @@ Dado que el objetivo declarado y prioritario del proyecto es la arquitectura, no
 
 ## Action items
 
-1. [ ] Localizar y validar la especificación oficial/comunitaria del formato `.lcp` antes de diseñar el dominio.
+1. [x] Localizar y validar la especificación oficial/comunitaria del formato `.lcp` antes de diseñar el dominio — resuelto con la Wiki de `massif-press/lancer-data` (https://github.com/massif-press/lancer-data/wiki), fuente citada en `vault/Modelo de Dominio/00 - Indice.md`.
 2. [ ] Confirmar el sistema operativo real de la tablet del cliente (Android vs iPad); no bloquea el alcance, ya que ambas plataformas quedan cubiertas.
-3. [ ] Diseñar el modelo de dominio (entidades y lógica de negocio del LCP) de forma aislada de cualquier dependencia de Flutter, como primer ejercicio de separación de capas.
+3. [x] Diseñar el modelo de dominio (entidades y lógica de negocio del LCP) de forma aislada de cualquier dependencia de Flutter, como primer ejercicio de separación de capas — completo en `vault/Modelo de Dominio/` (19 secciones) e implementado en `app/lib/domain/` (27 archivos Dart).
 4. [x] Documentado como ADR-002 el orden de desarrollo entre plataformas (común → Linux/Android → iOS/Windows/macOS).
