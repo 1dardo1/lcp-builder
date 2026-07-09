@@ -32,33 +32,49 @@ enum OtherEffectKind { overshield, hp, repair, cover }
 /// (miembro válido de la unión) para no añadir un tercer camino de
 /// ensamblado — mismo mecanismo ya usado en `IBonusData.val` con
 /// `numericOrFormula`.
-FieldSpec numericOrFormulaField(String key, String label) =>
-    ShapeChoiceFieldSpec(
-      key: key,
-      label: label,
-      options: [
-        ShapeChoiceOption(
-          value: 'A',
-          label: 'Número',
-          field: NumberFieldSpec(
-            key: '$key.a',
-            label: label,
-            allowDecimal: true,
-          ),
+/// [jsonKey]: la clave real del `.lcp`, si difiere de [key] (ej.
+/// `otherEffect.value` en el formulario, `val` en el JSON — ver
+/// `otherEffectCatalogField`). Por defecto igual a [key], como en
+/// [FieldSpec.jsonKey].
+FieldSpec numericOrFormulaField(String key, String label, {String? jsonKey}) {
+  final realKey = jsonKey ?? key;
+  return ShapeChoiceFieldSpec(
+    key: key,
+    jsonKey: realKey,
+    label: label,
+    // El propio valor crudo ya dice qué rama es: un número o un string.
+    branchFromJson: (json) {
+      final raw = json[realKey];
+      if (raw is num) return 'A';
+      if (raw is String) return 'B';
+      return null;
+    },
+    options: [
+      ShapeChoiceOption(
+        value: 'A',
+        label: 'Número',
+        field: NumberFieldSpec(
+          key: '$key.a',
+          jsonKey: realKey,
+          label: label,
+          allowDecimal: true,
         ),
-        ShapeChoiceOption(
-          value: 'B',
-          label: 'Fórmula',
-          field: TextFieldSpec(
-            key: '$key.b',
-            label: 'Fórmula (ej. {grit}+2)',
-            helpText:
-                'Fórmula en vez de número fijo — usa llaves para referirte a '
-                'un stat del piloto/mech, ej. "{grit}+2" o "{level}".',
-          ),
+      ),
+      ShapeChoiceOption(
+        value: 'B',
+        label: 'Fórmula',
+        field: TextFieldSpec(
+          key: '$key.b',
+          jsonKey: realKey,
+          label: 'Fórmula (ej. {grit}+2)',
+          helpText:
+              'Fórmula en vez de número fijo — usa llaves para referirte a '
+              'un stat del piloto/mech, ej. "{grit}+2" o "{level}".',
         ),
-      ],
-    );
+      ),
+    ],
+  );
+}
 
 NumericOrFormulaValue? numericOrFormulaFromItem(
   Map<String, dynamic> item,
@@ -453,18 +469,34 @@ FieldSpec otherEffectCatalogField() => CatalogFieldSpec<OtherEffectKind>(
   label: 'Tipo',
   catalogIds: OtherEffectKind.values,
   idLabel: (k) => k.name,
+  // El JSON no envuelve nada bajo una clave `otherEffect` — es un objeto
+  // plano con `type`/`val`/`target`/`aoe` como hermanos (ver
+  // `otherEffectDataToJson`), así que el id del catálogo se lee del campo
+  // `type`, no de una clave con el nombre del catálogo.
+  idFromJson: (json) {
+    final type = json['type'] as String?;
+    if (type == null) return null;
+    return OtherEffectKind.values.asNameMap()[type];
+  },
   valueFieldFor: (k) => switch (k) {
     OtherEffectKind.overshield => numericOrFormulaField(
       'otherEffect.value',
       'Overshield',
+      jsonKey: 'val',
     ),
-    OtherEffectKind.hp => numericOrFormulaField('otherEffect.value', 'HP'),
+    OtherEffectKind.hp => numericOrFormulaField(
+      'otherEffect.value',
+      'HP',
+      jsonKey: 'val',
+    ),
     OtherEffectKind.repair => numericOrFormulaField(
       'otherEffect.value',
       'Repair',
+      jsonKey: 'val',
     ),
     OtherEffectKind.cover => EnumFieldSpec<CoverLevel>(
       key: 'otherEffect.value',
+      jsonKey: 'val',
       label: 'Cover',
       required: true,
       options: CoverLevel.values,

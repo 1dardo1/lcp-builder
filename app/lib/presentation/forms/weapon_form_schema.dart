@@ -198,12 +198,14 @@ const _weaponTypeField = ShapeChoiceFieldSpec(
   key: 'type',
   label: 'Tipo de arma',
   required: true,
+  branchFromJson: _weaponTypeBranchFromJson,
   options: [
     ShapeChoiceOption(
       value: 'A',
       label: 'Único',
       field: EnumFieldSpec<WeaponType>(
         key: 'type.a',
+        jsonKey: 'type',
         label: 'Tipo',
         options: WeaponType.values,
         displayLabel: _weaponTypeLabel,
@@ -215,6 +217,7 @@ const _weaponTypeField = ShapeChoiceFieldSpec(
       label: 'Varios',
       field: MultiEnumFieldSpec<WeaponType>(
         key: 'type.b',
+        jsonKey: 'type',
         label: 'Tipos',
         options: WeaponType.values,
         displayLabel: _weaponTypeLabel,
@@ -228,6 +231,16 @@ String _weaponTypeLabel(WeaponType t) => t.jsonValue;
 
 WeaponType _weaponTypeFromJson(String v) =>
     WeaponType.values.firstWhere((t) => t.jsonValue == v);
+
+/// `type` es un único `WeaponType` (string) o una lista — la propia forma
+/// del valor crudo ya dice qué rama es, sin necesitar ningún campo
+/// discriminador aparte.
+String? _weaponTypeBranchFromJson(Map<String, dynamic> json) {
+  final raw = json['type'];
+  if (raw is List) return 'B';
+  if (raw is String) return 'A';
+  return null;
+}
 
 Object _weaponTypeFromValues(Map<String, dynamic> values) {
   final choice = values['type.choice'] as String? ?? 'A';

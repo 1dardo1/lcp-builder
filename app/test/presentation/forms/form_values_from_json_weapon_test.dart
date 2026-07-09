@@ -48,10 +48,33 @@ void main() {
     ]);
     expect(ammoItems.first['allowedSizes'], [WeaponSize.heavy]);
 
-    // `type` (ShapeChoiceFieldSpec, ver tarea pendiente) no se hidrata
-    // todavía — comprobamos explícitamente que no rompe, en vez de dar
-    // por hecho el resultado.
-    expect(values.containsKey('type.a'), isFalse);
+    // `type` es un ShapeChoiceFieldSpec (único WeaponType vs. lista) — el
+    // JSON trae un único string, así que la rama detectada debe ser "A" y
+    // `type.a` debe traer la instancia ya reconstruida.
+    expect(values['type.choice'], 'A');
+    expect(values['type.a'], WeaponType.rifle);
     expect(values.containsKey('type.b'), isFalse);
+  });
+
+  test('type como lista hidrata la rama "B" en vez de "A"', () {
+    const weapon = IWeaponData(
+      id: 'mw_multi',
+      name: 'Multi',
+      source: 'GMS',
+      license: 'GMS Everest',
+      licenseId: 'mf_everest',
+      licenseLevel: 0,
+      effect: 'Efecto',
+      description: 'Descripción',
+      mount: MountType.main,
+      type: [WeaponType.rifle, WeaponType.melee],
+    );
+
+    final json = weaponDataToJson(weapon);
+    final values = formValuesFromJson(buildWeaponFormSchema(), json);
+
+    expect(values['type.choice'], 'B');
+    expect(values['type.b'], [WeaponType.rifle, WeaponType.melee]);
+    expect(values.containsKey('type.a'), isFalse);
   });
 }

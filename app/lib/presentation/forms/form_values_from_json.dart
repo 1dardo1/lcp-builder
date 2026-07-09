@@ -8,13 +8,11 @@ import 'field_spec.dart';
 /// — para que Editar pueda abrir el mismo formulario de Crear ya relleno,
 /// en vez de vacío.
 ///
-/// [ShapeChoiceFieldSpec] y [CatalogFieldSpec] (casos 3/4/6 del catálogo)
-/// se dejan sin rellenar por ahora a propósito: averiguar qué rama/id de
-/// catálogo eligió el JSON original no es un simple `fromJsonValue` por
-/// campo como en [EnumFieldSpec] — la propia `xFromFormValues` de cada
-/// entidad ya lo resuelve con lógica específica suya, no genérica. Pendiente
-/// de decidir el enfoque antes de dar por completo el flujo de Editar (ver
-/// conversación).
+/// [ShapeChoiceFieldSpec]/[CatalogFieldSpec] se resuelven con
+/// [ShapeChoiceFieldSpec.branchFromJson]/[CatalogFieldSpec.idFromJson] —
+/// funciones que cada esquema rellena a mano (auditoría en curso, igual
+/// que [EnumFieldSpec.fromJsonValue]); mientras un campo no las tenga, se
+/// deja sin rellenar en vez de arriesgar un valor incorrecto.
 Map<String, dynamic> formValuesFromJson(
   List<FieldSpec> schema,
   Map<String, dynamic> json,
@@ -31,6 +29,34 @@ void _hydrateField(
   Map<String, dynamic> json,
   Map<String, dynamic> values,
 ) {
+  switch (field) {
+    // Estos dos casos operan sobre el JSON del contenedor completo (no un
+    // valor ya aislado por `jsonKey`) — el discriminador de rama/id puede
+    // vivir en la forma del valor o en qué clave está presente, no
+    // necesariamente bajo la propia `jsonKey` del campo (que muchas veces
+    // ni existe como tal en el JSON real).
+    case ShapeChoiceFieldSpec f:
+      final branch = f.branchFromJson?.call(json);
+      if (branch == null) return;
+      values['${field.key}.choice'] = branch;
+      final option = f.options.firstWhere(
+        (o) => o.value == branch,
+        orElse: () => f.options.first,
+      );
+      if (option.field != null) _hydrateField(option.field!, json, values);
+      return;
+
+    case CatalogFieldSpec f:
+      final id = f.idFromJsonDynamic(json);
+      if (id == null) return;
+      values['${field.key}.id'] = id;
+      _hydrateField(f.fieldFor(id), json, values);
+      return;
+
+    default:
+      break;
+  }
+
   final raw = json[field.jsonKey];
   if (raw == null) return;
 
@@ -66,6 +92,6 @@ void _hydrateField(
 
     case ShapeChoiceFieldSpec():
     case CatalogFieldSpec():
-      return;
+      break; // ya resueltos arriba, inalcanzable aquí.
   }
 }

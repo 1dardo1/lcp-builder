@@ -122,7 +122,7 @@ void main() {
       ]);
     });
 
-    test('ShapeChoiceFieldSpec y CatalogFieldSpec se omiten sin lanzar (pendiente)', () {
+    test('ShapeChoiceFieldSpec/CatalogFieldSpec sin branchFromJson/idFromJson (auditoría pendiente) se omiten sin lanzar', () {
       final schema = [
         const ShapeChoiceFieldSpec(
           key: 'value',
@@ -143,6 +143,62 @@ void main() {
       });
 
       expect(values, isEmpty);
+    });
+
+    test('ShapeChoiceFieldSpec con branchFromJson hidrata la rama elegida por la forma del valor', () {
+      final schema = [
+        ShapeChoiceFieldSpec(
+          key: 'val',
+          label: 'Val',
+          branchFromJson: (json) =>
+              json['val'] is num ? 'A' : (json['val'] is String ? 'B' : null),
+          options: const [
+            ShapeChoiceOption(
+              value: 'A',
+              label: 'Número',
+              field: NumberFieldSpec(key: 'val.a', jsonKey: 'val', label: 'Número'),
+            ),
+            ShapeChoiceOption(
+              value: 'B',
+              label: 'Fórmula',
+              field: TextFieldSpec(key: 'val.b', jsonKey: 'val', label: 'Fórmula'),
+            ),
+          ],
+        ),
+      ];
+
+      final numeric = formValuesFromJson(schema, {'val': 5});
+      expect(numeric['val.choice'], 'A');
+      expect(numeric['val.a'], 5);
+      expect(numeric.containsKey('val.b'), isFalse);
+
+      final formula = formValuesFromJson(schema, {'val': '1d6+2'});
+      expect(formula['val.choice'], 'B');
+      expect(formula['val.b'], '1d6+2');
+    });
+
+    test('CatalogFieldSpec con idFromJson lee el discriminador del JSON del contenedor completo', () {
+      final schema = [
+        CatalogFieldSpec<String>(
+          key: 'effect',
+          label: 'Effect',
+          catalogIds: const ['resist', 'immune'],
+          idLabel: (id) => id,
+          // El id vive en qué clave está presente, no en un campo `id`.
+          idFromJson: (json) {
+            if (json.containsKey('resist')) return 'resist';
+            if (json.containsKey('immune')) return 'immune';
+            return null;
+          },
+          valueFieldFor: (id) =>
+              TextFieldSpec(key: 'effect.value', jsonKey: id, label: 'Valor'),
+        ),
+      ];
+
+      final values = formValuesFromJson(schema, {'resist': 'kinetic'});
+
+      expect(values['effect.id'], 'resist');
+      expect(values['effect.value'], 'kinetic');
     });
   });
 }
