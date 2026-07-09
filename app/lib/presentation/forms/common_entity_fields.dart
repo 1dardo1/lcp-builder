@@ -1531,30 +1531,50 @@ List<String>? mapStringIdItems(dynamic rawItems) {
 /// `TierValue = number | [number, number, number]`. La rama "por tier" pide
 /// 3 campos fijos (`tier1`/`tier2`/`tier3`), mismo criterio que descartó
 /// `ListFieldSpec` en otros grupos de tamaño fijo (ej. `IEffectSaveData`).
-FieldSpec tierValueField(String key, String label) => ShapeChoiceFieldSpec(
-  key: key,
-  label: label,
-  options: [
-    ShapeChoiceOption(
-      value: 'single',
-      label: 'Único (los 3 tiers)',
-      field: NumberFieldSpec(key: '$key.single', label: label),
-    ),
-    ShapeChoiceOption(
-      value: 'perTier',
-      label: 'Por tier',
-      field: GroupFieldSpec(
-        key: '$key.perTier',
-        label: '$label por tier',
-        fields: const [
-          NumberFieldSpec(key: 'tier1', label: 'Tier 1', required: true),
-          NumberFieldSpec(key: 'tier2', label: 'Tier 2', required: true),
-          NumberFieldSpec(key: 'tier3', label: 'Tier 3', required: true),
-        ],
+/// [jsonKey]: la clave real del `.lcp`, si difiere de [key] (ej.
+/// `attackBonus` en el formulario, `attack_bonus` en el JSON). Por
+/// defecto igual a [key], como en [FieldSpec.jsonKey].
+FieldSpec tierValueField(String key, String label, {String? jsonKey}) {
+  final realKey = jsonKey ?? key;
+  return ShapeChoiceFieldSpec(
+    key: key,
+    jsonKey: realKey,
+    label: label,
+    // `tierValueToJson` escribe un número suelto o un array de 3 — la
+    // forma del propio valor ya dice la rama.
+    branchFromJson: (json) {
+      final raw = json[realKey];
+      if (raw is List) return 'perTier';
+      if (raw is num) return 'single';
+      return null;
+    },
+    options: [
+      ShapeChoiceOption(
+        value: 'single',
+        label: 'Único (los 3 tiers)',
+        field: NumberFieldSpec(
+          key: '$key.single',
+          jsonKey: realKey,
+          label: label,
+        ),
       ),
-    ),
-  ],
-);
+      ShapeChoiceOption(
+        value: 'perTier',
+        label: 'Por tier',
+        field: GroupFieldSpec(
+          key: '$key.perTier',
+          jsonKey: realKey,
+          label: '$label por tier',
+          fields: const [
+            NumberFieldSpec(key: 'tier1', label: 'Tier 1', required: true),
+            NumberFieldSpec(key: 'tier2', label: 'Tier 2', required: true),
+            NumberFieldSpec(key: 'tier3', label: 'Tier 3', required: true),
+          ],
+        ),
+      ),
+    ],
+  );
+}
 
 TierValue? tierValueFromItem(Map<String, dynamic> item, String key) {
   final choice = item['$key.choice'] as String? ?? 'single';
@@ -1581,19 +1601,17 @@ FieldSpec npcSizeField() => GroupFieldSpec(
   label: 'Tamaño (uno o más valores válidos por tier: 0.5, 1, 2, 3)',
   fields: [
     for (final n in [1, 2, 3])
-      // Sin fromJsonValue a propósito: NpcSize se serializa como un array
-      // de 3 sub-arrays sueltos (ver domain_json_mapper_test.dart), no
-      // como un objeto {tier1, tier2, tier3} — el jsonKey de este grupo ya
-      // no encaja 1:1 con la forma real del JSON, así que el hydrator
-      // genérico (form_values_from_json.dart) no puede alcanzar este
-      // campo de todos modos. Mismo cajón que ShapeChoiceFieldSpec/
-      // CatalogFieldSpec (ver conversación pendiente antes de dar por
-      // completa la hidratación de Editar).
+      // NpcSize se serializa como un array de 3 sub-arrays sueltos (ver
+      // `npcSizeToJson`) — el hydrator (`form_values_from_json.dart`)
+      // reparte ese array por posición sobre `tier1`/`tier2`/`tier3`, no
+      // por nombre de clave. Los elementos del sub-array ya son números
+      // crudos, no strings — `fromJsonValue` solo hace de identidad.
       MultiEnumFieldSpec<num>(
         key: 'tier$n',
         label: 'Tier $n',
         options: _npcSizeValues,
         displayLabel: (v) => v.toString(),
+        fromJsonValue: (v) => v as num,
       ),
   ],
 );
