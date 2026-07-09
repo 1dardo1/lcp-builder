@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart' show Locale;
+
+import '../i18n/field_translations.dart';
 import 'background_form_schema.dart';
 import 'bond_form_schema.dart';
 import 'core_bonus_form_schema.dart';
@@ -61,3 +64,17 @@ final List<EntityCrearConfig> crearEntidadConfigs = [
 final Map<String, EntityCrearConfig> crearEntidadConfigsByContentKey = {
   for (final config in crearEntidadConfigs) config.contentKey: config,
 };
+
+/// Título legible de un tipo de entidad para Mostrar, a partir del mismo
+/// `EntityCrearConfig.title` que usa el menú Crear ("Crear arma"/"Create
+/// weapon") — quitando el prefijo de acción, que no aplica al leer. Si
+/// [contentKey] no está registrado (`.lcp` con datos que esta app no
+/// modela todavía), se muestra tal cual como último recurso.
+String entityDisplayTitle(String contentKey, Locale locale) {
+  final config = crearEntidadConfigsByContentKey[contentKey];
+  final title = translateFieldText(config?.title ?? contentKey, locale);
+  for (final prefix in const ['Crear ', 'Create ']) {
+    if (title.startsWith(prefix)) return title.substring(prefix.length);
+  }
+  return title;
+}

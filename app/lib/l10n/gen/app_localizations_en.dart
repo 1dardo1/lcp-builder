@@ -91,4 +91,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get idioma => 'Language';
+
+  @override
+  String get mostrarMenuTitle => 'Show';
+
+  @override
+  String get abrirLcp => 'Open a .lcp';
+
+  @override
+  String get abrirCarpeta => 'Open a folder';
+
+  @override
+  String get carpetaSinLcp => 'This folder has no .lcp files.';
+
+  @override
+  String campoFaltante(String label) {
+    return 'Missing: $label';
+  }
+
+  @override
+  String nElementos(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String tipoCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entities',
+      one: '1 entity',
+    );
+    return '$_temp0';
+  }
 }

@@ -21,5 +21,12 @@
   "quitar": "Remove",
   "anadirCampo": "Add {label}",
   "crearReferencia": "Create {label}",
-  "idioma": "Language"
+  "idioma": "Language",
+  "mostrarMenuTitle": "Show",
+  "abrirLcp": "Open a .lcp",
+  "abrirCarpeta": "Open a folder",
+  "carpetaSinLcp": "This folder has no .lcp files.",
+  "campoFaltante": "Missing: {label}",
+  "nElementos": "{count, plural, one{1 item} other{{count} items}}",
+  "tipoCount": "{count, plural, one{1 entity} other{{count} entities}}"
 }

@@ -40,5 +40,21 @@
   "@crearReferencia": {
     "placeholders": {"label": {"type": "String"}}
   },
-  "idioma": "Idioma"
+  "idioma": "Idioma",
+  "mostrarMenuTitle": "Mostrar",
+  "abrirLcp": "Abrir un .lcp",
+  "abrirCarpeta": "Abrir una carpeta",
+  "carpetaSinLcp": "Esta carpeta no tiene ningún archivo .lcp.",
+  "campoFaltante": "Falta: {label}",
+  "@campoFaltante": {
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "nElementos": "{count, plural, one{1 elemento} other{{count} elementos}}",
+  "@nElementos": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "tipoCount": "{count, plural, one{1 entidad} other{{count} entidades}}",
+  "@tipoCount": {
+    "placeholders": {"count": {"type": "int"}}
+  }
 }

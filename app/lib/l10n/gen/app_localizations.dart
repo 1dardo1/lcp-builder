@@ -229,6 +229,48 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Idioma'**
   String get idioma;
+
+  /// No description provided for @mostrarMenuTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Mostrar'**
+  String get mostrarMenuTitle;
+
+  /// No description provided for @abrirLcp.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir un .lcp'**
+  String get abrirLcp;
+
+  /// No description provided for @abrirCarpeta.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir una carpeta'**
+  String get abrirCarpeta;
+
+  /// No description provided for @carpetaSinLcp.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta carpeta no tiene ningún archivo .lcp.'**
+  String get carpetaSinLcp;
+
+  /// No description provided for @campoFaltante.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta: {label}'**
+  String campoFaltante(String label);
+
+  /// No description provided for @nElementos.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, one{1 elemento} other{{count} elementos}}'**
+  String nElementos(int count);
+
+  /// No description provided for @tipoCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, one{1 entidad} other{{count} entidades}}'**
+  String tipoCount(int count);
 }
 
 class _AppLocalizationsDelegate
