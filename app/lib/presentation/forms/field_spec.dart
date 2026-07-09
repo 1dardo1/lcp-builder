@@ -112,6 +112,17 @@ class BoolFieldSpec extends FieldSpec {
 class EnumFieldSpec<T> extends FieldSpec {
   final List<T> options;
   final String Function(T) displayLabel;
+
+  /// Inverso de [displayLabel] pero para el valor real del `.lcp`, no para
+  /// la etiqueta de UI: dado el string que hay en el JSON (ej. `"Heavy"`),
+  /// devuelve la instancia de [T] de [options] que le corresponde — lo
+  /// necesita Editar para precargar el formulario de Crear con datos ya
+  /// escritos (ver `form_values_from_json.dart`). Nullable y por defecto
+  /// `null` mientras se audita entidad por entidad (mismo criterio que
+  /// [FieldSpec.jsonKey] al principio) — un campo sin rellenar aquí
+  /// significa que Editar no puede precargarlo todavía.
+  final T Function(String)? fromJsonValue;
+
   const EnumFieldSpec({
     required super.key,
     required super.label,
@@ -120,6 +131,7 @@ class EnumFieldSpec<T> extends FieldSpec {
     super.jsonKey,
     required this.options,
     required this.displayLabel,
+    this.fromJsonValue,
   });
 
   /// El motor genérico solo conoce `FieldSpec` (sin el argumento de tipo
@@ -127,6 +139,10 @@ class EnumFieldSpec<T> extends FieldSpec {
   /// perder T por variance. Este método sí puede — T está fijado en el
   /// propio objeto desde su construcción, no en el punto de llamada.
   String labelFor(dynamic value) => displayLabel(value as T);
+
+  /// Mismo motivo que [labelFor], para la dirección inversa. `null` si
+  /// [fromJsonValue] todavía no se ha rellenado para este campo.
+  dynamic valueFromJson(String raw) => fromJsonValue?.call(raw);
 }
 
 /// Una rama de un [ShapeChoiceFieldSpec]: `value` es el identificador
@@ -153,6 +169,17 @@ class ShapeChoiceOption {
 /// renderiza después el sub-campo de la rama elegida, si tiene uno.
 class ShapeChoiceFieldSpec extends FieldSpec {
   final List<ShapeChoiceOption> options;
+
+  /// Decide qué [ShapeChoiceOption.value] corresponde, a partir del JSON
+  /// crudo del *contenedor completo* (no de un valor ya aislado por
+  /// [FieldSpec.jsonKey] — el discriminador puede vivir en la forma del
+  /// propio valor, ej. `type` de un arma es un string o una lista) — lo
+  /// necesita Editar para precargar el formulario de Crear (ver
+  /// `form_values_from_json.dart`). `null` mientras no se audite este
+  /// campo (mismo criterio que [EnumFieldSpec.fromJsonValue]) o si el
+  /// JSON no trae ninguna rama reconocible.
+  final String? Function(Map<String, dynamic> json)? branchFromJson;
+
   const ShapeChoiceFieldSpec({
     required super.key,
     required super.label,
@@ -160,6 +187,7 @@ class ShapeChoiceFieldSpec extends FieldSpec {
     super.helpText,
     super.jsonKey,
     required this.options,
+    this.branchFromJson,
   });
 }
 
@@ -201,6 +229,11 @@ class ListFieldSpec extends FieldSpec {
 class MultiEnumFieldSpec<T> extends FieldSpec {
   final List<T> options;
   final String Function(T) displayLabel;
+
+  /// Mismo motivo y mismo criterio de "nullable mientras se audita" que
+  /// [EnumFieldSpec.fromJsonValue].
+  final T Function(String)? fromJsonValue;
+
   const MultiEnumFieldSpec({
     required super.key,
     required super.label,
@@ -209,11 +242,15 @@ class MultiEnumFieldSpec<T> extends FieldSpec {
     super.jsonKey,
     required this.options,
     required this.displayLabel,
+    this.fromJsonValue,
   });
 
   /// Mismo motivo que [EnumFieldSpec.labelFor] — evita el problema de
   /// variance de funciones al invocar desde el motor genérico.
   String labelFor(dynamic value) => displayLabel(value as T);
+
+  /// Mismo motivo que [EnumFieldSpec.valueFromJson].
+  dynamic valueFromJson(String raw) => fromJsonValue?.call(raw);
 }
 
 /// Sub-formulario de forma fija (ej. `IEffectSaveData` = `stat` + `aoe`):
@@ -251,6 +288,15 @@ class CatalogFieldSpec<TId> extends FieldSpec {
   final List<TId> catalogIds;
   final String Function(TId) idLabel;
   final FieldSpec Function(TId) valueFieldFor;
+
+  /// Mismo motivo que [ShapeChoiceFieldSpec.branchFromJson] — decide qué
+  /// id del catálogo corresponde a partir del JSON del contenedor
+  /// completo, ya que el id elegido a veces ni siquiera es un valor: es
+  /// el nombre de la clave presente (ej. `resistance`: la clave `resist`/
+  /// `vulnerability`/`immunity` presente en el JSON, no un campo `id`
+  /// aparte). `null` mientras no se audite este campo.
+  final TId? Function(Map<String, dynamic> json)? idFromJson;
+
   const CatalogFieldSpec({
     required super.key,
     required super.label,
@@ -260,10 +306,14 @@ class CatalogFieldSpec<TId> extends FieldSpec {
     required this.catalogIds,
     required this.idLabel,
     required this.valueFieldFor,
+    this.idFromJson,
   });
 
   /// Mismo motivo que [EnumFieldSpec.labelFor]: evita el problema de
   /// variance al invocar desde el motor genérico, que solo ve `FieldSpec`.
   String labelFor(dynamic id) => idLabel(id as TId);
   FieldSpec fieldFor(dynamic id) => valueFieldFor(id as TId);
+
+  /// Mismo motivo que [EnumFieldSpec.valueFromJson].
+  dynamic idFromJsonDynamic(Map<String, dynamic> json) => idFromJson?.call(json);
 }

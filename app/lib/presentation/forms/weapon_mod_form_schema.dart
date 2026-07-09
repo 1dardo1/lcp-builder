@@ -26,6 +26,7 @@ List<FieldSpec> buildWeaponModFormSchema() => [
     label: 'Tipos permitidos (vacío = todos)',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
+    fromJsonValue: (s) => WeaponType.values.firstWhere((t) => t.jsonValue == s),
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'allowedSizes',
@@ -33,6 +34,7 @@ List<FieldSpec> buildWeaponModFormSchema() => [
     label: 'Tamaños permitidos (vacío = todos)',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,
+    fromJsonValue: (s) => WeaponSize.values.firstWhere((w) => w.jsonValue == s),
   ),
   const ListFieldSpec(
     key: 'addedTags',
@@ -67,6 +69,7 @@ List<FieldSpec> buildWeaponModFormSchema() => [
     label: 'Tipos restringidos (DEPRECADO)',
     options: WeaponType.values,
     displayLabel: (t) => t.jsonValue,
+    fromJsonValue: (s) => WeaponType.values.firstWhere((t) => t.jsonValue == s),
   ),
   MultiEnumFieldSpec<WeaponSize>(
     key: 'restrictedSizes',
@@ -74,6 +77,7 @@ List<FieldSpec> buildWeaponModFormSchema() => [
     label: 'Tamaños restringidos (DEPRECADO)',
     options: WeaponSize.values,
     displayLabel: (s) => s.jsonValue,
+    fromJsonValue: (s) => WeaponSize.values.firstWhere((w) => w.jsonValue == s),
   ),
 ];
 

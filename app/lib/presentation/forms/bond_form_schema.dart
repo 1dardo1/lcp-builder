@@ -91,6 +91,8 @@ List<FieldSpec> buildBondFormSchema() => [
         label: 'Frecuencia',
         options: ActionFrequency.values,
         displayLabel: (f) => f.jsonValue,
+        fromJsonValue: (s) =>
+            ActionFrequency.values.firstWhere((f) => f.jsonValue == s),
       ),
       const TextFieldSpec(
         key: 'prerequisite',

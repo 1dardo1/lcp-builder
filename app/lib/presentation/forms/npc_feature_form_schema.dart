@@ -96,6 +96,7 @@ List<FieldSpec> _npcDamageItemFields() => [
     required: true,
     options: DamageType.values,
     displayLabel: (d) => d.jsonValue,
+    fromJsonValue: (s) => DamageType.values.firstWhere((d) => d.jsonValue == s),
   ),
   const GroupFieldSpec(
     key: 'damage',
@@ -119,6 +120,7 @@ List<FieldSpec> _npcDamageItemFields() => [
     label: 'Target',
     options: TargetType.values,
     displayLabel: (t) => t.name,
+    fromJsonValue: (s) => TargetType.values.byName(s),
   ),
 ];
 

@@ -26,6 +26,7 @@ List<FieldSpec> buildReserveFormSchema() => [
     required: true,
     options: ReserveType.values,
     displayLabel: (t) => t.name,
+    fromJsonValue: (s) => ReserveType.values.byName(s),
   ),
   const TextFieldSpec(
     key: 'label',

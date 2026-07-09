@@ -176,18 +176,24 @@ List<FieldSpec> _coreSystemFields() => [
     required: true,
     options: ActivationType.values,
     displayLabel: (a) => a.jsonValue,
+    fromJsonValue: (s) =>
+        ActivationType.values.firstWhere((a) => a.jsonValue == s),
   ),
   EnumFieldSpec<ActivationType>(
     key: 'deactivation',
     label: 'Desactivación',
     options: ActivationType.values,
     displayLabel: (a) => a.jsonValue,
+    fromJsonValue: (s) =>
+        ActivationType.values.firstWhere((a) => a.jsonValue == s),
   ),
   EnumFieldSpec<CoreSystemUse>(
     key: 'use',
     label: 'Duración de uso',
     options: CoreSystemUse.values,
     displayLabel: (u) => u.jsonValue,
+    fromJsonValue: (s) =>
+        CoreSystemUse.values.firstWhere((u) => u.jsonValue == s),
   ),
   ListFieldSpec(
     key: 'activeEffects',
@@ -444,6 +450,7 @@ List<FieldSpec> buildFrameFormSchema() => [
         required: true,
         options: MountType.values,
         displayLabel: _mountLabel,
+        fromJsonValue: _mountFromJson,
       ),
     ],
   ),
@@ -481,6 +488,9 @@ List<FieldSpec> buildFrameFormSchema() => [
 ];
 
 String _mountLabel(MountType m) => m.jsonValue;
+
+MountType _mountFromJson(String v) =>
+    MountType.values.firstWhere((m) => m.jsonValue == v);
 
 IFrameData frameFromFormValues(Map<String, dynamic> values) {
   final statsGroup = (values['stats'] as Map<String, dynamic>?) ?? const {};
