@@ -112,9 +112,30 @@ Bug real encontrado (y corregido, con test de regresión) durante la demo manual
 
 **Cobertura de `helpText`**: tras la demo, se extendió de un puñado de campos (arma + referencias) a prácticamente todos los campos de texto de las 24 entidades — cada `TextFieldSpec`/rama de texto de un `ShapeChoiceFieldSpec` explica qué se espera (id vs. nombre visible, formato esperado, ejemplo concreto). Quedan sin `helpText` explícito los `PatternTextFieldSpec` (`DiceExpression`, `EffectDuration`, `SynergyLocation`...), porque ya muestran su `patternHint` siempre visible bajo el campo, sin necesidad de pulsar el botón de ayuda.
 
+### Flujo Mostrar — ver/localizar
+
+Segunda fase de ADR-003: abrir un `.lcp` (o una carpeta con varios) y ver su contenido, sin ninguna capacidad de escritura.
+
+- `domain/ports/content_pack_reader.dart` — puerto hexagonal (`ParsedContentPack`: manifest tipado + `contentByKey` como JSON crudo, no objetos de dominio — leer no necesita reconstruir tipos, solo mostrar).
+- `infrastructure/lcp/zip_content_pack_reader.dart` — adapter que abre el zip, parsea `lcp_manifest.json` a `ILcpManifestData` y deja cada archivo de contenido tal cual (lista de `Map<String, dynamic>`).
+- `application/use_cases/mostrar_contenido_use_case.dart` — orquesta lector de archivo + `ContentPackReader`.
+- `presentation/screens/mostrar/` — `MostrarMenuScreen` (abrir `.lcp`/carpeta) → `LcpFolderScreen` (si eligió carpeta, lista los `.lcp` encontrados) → `LcpEntityTypesScreen` (tipos de entidad con recuento) → `LcpEntityCardsScreen` (una `EntityDisplayCard` de solo lectura por instancia).
+- `presentation/widgets/entity_display_card.dart` — pinta cualquier entidad a partir de su `List<FieldSpec>` (el mismo esquema que ya describe el formulario de Crear) sin conocer el tipo concreto; limitación documentada y aceptada: un `ListFieldSpec` anidado muestra solo el recuento de ítems, no su expansión completa.
+
+### Flujo Editar — editar/eliminar
+
+Tercera fase de ADR-003, sobre el mismo esquema de entrada que Mostrar, con dos capacidades nuevas por tarjeta: editar (abre el formulario de Crear precargado) y eliminar (con confirmación). Requisito explícito del cliente: editar puede tocar una o varias entidades, de uno o varios tipos, en uno o varios `.lcp` de la misma carpeta, sin perder ni los cambios en curso ni los datos no tocados.
+
+- `presentation/forms/form_values_from_json.dart` — hidrata un `Map<String, dynamic>` de valores de formulario a partir del JSON crudo de una entidad, recorriendo el mismo `List<FieldSpec>` del esquema de Crear. Los campos polimórficos necesitaron su inverso de lectura explícito, provisto en el propio esquema junto a `jsonKey`/`displayLabel`: `EnumFieldSpec`/`MultiEnumFieldSpec.fromJsonValue`, `ShapeChoiceFieldSpec.branchFromJson` e `idFromJson` de `CatalogFieldSpec` (ambos operan sobre el JSON del contenedor completo, no un valor aislado, porque el discriminador a veces es la forma del propio valor). El caso 6 (`TierValue`/`NpcSize`/`EidolonShardCount`, JSON como array posicional) necesitó una hidratación aparte (`_hydratePositionalGroup`), al no encajar en "elige una rama" ni "resuelve un id". Auditado en las 24 entidades — ver `Aprendizajes/Principios y decisiones clave.md`.
+- `presentation/forms/generic_form_controller.dart` — `GenericFormController` gana un `initialValues` opcional, para que el mismo `GenericFormView` de Crear arranque precargado en vez de vacío.
+- `domain/ports/raw_content_pack_exporter.dart` / `infrastructure/lcp/zip_raw_content_pack_exporter.dart` — a diferencia de `ContentPackExporter` (Crear), este puerto escribe `Map<String, List<Map<String, dynamic>>>` (JSON crudo) directo al zip, sin pasar por ningún tipo de dominio. Decisión central de Editar: la entidad editada sí pasa por `fromFormValues` → tipo de dominio → `entityDataToJson` (función pública, extraída de `ZipContentPackExporter`), pero **todo lo demás nunca se reconstruye** — así ningún hueco del esquema del formulario puede perder silenciosamente un campo de una entidad que el usuario no tocó.
+- `application/use_cases/editar_contenido_use_case.dart` — reexporta un `ParsedContentPack` (con la sustitución ya aplicada) a una ruta.
+- `presentation/session/edit_session.dart` — `EditSession` (`ChangeNotifier`, misma idea que `CrearSession`): `path → ParsedContentPack` más las rutas con cambios sin guardar. Reabrir un `.lcp` ya presente en la sesión reutiliza ese estado en vez de releerlo del disco, para no descartar ediciones en curso al navegar entre archivos de la misma carpeta.
+- `presentation/screens/editar/` — mismo esqueleto de pantallas que Mostrar (`EditarMenuScreen`/`EditarFolderScreen`/`EditarEntityTypesScreen`), con `EditarEntityCardsScreen` (tarjeta + botones editar/eliminar, eliminar con `AlertDialog` de confirmación) y `EditarEntidadScreen` (el formulario precargado) añadidas. "Guardar .lcp" solo aparece cuando `EditSession.isDirty` es cierto para ese archivo.
+
 ### Pantalla de inicio (Crear / Mostrar / Editar)
 
-`main.dart` ya no arranca directamente en el menú de Crear — arranca en `presentation/screens/home/home_screen.dart`, con las 3 fases del plan de ADR-003 (Crear → Mostrar/localizar → Editar/eliminar) como opciones. Solo "Crear" navega a una pantalla funcional (`CrearMenuScreen`); "Mostrar" y "Editar" navegan a `presentation/screens/no_implementado_screen.dart`, un placeholder compartido que no depende de ninguna de las dos fases todavía sin construir — se sustituirá cuando a cada una le toque su turno.
+`main.dart` ya no arranca directamente en el menú de Crear — arranca en `presentation/screens/home/home_screen.dart`, con las 3 fases del plan de ADR-003 (Crear → Mostrar/localizar → Editar/eliminar) como opciones, las 3 navegando ya a una pantalla funcional propia (`CrearMenuScreen`/`MostrarMenuScreen`/`EditarMenuScreen`).
 
 ### Selector de ubicación de guardado (`file_selector`)
 

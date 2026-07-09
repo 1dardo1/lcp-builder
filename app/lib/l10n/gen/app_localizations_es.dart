@@ -130,4 +130,26 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get editar => 'Editar';
+
+  @override
+  String get eliminar => 'Eliminar';
+
+  @override
+  String get confirmarEliminarTitulo => 'Eliminar entidad';
+
+  @override
+  String get confirmarEliminarMensaje =>
+      '¿Seguro que quieres eliminar esta entidad? Esta acción no se puede deshacer.';
+
+  @override
+  String get guardarCambios => 'Guardar cambios';
+
+  @override
+  String get guardarLcp => 'Guardar .lcp';
+
+  @override
+  String get sinEntidades => 'No quedan entidades de este tipo.';
 }

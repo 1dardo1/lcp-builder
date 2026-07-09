@@ -56,5 +56,12 @@
   "tipoCount": "{count, plural, one{1 entidad} other{{count} entidades}}",
   "@tipoCount": {
     "placeholders": {"count": {"type": "int"}}
-  }
+  },
+  "editar": "Editar",
+  "eliminar": "Eliminar",
+  "confirmarEliminarTitulo": "Eliminar entidad",
+  "confirmarEliminarMensaje": "¿Seguro que quieres eliminar esta entidad? Esta acción no se puede deshacer.",
+  "guardarCambios": "Guardar cambios",
+  "guardarLcp": "Guardar .lcp",
+  "sinEntidades": "No quedan entidades de este tipo."
 }
