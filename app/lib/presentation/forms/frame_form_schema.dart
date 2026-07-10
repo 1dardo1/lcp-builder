@@ -293,9 +293,7 @@ List<FieldSpec> _coreSystemFields() => [
         key: 'id',
         label: 'ID del tag',
         required: true,
-        helpText:
-            'El ID del tag (Tag), no su nombre visible. Si el tag '
-            'todavía no existe, usa el botón de crear tag desde el menú.',
+        helpText: tagIdHelpText,
       ),
     ],
   ),
@@ -356,9 +354,7 @@ FieldSpec _specialtyField() => const ShapeChoiceFieldSpec(
             key: 'source',
             label: 'Fabricante (Manufacturer ID)',
             required: true,
-            helpText:
-                'El ID del fabricante requerido para esta specialty, no su '
-                'nombre visible.',
+            helpText: manufacturerIdHelpText,
             referenceEntityKey: 'manufacturers',
             referenceLabel: 'fabricante',
           ),
@@ -415,7 +411,7 @@ List<FieldSpec> buildFrameFormSchema() => [
     key: 'source',
     label: 'Fabricante (debe coincidir con un Manufacturer ID)',
     required: true,
-    helpText: 'El ID del fabricante (Manufacturer), no su nombre visible.',
+    helpText: manufacturerIdHelpText,
     referenceEntityKey: 'manufacturers',
     referenceLabel: 'fabricante',
   ),

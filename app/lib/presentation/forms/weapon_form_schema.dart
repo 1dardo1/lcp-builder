@@ -271,11 +271,7 @@ List<FieldSpec> buildWeaponFormSchema() => [
     key: 'source',
     label: 'Fabricante (source)',
     required: true,
-    helpText:
-        'El ID del fabricante (Manufacturer), NO su nombre visible. Ej.: '
-        'si el fabricante se llama "General Manufacturing Systems" pero su '
-        'ID es "GMS", aquí va "GMS". Si el fabricante todavía no existe, '
-        'usa el botón de abajo para crearlo sin salir de este formulario.',
+    helpText: manufacturerIdHelpText,
     referenceEntityKey: 'manufacturers',
     referenceLabel: 'fabricante',
   ),
@@ -347,8 +343,9 @@ List<FieldSpec> buildWeaponFormSchema() => [
     itemFields: [
       TextFieldSpec(
         key: 'id',
-        label: 'ID del tag (ej. tg_accurate)',
+        label: 'ID del tag',
         required: true,
+        helpText: tagIdHelpText,
       ),
     ],
   ),

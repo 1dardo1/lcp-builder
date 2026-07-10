@@ -61,9 +61,7 @@ List<FieldSpec> npcFeatureBaseFields() => [
         key: 'id',
         label: 'ID del tag',
         required: true,
-        helpText:
-            'El ID del tag (Tag), no su nombre visible. Si el tag '
-            'todavía no existe, usa el botón de crear tag desde el menú.',
+        helpText: tagIdHelpText,
       ),
     ],
   ),
