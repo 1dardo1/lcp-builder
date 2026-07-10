@@ -4,4 +4,29 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application>
+        <!--
+          Solo para el test de aceptación instrumentado (ver
+          androidTest/.../MainActivityTest.kt) — vive en el source set
+          `debug`, así que el merge de manifests lo añade a builds de
+          debug/profile pero NUNCA a un .apk/.aab de release real.
+          Espresso-Intents intercepta ACTION_CREATE_DOCUMENT/
+          ACTION_OPEN_DOCUMENT antes de que se abra el selector real de
+          Android y responde con una URI content:// de este proveedor —
+          así el resto del flujo (ContentResolver, permisos, truncado)
+          se ejercita de verdad, sin depender de la UI de otra app
+          (DocumentsUI), que cambia entre versiones/fabricantes y sería
+          frágil de automatizar.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.lcp_builder.acceptancetest.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
 </manifest>
