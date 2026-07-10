@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/gen/app_localizations.dart';
 import '../../forms/crear_entidad_configs.dart';
+import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/entity_display_card.dart';
@@ -10,9 +11,13 @@ import 'editar_entidad_screen.dart';
 
 /// Lista de entidades de [contentKey] dentro del `.lcp` de [lcpPath], cada
 /// una con su [EntityDisplayCard] de solo lectura (misma pieza que
-/// Mostrar) más botones de editar/eliminar. Escucha [session]
-/// (`ListenableBuilder`) porque editar o eliminar una entidad cambia
-/// directamente el estado ahí, sin pasar por esta pantalla.
+/// Mostrar) más botones de editar/eliminar, y un botón de crear una
+/// entidad nueva de este mismo tipo (arriba del todo y también abajo de
+/// la lista, para no tener que hacer scroll de vuelta si la lista es
+/// larga) — reutiliza `EditarEntidadScreen` en su modo "crear"
+/// (`index`/`rawEntity` sin pasar). Escucha [session]
+/// (`ListenableBuilder`) porque editar, eliminar o crear una entidad
+/// cambia directamente el estado ahí, sin pasar por esta pantalla.
 class EditarEntityCardsScreen extends StatelessWidget {
   final EditSession session;
   final String lcpPath;
@@ -43,6 +48,22 @@ class EditarEntityCardsScreen extends StatelessWidget {
           contentKey: contentKey,
           index: index,
           rawEntity: raw,
+          localeController: localeController,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _crear(BuildContext context) async {
+    final config = crearEntidadConfigsByContentKey[contentKey];
+    if (config == null) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => EditarEntidadScreen(
+          config: config,
+          session: session,
+          lcpPath: lcpPath,
+          contentKey: contentKey,
           localeController: localeController,
         ),
       ),
@@ -87,11 +108,27 @@ class EditarEntityCardsScreen extends StatelessWidget {
         builder: (context, _) {
           final entities =
               session.packFor(lcpPath)?.contentByKey[contentKey] ?? const [];
+          final crearButton = config == null
+              ? null
+              : Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: FilledButton.icon(
+                    onPressed: () => _crear(context),
+                    icon: const Icon(Icons.add),
+                    label: Text(translateFieldText(config.title, locale)),
+                  ),
+                );
           if (entities.isEmpty) {
-            return Center(child: Text(t.sinEntidades));
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [Text(t.sinEntidades), ?crearButton],
+              ),
+            );
           }
           return ListView(
             children: [
+              ?crearButton,
               for (var i = 0; i < entities.length; i++)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -126,6 +163,7 @@ class EditarEntityCardsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+              ?crearButton,
             ],
           );
         },

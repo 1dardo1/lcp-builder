@@ -11,22 +11,29 @@ import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 
-/// Pantalla de edición de una entidad ya existente: reutiliza el mismo
-/// [GenericFormView]/[EntityCrearConfig] que Crear, pero el controlador
-/// arranca precargado con los datos que ya tenía la entidad (vía
-/// `formValuesFromJson` — ver esa auditoría) en vez de vacío.
+/// Pantalla de edición (o creación) de una entidad, dentro del flujo
+/// Editar: reutiliza el mismo [GenericFormView]/[EntityCrearConfig] que
+/// Crear.
 ///
-/// A diferencia de `CrearEntidadScreen`, un único botón: "Guardar" no crea
-/// una entidad nueva, sustituye la que ya había en [EditSession] (en
-/// memoria, no en disco todavía — el guardado a disco es una acción
-/// aparte, ver `EditarEntityTypesScreen`).
+/// Dos modos, según si se pasa [index]/[rawEntity] o no:
+/// - **Editar** (ambos presentes): el controlador arranca precargado con
+///   los datos que ya tenía la entidad (vía `formValuesFromJson`), y
+///   "Guardar" sustituye esa misma entidad en [EditSession]
+///   (`replaceEntity`).
+/// - **Crear** (ambos `null`): el controlador arranca vacío, como en
+///   `CrearEntidadScreen`, y "Guardar" añade una entidad nueva al final de
+///   la lista (`EditSession.addEntity`) en vez de sustituir nada.
+///
+/// En ambos casos el cambio queda en memoria (`EditSession`), no en disco
+/// todavía — el guardado a disco es una acción aparte, ver
+/// `EditarEntityTypesScreen`.
 class EditarEntidadScreen extends StatefulWidget {
   final EntityCrearConfig config;
   final EditSession session;
   final String lcpPath;
   final String contentKey;
-  final int index;
-  final Map<String, dynamic> rawEntity;
+  final int? index;
+  final Map<String, dynamic>? rawEntity;
   final LocaleController localeController;
 
   const EditarEntidadScreen({
@@ -35,8 +42,8 @@ class EditarEntidadScreen extends StatefulWidget {
     required this.session,
     required this.lcpPath,
     required this.contentKey,
-    required this.index,
-    required this.rawEntity,
+    this.index,
+    this.rawEntity,
     required this.localeController,
   });
 
@@ -47,7 +54,7 @@ class EditarEntidadScreen extends StatefulWidget {
 class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
   late final _schema = widget.config.buildSchema();
   late final _controller = GenericFormController(
-    initialValues: formValuesFromJson(_schema, widget.rawEntity),
+    initialValues: formValuesFromJson(_schema, widget.rawEntity ?? const {}),
   );
   String? _errorMessage;
 
@@ -55,12 +62,17 @@ class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
     try {
       final content = widget.config.fromFormValues(_controller.values);
       final rawJson = entityDataToJson(content);
-      widget.session.replaceEntity(
-        widget.lcpPath,
-        widget.contentKey,
-        widget.index,
-        rawJson,
-      );
+      final index = widget.index;
+      if (index == null) {
+        widget.session.addEntity(widget.lcpPath, widget.contentKey, rawJson);
+      } else {
+        widget.session.replaceEntity(
+          widget.lcpPath,
+          widget.contentKey,
+          index,
+          rawJson,
+        );
+      }
       Navigator.pop(context);
     } catch (e) {
       setState(
