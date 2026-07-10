@@ -174,6 +174,11 @@ class GenericFormView extends StatelessWidget {
       onPressed: () => showDialog<void>(
         context: context,
         builder: (dialogContext) => AlertDialog(
+          // scrollable: true — algunos helpText son largos de verdad
+          // (ej. la referencia de tags/fabricantes del Core de Lancer,
+          // ver common_entity_fields.dart), y sin esto el contenido
+          // desborda el diálogo en vez de poder desplazarse.
+          scrollable: true,
           content: Text(helpText),
           actions: [
             TextButton(
