@@ -11,13 +11,15 @@ import 'editar_entidad_screen.dart';
 
 /// Lista de entidades de [contentKey] dentro del `.lcp` de [lcpPath], cada
 /// una con su [EntityDisplayCard] de solo lectura (misma pieza que
-/// Mostrar) más botones de editar/eliminar, y un botón de crear una
-/// entidad nueva de este mismo tipo (arriba del todo y también abajo de
-/// la lista, para no tener que hacer scroll de vuelta si la lista es
-/// larga) — reutiliza `EditarEntidadScreen` en su modo "crear"
-/// (`index`/`rawEntity` sin pasar). Escucha [session]
-/// (`ListenableBuilder`) porque editar, eliminar o crear una entidad
-/// cambia directamente el estado ahí, sin pasar por esta pantalla.
+/// Mostrar) más botones de editar/eliminar, y un botón arriba del todo
+/// para crear una entidad nueva de este mismo tipo — reutiliza
+/// `EditarEntidadScreen` en su modo "crear" (`index`/`rawEntity` sin
+/// pasar). Para crear la primera entidad de un tipo que el `.lcp`
+/// todavía no tiene ninguna, ver `EditarElegirTipoScreen` en su lugar
+/// (esta pantalla solo existe para tipos que ya tienen contenido).
+/// Escucha [session] (`ListenableBuilder`) porque editar, eliminar o
+/// crear una entidad cambia directamente el estado ahí, sin pasar por
+/// esta pantalla.
 class EditarEntityCardsScreen extends StatelessWidget {
   final EditSession session;
   final String lcpPath;
@@ -163,7 +165,6 @@ class EditarEntityCardsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              ?crearButton,
             ],
           );
         },

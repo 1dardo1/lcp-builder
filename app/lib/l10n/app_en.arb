@@ -35,5 +35,7 @@
   "confirmarEliminarMensaje": "Are you sure you want to delete this entity? This action cannot be undone.",
   "guardarCambios": "Save changes",
   "guardarLcp": "Save .lcp",
-  "sinEntidades": "No entities of this type left."
+  "sinEntidades": "No entities of this type left.",
+  "crearTipoNuevo": "Create new entity type",
+  "elegirTipoTitle": "Choose entity type"
 }

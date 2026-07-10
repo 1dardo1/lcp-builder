@@ -135,4 +135,32 @@ void main() {
       expect(find.text('Guardar .lcp'), findsNothing);
     },
   );
+
+  testWidgets(
+    'el botón "Crear entidad de tipo nuevo" navega a la pantalla de elegir '
+    'tipo, con las 24 entidades registradas (no solo las que ya tiene el '
+    '.lcp)',
+    (tester) async {
+      await tester.pumpWidget(
+        wrapWithLocalization(
+          EditarEntityTypesScreen(
+            session: EditSession(),
+            lcpPath: 'paquete.lcp',
+            localeController: LocaleController(),
+            loadContent: (_) async => parsed,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Crear entidad de tipo nuevo'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Elegir tipo de entidad'), findsOneWidget);
+      // "tags" tiene 0 instancias en el .lcp actual — no aparece en esta
+      // pantalla, pero sí en la de elegir tipo, porque el objetivo es
+      // justo poder crear la primera.
+      expect(find.text('Crear tag'), findsOneWidget);
+    },
+  );
 }
