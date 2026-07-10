@@ -152,4 +152,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get sinEntidades => 'No quedan entidades de este tipo.';
+
+  @override
+  String get crearTipoNuevo => 'Crear entidad de tipo nuevo';
+
+  @override
+  String get elegirTipoTitle => 'Elegir tipo de entidad';
 }

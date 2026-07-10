@@ -63,5 +63,7 @@
   "confirmarEliminarMensaje": "¿Seguro que quieres eliminar esta entidad? Esta acción no se puede deshacer.",
   "guardarCambios": "Guardar cambios",
   "guardarLcp": "Guardar .lcp",
-  "sinEntidades": "No quedan entidades de este tipo."
+  "sinEntidades": "No quedan entidades de este tipo.",
+  "crearTipoNuevo": "Crear entidad de tipo nuevo",
+  "elegirTipoTitle": "Elegir tipo de entidad"
 }

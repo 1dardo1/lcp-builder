@@ -313,6 +313,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No quedan entidades de este tipo.'**
   String get sinEntidades;
+
+  /// No description provided for @crearTipoNuevo.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear entidad de tipo nuevo'**
+  String get crearTipoNuevo;
+
+  /// No description provided for @elegirTipoTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir tipo de entidad'**
+  String get elegirTipoTitle;
 }
 
 class _AppLocalizationsDelegate

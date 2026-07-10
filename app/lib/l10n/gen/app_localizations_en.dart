@@ -152,4 +152,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sinEntidades => 'No entities of this type left.';
+
+  @override
+  String get crearTipoNuevo => 'Create new entity type';
+
+  @override
+  String get elegirTipoTitle => 'Choose entity type';
 }

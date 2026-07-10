@@ -41,14 +41,6 @@ void main() {
 
   testWidgets('pinta una EntityDisplayCard por instancia, con botones de '
       'editar/eliminar', (tester) async {
-    // Viewport amplio: por defecto el ListView solo construye lo que cabe
-    // en pantalla + cache extent, y aquí hay que comprobar que el botón
-    // de crear aparece tanto arriba como abajo de la lista.
-    tester.view.physicalSize = const Size(1080, 4000);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-
     final session = EditSession();
     session.load('paquete.lcp', buildPack());
 
@@ -67,8 +59,8 @@ void main() {
     expect(find.byType(EntityDisplayCard), findsNWidgets(2));
     expect(find.text('Editar'), findsNWidgets(2));
     expect(find.text('Eliminar'), findsNWidgets(2));
-    // Botón de crear entidad, arriba del todo y abajo de la lista.
-    expect(find.text('Crear fabricante'), findsNWidgets(2));
+    // Botón de crear entidad, arriba del todo de la lista (solo uno).
+    expect(find.text('Crear fabricante'), findsOneWidget);
   });
 
   testWidgets('sin entidades restantes muestra el mensaje de "sin entidades"', (

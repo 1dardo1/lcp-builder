@@ -12,6 +12,7 @@ import '../../forms/crear_entidad_configs.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
+import 'editar_elegir_tipo_screen.dart';
 import 'editar_entity_cards_screen.dart';
 
 /// Adapter real por defecto de [EditarEntityTypesScreen.saveContent] —
@@ -147,6 +148,26 @@ class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: OutlinedButton.icon(
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => EditarElegirTipoScreen(
+                              session: widget.session,
+                              lcpPath: widget.lcpPath,
+                              localeController: widget.localeController,
+                            ),
+                          ),
+                        ),
+                        icon: const Icon(Icons.add),
+                        label: Text(t.crearTipoNuevo),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Expanded(
                     child: ListView(
                       children: [
