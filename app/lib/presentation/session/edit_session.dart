@@ -55,6 +55,20 @@ class EditSession extends ChangeNotifier {
     _replaceContentByKey(path, pack, contentKey, list);
   }
 
+  /// Añade [entity] (ya en JSON crudo — ver `entityDataToJson`) al final de
+  /// `contentByKey[contentKey]` dentro del paquete de [path] — a diferencia
+  /// de [replaceEntity], no sustituye ninguna entidad existente, crea una
+  /// nueva. El resto de entidades, de este tipo o de cualquier otro, no se
+  /// tocan.
+  void addEntity(String path, String contentKey, Map<String, dynamic> entity) {
+    final pack = _packs[path];
+    if (pack == null) return;
+    final list = List<Map<String, dynamic>>.from(
+      pack.contentByKey[contentKey] ?? const [],
+    )..add(entity);
+    _replaceContentByKey(path, pack, contentKey, list);
+  }
+
   /// Elimina la entidad en la posición [index] de `contentByKey[contentKey]`
   /// dentro del paquete de [path].
   void deleteEntity(String path, String contentKey, int index) {

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/domain/ports/content_pack_reader.dart';
@@ -40,6 +41,14 @@ void main() {
 
   testWidgets('pinta una EntityDisplayCard por instancia, con botones de '
       'editar/eliminar', (tester) async {
+    // Viewport amplio: por defecto el ListView solo construye lo que cabe
+    // en pantalla + cache extent, y aquí hay que comprobar que el botón
+    // de crear aparece tanto arriba como abajo de la lista.
+    tester.view.physicalSize = const Size(1080, 4000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     final session = EditSession();
     session.load('paquete.lcp', buildPack());
 
@@ -58,6 +67,8 @@ void main() {
     expect(find.byType(EntityDisplayCard), findsNWidgets(2));
     expect(find.text('Editar'), findsNWidgets(2));
     expect(find.text('Eliminar'), findsNWidgets(2));
+    // Botón de crear entidad, arriba del todo y abajo de la lista.
+    expect(find.text('Crear fabricante'), findsNWidgets(2));
   });
 
   testWidgets('sin entidades restantes muestra el mensaje de "sin entidades"', (
@@ -89,6 +100,8 @@ void main() {
     );
 
     expect(find.text('No quedan entidades de este tipo.'), findsOneWidget);
+    // El botón de crear sigue disponible aunque no quede ninguna entidad.
+    expect(find.text('Crear fabricante'), findsOneWidget);
   });
 
   testWidgets('eliminar pide confirmación y, al confirmar, quita la entidad '
@@ -138,4 +151,57 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets(
+    'tocar "Crear fabricante" abre el formulario vacío, y guardar añade la '
+    'entidad a la lista sin tocar las existentes',
+    (tester) async {
+      tester.view.physicalSize = const Size(1080, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final session = EditSession();
+      session.load('paquete.lcp', buildPack());
+
+      await tester.pumpWidget(
+        wrapWithLocalization(
+          EditarEntityCardsScreen(
+            session: session,
+            lcpPath: 'paquete.lcp',
+            contentKey: 'manufacturers',
+            localeController: LocaleController(),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Crear fabricante').first);
+      await tester.pumpAndSettle();
+
+      // El formulario está vacío — nada de los fabricantes existentes.
+      expect(find.text('General Manufacturing Systems'), findsNothing);
+
+      await tester.enterText(find.byKey(const ValueKey('id')), 'HA');
+      await tester.enterText(
+        find.byKey(const ValueKey('name')),
+        'Harrison Armory',
+      );
+      await tester.enterText(find.byKey(const ValueKey('description')), 'd3');
+      await tester.enterText(find.byKey(const ValueKey('quote')), 'q3');
+      await tester.enterText(find.byKey(const ValueKey('light')), 'CCCCCC');
+      await tester.enterText(find.byKey(const ValueKey('dark')), '333333');
+      await tester.tap(find.text('Guardar cambios'));
+      await tester.pumpAndSettle();
+
+      // De vuelta en la lista (ListenableBuilder), las 2 originales siguen
+      // intactas y aparece la nueva.
+      expect(find.byType(EntityDisplayCard), findsNWidgets(3));
+      expect(find.textContaining('Harrison Armory'), findsOneWidget);
+      expect(
+        find.textContaining('General Manufacturing Systems'),
+        findsOneWidget,
+      );
+      expect(session.isDirty('paquete.lcp'), isTrue);
+    },
+  );
 }

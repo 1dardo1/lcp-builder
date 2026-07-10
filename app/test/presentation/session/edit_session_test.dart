@@ -49,6 +49,46 @@ void main() {
     expect(session.isDirty('/a.lcp'), isTrue);
   });
 
+  test('addEntity añade al final sin tocar las demás entidades ni tipos', () {
+    final session = EditSession();
+    session.load('/a.lcp', _samplePack());
+
+    session.addEntity('/a.lcp', 'weapons', {
+      'id': 'mw_tres',
+      'name': 'Arma nueva',
+    });
+
+    final pack = session.packFor('/a.lcp')!;
+    expect(pack.contentByKey['weapons'], hasLength(3));
+    expect(pack.contentByKey['weapons']!.first['name'], 'Arma 1');
+    expect(pack.contentByKey['weapons']![1]['name'], 'Arma 2');
+    expect(pack.contentByKey['weapons']!.last['name'], 'Arma nueva');
+    expect(
+      pack.contentByKey['manufacturers']!.first['name'],
+      'General Manufacturing Systems',
+    );
+    expect(session.isDirty('/a.lcp'), isTrue);
+  });
+
+  test('addEntity en un contentKey todavía vacío/ausente crea la lista', () {
+    final session = EditSession();
+    session.load('/a.lcp', _samplePack());
+
+    session.addEntity('/a.lcp', 'tags', {'id': 'tg_nuevo', 'name': 'Tag'});
+
+    final pack = session.packFor('/a.lcp')!;
+    expect(pack.contentByKey['tags'], hasLength(1));
+    expect(pack.contentByKey['tags']!.first['id'], 'tg_nuevo');
+  });
+
+  test('addEntity sobre un path nunca cargado no rompe', () {
+    final session = EditSession();
+    session.addEntity('/nunca.lcp', 'weapons', {'id': 'x', 'name': 'x'});
+
+    expect(session.packFor('/nunca.lcp'), isNull);
+    expect(session.isDirty('/nunca.lcp'), isFalse);
+  });
+
   test('deleteEntity elimina solo esa entidad', () {
     final session = EditSession();
     session.load('/a.lcp', _samplePack());

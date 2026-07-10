@@ -118,4 +118,82 @@ void main() {
       expect(session.isDirty('paquete.lcp'), isTrue);
     },
   );
+
+  testWidgets(
+    'sin index/rawEntity (modo crear), el formulario arranca vacío',
+    (tester) async {
+      tester.view.physicalSize = const Size(1080, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final session = EditSession();
+      session.load('paquete.lcp', buildPack());
+
+      await tester.pumpWidget(
+        wrapWithLocalization(
+          EditarEntidadScreen(
+            config: crearEntidadConfigsByContentKey['manufacturers']!,
+            session: session,
+            lcpPath: 'paquete.lcp',
+            contentKey: 'manufacturers',
+            localeController: LocaleController(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('GMS'), findsNothing);
+      expect(find.text('General Manufacturing Systems'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'sin index/rawEntity, guardar añade una entidad nueva sin tocar las '
+    'existentes',
+    (tester) async {
+      tester.view.physicalSize = const Size(1080, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final session = EditSession();
+      session.load('paquete.lcp', buildPack());
+
+      await tester.pumpWidget(
+        wrapWithLocalization(
+          EditarEntidadScreen(
+            config: crearEntidadConfigsByContentKey['manufacturers']!,
+            session: session,
+            lcpPath: 'paquete.lcp',
+            contentKey: 'manufacturers',
+            localeController: LocaleController(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byKey(const ValueKey('id')), 'HA');
+      await tester.enterText(
+        find.byKey(const ValueKey('name')),
+        'Harrison Armory',
+      );
+      await tester.enterText(find.byKey(const ValueKey('description')), 'd3');
+      await tester.enterText(find.byKey(const ValueKey('quote')), 'q3');
+      await tester.enterText(find.byKey(const ValueKey('light')), 'CCCCCC');
+      await tester.enterText(find.byKey(const ValueKey('dark')), '333333');
+      await tester.tap(find.text('Guardar cambios'));
+      await tester.pumpAndSettle();
+
+      final updated =
+          session.packFor('paquete.lcp')!.contentByKey['manufacturers']!;
+      // Las 2 originales siguen ahí, intactas, más la nueva al final.
+      expect(updated.length, 3);
+      expect(updated[0]['name'], 'General Manufacturing Systems');
+      expect(updated[1]['name'], 'Industrial Printworks Sacrifice-North');
+      expect(updated[2]['id'], 'HA');
+      expect(updated[2]['name'], 'Harrison Armory');
+      expect(session.isDirty('paquete.lcp'), isTrue);
+    },
+  );
 }
