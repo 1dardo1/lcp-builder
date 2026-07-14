@@ -50,9 +50,12 @@ jobs:
           # solo necesita el runtime de Android.
           emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim -camera-back none
           disable-animations: true
-          script: |
-            cd app
-            flutter test integration_test/editar_android_acceptance_test.dart -d emulator-5554
+          # Una sola línea: este `script` de reactivecircus/android-emulator-runner
+          # ejecuta cada línea como una invocación de shell independiente (no
+          # persiste el `cd` entre líneas), a diferencia de un `run:` normal de
+          # GitHub Actions — con dos líneas, `flutter test` se ejecutaba desde la
+          # raíz del repo y fallaba con "No pubspec.yaml file found".
+          script: cd app && flutter test integration_test/editar_android_acceptance_test.dart -d emulator-5554
 
   linux-smoke:
     runs-on: ubuntu-latest
