@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:lcp_builder/infrastructure/file_system/android_saf_channel.dart';
 import 'package:lcp_builder/infrastructure/file_system/android_saf_file_reader.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
+import 'package:lcp_builder/l10n/gen/app_localizations.dart';
 import 'package:lcp_builder/presentation/forms/manufacturer_form_schema.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/crear/crear_entidad_screen.dart';
@@ -13,6 +15,23 @@ import 'package:lcp_builder/presentation/screens/editar/editar_entity_cards_scre
 import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_screen.dart';
 import 'package:lcp_builder/presentation/session/crear_session.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
+
+/// Igual que `test/support/test_app.dart`'s `wrapWithLocalization`, pero
+/// duplicado aquí en vez de importado — este archivo vive en
+/// `integration_test/`, aparte de `test/`, y se mantiene autocontenido.
+/// Necesario porque `AppLocalizations.of(context)` lanza un null-check si
+/// el `MaterialApp` no registra `localizationsDelegates`/`supportedLocales`.
+Widget _wrapWithLocalization(Widget home) => MaterialApp(
+  locale: const Locale('es'),
+  localizationsDelegates: const [
+    AppLocalizations.delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ],
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: home,
+);
 
 /// Test de aceptación real de Android — corre en un emulador/dispositivo
 /// de verdad (`flutter test integration_test/` apuntando a un dispositivo,
@@ -48,8 +67,8 @@ void main() {
       // --- Crear: escribe de verdad, vía el selector interceptado. ---
       final crearSession = CrearSession();
       await tester.pumpWidget(
-        MaterialApp(
-          home: CrearEntidadScreen(
+        _wrapWithLocalization(
+          CrearEntidadScreen(
             config: manufacturerCrearConfig,
             session: crearSession,
             localeController: LocaleController(),
@@ -98,8 +117,8 @@ void main() {
       // --- Editar: relee esa misma URI de verdad, sin mocks. ---
       final editSession = EditSession();
       await tester.pumpWidget(
-        MaterialApp(
-          home: EditarEntityTypesScreen(
+        _wrapWithLocalization(
+          EditarEntityTypesScreen(
             session: editSession,
             lcpPath: lcpUri!,
             localeController: LocaleController(),
@@ -111,8 +130,8 @@ void main() {
       expect(find.text('AcceptanceTestCorp'), findsOneWidget);
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: EditarEntityCardsScreen(
+        _wrapWithLocalization(
+          EditarEntityCardsScreen(
             session: editSession,
             lcpPath: lcpUri,
             contentKey: 'manufacturers',
@@ -137,8 +156,8 @@ void main() {
       // Guardar de verdad en disco — el canal nativo real, con el
       // truncado explícito que arregló #39.
       await tester.pumpWidget(
-        MaterialApp(
-          home: EditarEntityTypesScreen(
+        _wrapWithLocalization(
+          EditarEntityTypesScreen(
             session: editSession,
             lcpPath: lcpUri,
             localeController: LocaleController(),
