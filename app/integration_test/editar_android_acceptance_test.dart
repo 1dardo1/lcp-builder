@@ -64,6 +64,17 @@ void main() {
     'escritura/lectura en Android (SAF real, sin mocks) — regresión de '
     'los bugs de guardado corregidos en #37/#38/#39',
     (tester) async {
+      // El formulario es largo — sin esto, en la pantalla real (más
+      // pequeña) del emulador, la ListView solo construye lo que cabe en
+      // el viewport + cache extent: botones como "Finalizar lcp", más
+      // abajo del todo, quedarían fuera del árbol y find.text no los
+      // encontraría (mismo problema ya resuelto en widget_test.dart /
+      // crear_entidad_screen_test.dart, nunca aplicado aquí).
+      tester.view.physicalSize = const Size(1080, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       // --- Crear: escribe de verdad, vía el selector interceptado. ---
       final crearSession = CrearSession();
       await tester.pumpWidget(
