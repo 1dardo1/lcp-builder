@@ -72,6 +72,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requerido => 'Required';
 
   @override
+  String get revisaCamposMarcados => 'Check the fields marked in red.';
+
+  @override
   String noCoincidePattern(String hint) {
     return 'Doesn\'t match: $hint';
   }

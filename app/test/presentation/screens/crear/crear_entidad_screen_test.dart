@@ -97,4 +97,45 @@ void main() {
       expect(session.content['manufacturers'], isNull);
     },
   );
+
+  testWidgets(
+    'dejar un campo obligatorio vacío y pulsar Continuar no añade la '
+    'entidad a la sesión, y muestra "Requerido" — regresión: el validator '
+    'de los campos existía pero no había ningún Form que lo disparara, así '
+    'que antes de este fix se podía enviar con campos obligatorios vacíos',
+    (tester) async {
+      tester.view.physicalSize = const Size(1080, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final session = CrearSession();
+      await tester.pumpWidget(
+        wrapWithLocalization(
+          CrearEntidadScreen(
+            config: manufacturerCrearConfig,
+            session: session,
+            localeController: LocaleController(),
+          ),
+        ),
+      );
+
+      // "id" se deja vacío a propósito — el resto de obligatorios sí se
+      // rellenan, para aislar que el bloqueo viene de ese campo concreto.
+      await tester.enterText(
+        find.byKey(const ValueKey('name')),
+        'General Manufacturing Systems',
+      );
+      await tester.enterText(find.byKey(const ValueKey('description')), 'd');
+      await tester.enterText(find.byKey(const ValueKey('quote')), 'q');
+      await tester.enterText(find.byKey(const ValueKey('light')), '#FFFFFF');
+      await tester.enterText(find.byKey(const ValueKey('dark')), '#000000');
+
+      await tester.tap(find.text('Continuar'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Requerido'), findsOneWidget);
+      expect(session.isEmpty, isTrue);
+    },
+  );
 }

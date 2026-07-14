@@ -21,6 +21,7 @@ Future<GenericFormController> _pumpFields(
           child: GenericFormView(
             fields: fields,
             controller: controller,
+            formKey: GlobalKey<FormState>(),
             onCreateReference: onCreateReference,
           ),
         ),
@@ -156,6 +157,7 @@ void main() {
               child: GenericFormView(
                 fields: buildWeaponFormSchema(),
                 controller: controller,
+                formKey: GlobalKey<FormState>(),
               ),
             ),
           ),
@@ -291,6 +293,7 @@ void main() {
                 ),
               ],
               controller: controller,
+              formKey: GlobalKey<FormState>(),
               locale: const Locale('en'),
               onCreateReference: (_) async => 'X',
             ),

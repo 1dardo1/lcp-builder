@@ -45,6 +45,14 @@ class GenericFormView extends StatelessWidget {
   final List<FieldSpec> fields;
   final GenericFormController controller;
 
+  /// Clave del `Form` que envuelve el árbol de campos — quien construye
+  /// esta pantalla (`CrearEntidadScreen`/`EditarEntidadScreen`) la usa para
+  /// llamar a `formKey.currentState!.validate()` antes de ensamblar la
+  /// entidad, y así los `validator` de los campos (antes sin efecto: no
+  /// había ningún `Form` que los disparara) bloqueen de verdad el envío
+  /// con campos obligatorios vacíos.
+  final GlobalKey<FormState> formKey;
+
   /// Idioma activo — traduce `FieldSpec.label`/`helpText`/`patternHint` y
   /// `ShapeChoiceOption.label` en el punto de render (ver
   /// `field_translations.dart`); el texto de ayuda fijo del propio motor
@@ -66,6 +74,7 @@ class GenericFormView extends StatelessWidget {
     super.key,
     required this.fields,
     required this.controller,
+    required this.formKey,
     this.locale = const Locale('es'),
     this.onCreateReference,
   });
@@ -77,11 +86,15 @@ class GenericFormView extends StatelessWidget {
     final rootContext = _FieldContext(get: controller.get, set: controller.set);
     return AnimatedBuilder(
       animation: controller,
-      builder: (context, _) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final field in fields) _buildField(context, field, rootContext),
-        ],
+      builder: (context, _) => Form(
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final field in fields)
+              _buildField(context, field, rootContext),
+          ],
+        ),
       ),
     );
   }
@@ -95,6 +108,7 @@ class GenericFormView extends StatelessWidget {
         (v) => ctx.set(f.key, v),
       ),
       NumberFieldSpec f => _buildNumber(
+        context,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
@@ -105,6 +119,7 @@ class GenericFormView extends StatelessWidget {
         (v) => ctx.set(f.key, v),
       ),
       EnumFieldSpec f => _buildEnum(
+        context,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
@@ -203,20 +218,26 @@ class GenericFormView extends StatelessWidget {
     // recién creado en el campo). Un `TextEditingController` propio, con
     // key estable por campo, sí se sincroniza en rebuilds posteriores (ver
     // `_ControlledTextField`).
+    final t = AppLocalizations.of(context);
     return _ControlledTextField(
       key: ValueKey(f.key),
       current: current as String?,
       maxLines: f.maxLines,
       labelText: _tr(f.label) + (f.required ? ' *' : ''),
       onChanged: onChanged,
+      validator: f.required
+          ? (value) => (value == null || value.isEmpty) ? t.requerido : null
+          : null,
     );
   }
 
   Widget _buildNumber(
+    BuildContext context,
     NumberFieldSpec f,
     dynamic current,
     ValueChanged<num?> onChanged,
   ) {
+    final t = AppLocalizations.of(context);
     return TextFormField(
       key: ValueKey(f.key),
       initialValue: current?.toString(),
@@ -225,6 +246,10 @@ class GenericFormView extends StatelessWidget {
         labelText: _tr(f.label) + (f.required ? ' *' : ''),
       ),
       onChanged: (text) => onChanged(num.tryParse(text)),
+      validator: f.required
+          ? (value) =>
+                (value == null || value.isEmpty) ? t.requerido : null
+          : null,
     );
   }
 
@@ -242,10 +267,12 @@ class GenericFormView extends StatelessWidget {
   }
 
   Widget _buildEnum(
+    BuildContext context,
     EnumFieldSpec f,
     dynamic current,
     ValueChanged<dynamic> onChanged,
   ) {
+    final t = AppLocalizations.of(context);
     return DropdownButtonFormField(
       key: ValueKey(f.key),
       initialValue: current,
@@ -257,6 +284,7 @@ class GenericFormView extends StatelessWidget {
           DropdownMenuItem(value: option, child: Text(f.labelFor(option))),
       ],
       onChanged: onChanged,
+      validator: f.required ? (value) => value == null ? t.requerido : null : null,
     );
   }
 
@@ -491,6 +519,7 @@ class _ControlledTextField extends StatefulWidget {
   final int maxLines;
   final String labelText;
   final ValueChanged<String> onChanged;
+  final FormFieldValidator<String>? validator;
 
   const _ControlledTextField({
     super.key,
@@ -498,6 +527,7 @@ class _ControlledTextField extends StatefulWidget {
     required this.maxLines,
     required this.labelText,
     required this.onChanged,
+    this.validator,
   });
 
   @override
@@ -512,7 +542,16 @@ class _ControlledTextFieldState extends State<_ControlledTextField> {
     super.didUpdateWidget(oldWidget);
     if (widget.current != oldWidget.current &&
         widget.current != _controller.text) {
-      _controller.text = widget.current ?? '';
+      // Escribir en el controller aquí, en mitad del build del padre,
+      // dispara sus listeners de forma síncrona — con el `Form` que ahora
+      // envuelve el árbol (ver `GenericFormView.build`), eso incluye
+      // `FormFieldState.didChange`, que llama a `setState` sobre el propio
+      // `Form` mientras el framework todavía lo está construyendo
+      // ("setState() or markNeedsBuild() called during build"). Se pospone
+      // al siguiente frame, ya fuera de la fase de build.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _controller.text = widget.current ?? '';
+      });
     }
   }
 
@@ -529,6 +568,7 @@ class _ControlledTextFieldState extends State<_ControlledTextField> {
       maxLines: widget.maxLines,
       decoration: InputDecoration(labelText: widget.labelText),
       onChanged: widget.onChanged,
+      validator: widget.validator,
     );
   }
 }
