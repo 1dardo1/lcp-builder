@@ -1,0 +1,40 @@
+name: Build Linux
+
+# Solo manual (workflow_dispatch), mismo criterio que build-apk.yml: no
+# tiene sentido compilar el binario de Linux en cada commit todavía — se
+# lanza a demanda desde la pestaña Actions.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+
+      - name: Dependencias de Linux desktop
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev ninja-build
+
+      - run: flutter pub get
+
+      - run: flutter analyze
+
+      - run: flutter test
+
+      - run: flutter config --enable-linux-desktop
+
+      - run: flutter build linux --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcp-builder-linux
+          path: app/build/linux/x64/release/bundle
+          retention-days: 30
