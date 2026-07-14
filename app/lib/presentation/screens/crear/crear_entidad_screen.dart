@@ -49,10 +49,17 @@ class CrearEntidadScreen extends StatefulWidget {
 
 class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
   final _controller = GenericFormController();
+  final _formKey = GlobalKey<FormState>();
   late final _schema = widget.config.buildSchema();
   String? _errorMessage;
 
   Object? _ensamblar() {
+    if (!(_formKey.currentState?.validate() ?? true)) {
+      setState(
+        () => _errorMessage = AppLocalizations.of(context).revisaCamposMarcados,
+      );
+      return null;
+    }
     try {
       final content = widget.config.fromFormValues(_controller.values);
       setState(() => _errorMessage = null);
@@ -119,6 +126,7 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
             GenericFormView(
               fields: _schema,
               controller: _controller,
+              formKey: _formKey,
               locale: locale,
               onCreateReference: _onCreateReference,
             ),

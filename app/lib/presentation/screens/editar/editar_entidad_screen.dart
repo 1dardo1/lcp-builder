@@ -56,9 +56,16 @@ class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
   late final _controller = GenericFormController(
     initialValues: formValuesFromJson(_schema, widget.rawEntity ?? const {}),
   );
+  final _formKey = GlobalKey<FormState>();
   String? _errorMessage;
 
   void _guardar() {
+    if (!(_formKey.currentState?.validate() ?? true)) {
+      setState(
+        () => _errorMessage = AppLocalizations.of(context).revisaCamposMarcados,
+      );
+      return;
+    }
     try {
       final content = widget.config.fromFormValues(_controller.values);
       final rawJson = entityDataToJson(content);
@@ -97,6 +104,7 @@ class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
             GenericFormView(
               fields: _schema,
               controller: _controller,
+              formKey: _formKey,
               locale: locale,
             ),
             const SizedBox(height: 16),

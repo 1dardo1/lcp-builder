@@ -17,6 +17,7 @@
   "ayuda": "Help",
   "cerrar": "Close",
   "requerido": "Required",
+  "revisaCamposMarcados": "Check the fields marked in red.",
   "noCoincidePattern": "Doesn't match: {hint}",
   "quitar": "Remove",
   "anadirCampo": "Add {label}",

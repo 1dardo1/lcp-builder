@@ -27,6 +27,7 @@
   "ayuda": "Ayuda",
   "cerrar": "Cerrar",
   "requerido": "Requerido",
+  "revisaCamposMarcados": "Revisa los campos marcados en rojo.",
   "noCoincidePattern": "No coincide con: {hint}",
   "@noCoincidePattern": {
     "placeholders": {"hint": {"type": "String"}}

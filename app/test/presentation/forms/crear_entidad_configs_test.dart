@@ -59,6 +59,7 @@ void main() {
                 child: GenericFormView(
                   fields: fields,
                   controller: GenericFormController(),
+                  formKey: GlobalKey<FormState>(),
                 ),
               ),
             ),

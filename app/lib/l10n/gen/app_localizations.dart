@@ -200,6 +200,12 @@ abstract class AppLocalizations {
   /// **'Requerido'**
   String get requerido;
 
+  /// No description provided for @revisaCamposMarcados.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa los campos marcados en rojo.'**
+  String get revisaCamposMarcados;
+
   /// No description provided for @noCoincidePattern.
   ///
   /// In es, this message translates to:
