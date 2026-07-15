@@ -16,7 +16,24 @@ import 'generic_form_controller.dart';
 class _FieldContext {
   final dynamic Function(String key) get;
   final void Function(String key, dynamic value) set;
-  const _FieldContext({required this.get, required this.set});
+
+  /// Prefijo para construir la `ValueKey` de un campo de este nivel (ej.
+  /// `'damage.'` dentro del [GroupFieldSpec] `damage`) — sin esto, dos
+  /// grupos hermanos con un campo del mismo nombre (ej. `damage.val` y
+  /// `range.val`, ambos con key local `'val'`) producirían dos widgets con
+  /// la misma `ValueKey('val')` en el mismo árbol: Flutter no lo rechaza
+  /// (no son hermanos directos), pero cualquier `find.byKey`/automatización
+  /// de test no puede distinguirlos (ver `crear_entidad_screen_all_configs_test.dart`,
+  /// que lo atrapó con weapon mod/frame). No se aplica todavía al mismo
+  /// problema dentro de [ListFieldSpec] (ítems repetidos comparten key
+  /// local igual) — fuera de alcance de este fix, ver nota en `_itemContext`.
+  final String keyPrefix;
+
+  const _FieldContext({
+    required this.get,
+    required this.set,
+    this.keyPrefix = '',
+  });
 }
 
 /// Motor genérico: interpreta una `List<FieldSpec>` y la pinta como
@@ -100,32 +117,38 @@ class GenericFormView extends StatelessWidget {
   }
 
   Widget _buildField(BuildContext context, FieldSpec field, _FieldContext ctx) {
+    final key = ValueKey('${ctx.keyPrefix}${field.key}');
     final content = switch (field) {
       TextFieldSpec f => _buildText(
         context,
+        key,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
       ),
       NumberFieldSpec f => _buildNumber(
         context,
+        key,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
       ),
       BoolFieldSpec f => _buildBool(
+        key,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
       ),
       EnumFieldSpec f => _buildEnum(
         context,
+        key,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
       ),
       PatternTextFieldSpec f => _buildPatternText(
         context,
+        key,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
@@ -134,6 +157,7 @@ class GenericFormView extends StatelessWidget {
       CatalogFieldSpec f => _buildCatalog(context, f, ctx),
       ListFieldSpec f => _buildList(context, f, ctx),
       MultiEnumFieldSpec f => _buildMultiEnum(
+        key,
         f,
         ctx.get(f.key),
         (v) => ctx.set(f.key, v),
@@ -208,6 +232,7 @@ class GenericFormView extends StatelessWidget {
 
   Widget _buildText(
     BuildContext context,
+    ValueKey<String> key,
     TextFieldSpec f,
     dynamic current,
     ValueChanged<String> onChanged,
@@ -220,7 +245,7 @@ class GenericFormView extends StatelessWidget {
     // `_ControlledTextField`).
     final t = AppLocalizations.of(context);
     return _ControlledTextField(
-      key: ValueKey(f.key),
+      key: key,
       current: current as String?,
       maxLines: f.maxLines,
       labelText: _tr(f.label) + (f.required ? ' *' : ''),
@@ -233,13 +258,14 @@ class GenericFormView extends StatelessWidget {
 
   Widget _buildNumber(
     BuildContext context,
+    ValueKey<String> key,
     NumberFieldSpec f,
     dynamic current,
     ValueChanged<num?> onChanged,
   ) {
     final t = AppLocalizations.of(context);
     return TextFormField(
-      key: ValueKey(f.key),
+      key: key,
       initialValue: current?.toString(),
       keyboardType: TextInputType.numberWithOptions(decimal: f.allowDecimal),
       decoration: InputDecoration(
@@ -254,12 +280,13 @@ class GenericFormView extends StatelessWidget {
   }
 
   Widget _buildBool(
+    ValueKey<String> key,
     BoolFieldSpec f,
     dynamic current,
     ValueChanged<bool> onChanged,
   ) {
     return CheckboxListTile(
-      key: ValueKey(f.key),
+      key: key,
       value: (current as bool?) ?? false,
       title: Text(_tr(f.label)),
       onChanged: (v) => onChanged(v ?? false),
@@ -268,13 +295,14 @@ class GenericFormView extends StatelessWidget {
 
   Widget _buildEnum(
     BuildContext context,
+    ValueKey<String> key,
     EnumFieldSpec f,
     dynamic current,
     ValueChanged<dynamic> onChanged,
   ) {
     final t = AppLocalizations.of(context);
     return DropdownButtonFormField(
-      key: ValueKey(f.key),
+      key: key,
       initialValue: current,
       decoration: InputDecoration(
         labelText: _tr(f.label) + (f.required ? ' *' : ''),
@@ -290,6 +318,7 @@ class GenericFormView extends StatelessWidget {
 
   Widget _buildPatternText(
     BuildContext context,
+    ValueKey<String> key,
     PatternTextFieldSpec f,
     dynamic current,
     ValueChanged<String> onChanged,
@@ -297,7 +326,7 @@ class GenericFormView extends StatelessWidget {
     final t = AppLocalizations.of(context);
     final hint = _tr(f.patternHint);
     return TextFormField(
-      key: ValueKey(f.key),
+      key: key,
       initialValue: current as String?,
       decoration: InputDecoration(
         labelText: _tr(f.label) + (f.required ? ' *' : ''),
@@ -352,7 +381,7 @@ class GenericFormView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownButtonFormField(
-          key: ValueKey('${f.key}.id'),
+          key: ValueKey('${ctx.keyPrefix}${f.key}.id'),
           initialValue: selectedId,
           decoration: InputDecoration(
             labelText: _tr(f.label) + (f.required ? ' *' : ''),
@@ -370,12 +399,14 @@ class GenericFormView extends StatelessWidget {
   }
 
   Widget _buildMultiEnum(
+    ValueKey<String> key,
     MultiEnumFieldSpec f,
     dynamic current,
     ValueChanged<List<dynamic>> onChanged,
   ) {
     final selected = (current as List?)?.toSet() ?? {};
     return Column(
+      key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(_tr(f.label) + (f.required ? ' *' : '')),
@@ -384,7 +415,7 @@ class GenericFormView extends StatelessWidget {
           children: [
             for (final option in f.options)
               FilterChip(
-                key: ValueKey('${f.key}.${option.toString()}'),
+                key: ValueKey('${key.value}.${option.toString()}'),
                 label: Text(f.labelFor(option)),
                 selected: selected.contains(option),
                 onSelected: (isSelected) {
@@ -431,6 +462,7 @@ class GenericFormView extends StatelessWidget {
         current[subKey] = value;
         ctx.set(key, current);
       },
+      keyPrefix: '${ctx.keyPrefix}$key.',
     );
   }
 

@@ -78,8 +78,11 @@ void main() {
         ),
       ]);
 
-      await tester.enterText(find.byKey(const ValueKey('stat')), 'hull');
-      await tester.tap(find.byKey(const ValueKey('aoe')));
+      await tester.enterText(
+        find.byKey(const ValueKey('save.stat')),
+        'hull',
+      );
+      await tester.tap(find.byKey(const ValueKey('save.aoe')));
       await tester.pump();
 
       expect(controller.values['save'], {'stat': 'hull', 'aoe': true});
@@ -127,16 +130,16 @@ void main() {
       await tester.tap(find.text('Por tier'));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('count.single')), findsNothing);
-      expect(find.byKey(const ValueKey('tier1')), findsOneWidget);
-      expect(find.byKey(const ValueKey('tier2')), findsOneWidget);
-      expect(find.byKey(const ValueKey('tier3')), findsOneWidget);
+      expect(find.byKey(const ValueKey('count.perTier.tier1')), findsOneWidget);
+      expect(find.byKey(const ValueKey('count.perTier.tier2')), findsOneWidget);
+      expect(find.byKey(const ValueKey('count.perTier.tier3')), findsOneWidget);
 
       // La rama "hostile" no tiene `field` — elegirla no debe pintar ningún
       // sub-campo (ni el de "single" ni el de "perTier").
       await tester.tap(find.text('Hostile characters'));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('count.single')), findsNothing);
-      expect(find.byKey(const ValueKey('tier1')), findsNothing);
+      expect(find.byKey(const ValueKey('count.perTier.tier1')), findsNothing);
       expect(controller.values['count.choice'], 'hostile');
     },
   );
