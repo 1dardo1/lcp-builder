@@ -115,7 +115,15 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Generado:'), findsOneWidget);
+      // No se comprueba aquí el SnackBar "Generado: ..." (sí lo hace
+      // finalizar_lcp_test.dart, en el host): es un widget efímero con
+      // temporizador de verdad, y en un dispositivo/emulador real
+      // (IntegrationTestWidgetsFlutterBinding, tiempo real — a diferencia
+      // del reloj simulado que usa `flutter test` en el host) puede
+      // llegar a autodescartarse antes de esta línea, sobre todo en un
+      // emulador de CI lento — visto fallar así en un run real. La
+      // comprobación fuerte de este test no es el SnackBar, es releer los
+      // bytes reales del disco más abajo.
 
       // La URI real que acaba de usar Crear — se recupera pidiendo otra
       // vez al selector (interceptado: siempre responde con la misma
