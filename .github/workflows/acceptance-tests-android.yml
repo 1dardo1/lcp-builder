@@ -56,9 +56,34 @@ jobs:
           # solo necesita el runtime de Android.
           emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim -camera-back none
           disable-animations: true
-          # Una sola línea: este `script` de reactivecircus/android-emulator-runner
-          # ejecuta cada línea como una invocación de shell independiente (no
-          # persiste el `cd` entre líneas), a diferencia de un `run:` normal de
-          # GitHub Actions — con dos líneas, `flutter test` se ejecutaba desde la
-          # raíz del repo y fallaba con "No pubspec.yaml file found".
-          script: cd app && flutter test integration_test/editar_android_acceptance_test.dart integration_test/crear_editar_todas_entidades_acceptance_test.dart -d emulator-5554
+          # Visto dos veces (runs reales): el step se queda colgado justo
+          # después de instalar el APK, sin ninguna línea de test — a
+          # diferencia de fallos anteriores (localización, validación,
+          # viewport, snackbar), que sí llegaban a ejecutar el test y
+          # mostraban un fallo concreto. Sin ninguna pista de la causa,
+          # solo se puede mejorar el diagnóstico para el próximo run, no
+          # "arreglar" nada a ciegas:
+          # - `timeout` interno (1200s, por debajo de los 30 min del job)
+          #   para que el propio step falle limpio si vuelve a colgarse,
+          #   en vez de depender de que el job entero se cancele (eso no
+          #   deja ni rastro en el log, ver PR con el timeout-minutes).
+          # - `--verbose` en `flutter test`, para ver en el log en
+          #   directo qué está esperando la herramienta mientras no hay
+          #   salida de test.
+          # - `adb logcat` en segundo plano, volcado al final — puede
+          #   revelar un crash/ANR del lado nativo que Flutter nunca
+          #   llega a reportar.
+          #
+          # Todo en una única línea lógica (el `>-` de YAML pliega estas
+          # líneas en una sola) porque este `script` de
+          # reactivecircus/android-emulator-runner ejecuta cada línea
+          # como una invocación de shell independiente, no un script
+          # multilínea con estado compartido (ver PR del fix de `cd app`).
+          script: >-
+            bash -c 'set -x; adb logcat -c; adb logcat > /tmp/logcat.txt &
+            LOGCAT_PID=$!; cd app; timeout 1200 flutter test --verbose
+            integration_test/editar_android_acceptance_test.dart
+            integration_test/crear_editar_todas_entidades_acceptance_test.dart
+            -d emulator-5554; EXIT=$?; kill $LOGCAT_PID 2>/dev/null || true;
+            echo "--- últimas 300 líneas de logcat ---"; tail -n 300
+            /tmp/logcat.txt; exit $EXIT'
