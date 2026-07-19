@@ -1,93 +1,17 @@
-name: Acceptance Tests
+name: Acceptance Tests - All
 
-# Solo manual (workflow_dispatch), mismo criterio que build-apk.yml: no
-# tiene sentido levantar un emulador de Android o compilar el binario de
-# Linux en cada commit todavía — se lanza a demanda desde la pestaña
-# Actions. Ver "Flujo Mostrar/Editar" en app/README.md y
-# vault/Aprendizajes/Principios y decisiones clave.md para el porqué de
-# cada test: el de Android es el único que ejercita de verdad el canal
-# nativo (AndroidSafFileWriter/Reader) donde vivían los bugs reales de
-# guardado corregidos en #37/#38/#39; el de Linux es un smoke test que
-# complementa los tests de aceptación ya existentes en
-# test/application/use_cases/, que ya corren con E/S real de dart:io
-# sobre este mismo Linux.
+# Lanza los dos workflows de aceptación (Android + Linux) en un solo
+# botón desde la pestaña Actions — cada uno también se puede lanzar por
+# separado (acceptance-tests-android.yml / acceptance-tests-linux.yml).
+# Los "uses:" de abajo son llamadas a esos mismos workflows como
+# reutilizables (workflow_call): un solo sitio con los pasos de cada uno,
+# nada duplicado entre este archivo y los otros dos.
 on:
   workflow_dispatch: {}
 
 jobs:
-  android-emulator:
-    runs-on: ubuntu-latest
-    # Sin esto, un cuelgue real (visto una vez: el job se quedó sin dar
-    # ninguna señal tras instalar el APK, sin error ni progreso) se come
-    # las 360 min por defecto de un job de GitHub Actions antes de que
-    # nadie se entere. Con las 20 entidades del ciclo completo
-    # (crear_editar_todas_entidades_acceptance_test.dart) además del test
-    # de fabricante ya existente, un run normal puede tardar bastante más
-    # que los 6-7 min de cuando solo había un test — margen generoso, no
-    # medido todavía en un run real.
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
+  android:
+    uses: ./.github/workflows/acceptance-tests-android.yml
 
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.44.4"
-          channel: stable
-
-      - name: flutter pub get
-        working-directory: app
-        run: flutter pub get
-
-      - name: Habilitar KVM para el emulador
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - name: Test de aceptación en emulador Android
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          # AVD sin ventana gráfica — no hace falta interfaz real, el test
-          # solo necesita el runtime de Android.
-          emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim -camera-back none
-          disable-animations: true
-          # Una sola línea: este `script` de reactivecircus/android-emulator-runner
-          # ejecuta cada línea como una invocación de shell independiente (no
-          # persiste el `cd` entre líneas), a diferencia de un `run:` normal de
-          # GitHub Actions — con dos líneas, `flutter test` se ejecutaba desde la
-          # raíz del repo y fallaba con "No pubspec.yaml file found".
-          script: cd app && flutter test integration_test/editar_android_acceptance_test.dart integration_test/crear_editar_todas_entidades_acceptance_test.dart -d emulator-5554
-
-  linux-smoke:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.44.4"
-          channel: stable
-
-      - name: Dependencias de Linux desktop + Xvfb
-        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev xvfb
-
-      - name: flutter pub get
-        working-directory: app
-        run: flutter pub get
-
-      - name: Habilitar Linux desktop
-        working-directory: app
-        run: flutter config --enable-linux-desktop
-
-      - name: Smoke test de aceptación (binario real, bajo Xvfb)
-        working-directory: app
-        run: xvfb-run --auto-servernum flutter test integration_test/app_smoke_test.dart -d linux
+  linux:
+    uses: ./.github/workflows/acceptance-tests-linux.yml
