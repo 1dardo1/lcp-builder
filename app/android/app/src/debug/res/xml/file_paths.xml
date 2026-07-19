@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Rutas expuestas por el FileProvider de test de aceptación (ver
-  AndroidManifest.xml de este mismo source set y
-  androidTest/.../MainActivityTest.kt). Solo el subdirectorio de caché
+  Rutas expuestas por el FileProvider de los tests de aceptación (ver
+  AndroidManifest.xml de este mismo source set y el método
+  `useTestSafDocument` en MainActivity.kt). Solo el subdirectorio de caché
   "acceptance_test/" — nada más de la app queda expuesto.
 -->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">

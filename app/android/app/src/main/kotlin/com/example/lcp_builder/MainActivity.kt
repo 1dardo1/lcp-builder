@@ -6,9 +6,11 @@ import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.system.Os
+import androidx.core.content.FileProvider
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.File
 
 /**
  * Canal nativo mínimo de los flujos Crear/Mostrar/Editar en Android — ver
@@ -37,6 +39,24 @@ class MainActivity : FlutterActivity() {
     private var pendingCreateDocumentResult: MethodChannel.Result? = null
     private var pendingOpenDocumentResult: MethodChannel.Result? = null
 
+    /**
+     * URI content:// fija que `createDocument`/`openDocument` devuelven en
+     * vez de abrir el selector nativo del sistema, cuando un test de
+     * aceptación la ha armado con `useTestSafDocument`. `null` en uso
+     * normal, así que la app real siempre abre el selector de verdad.
+     *
+     * Existe porque `flutter test integration_test/... -d emulator` conduce
+     * la app por el VM service, NO por la instrumentación de Android — así
+     * que Espresso-Intents no puede interceptar `ACTION_CREATE_DOCUMENT`/
+     * `ACTION_OPEN_DOCUMENT`, el selector real (DocumentsUI) se abre sin
+     * que nada lo conteste, y el `await` de Dart se cuelga para siempre.
+     * Armando esta URI, el test se salta esa UI imposible de automatizar
+     * pero sigue ejerciendo el camino REAL de escritura/lectura SAF
+     * (`writeBytes`/`readBytes`: `ContentResolver`, `Os.ftruncate`) — justo
+     * el código donde vivían los bugs de guardado corregidos (#37/#38/#39).
+     */
+    private var testSafUriOverride: Uri? = null
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channelName)
@@ -47,6 +67,7 @@ class MainActivity : FlutterActivity() {
                         startCreateDocument(suggestedName, result)
                     }
                     "openDocument" -> startOpenDocument(result)
+                    "useTestSafDocument" -> useTestSafDocument(result)
                     "writeBytes" -> {
                         val uriString = call.argument<String>("uri")
                         val bytes = call.argument<ByteArray>("bytes")
@@ -77,7 +98,34 @@ class MainActivity : FlutterActivity() {
             }
     }
 
+    /**
+     * Arma [testSafUriOverride] con un content:// del FileProvider de test
+     * (source set `debug`, ver `AndroidManifest.xml`) a un archivo en la
+     * caché de la app. SOLO lo llama un test de aceptación; la app normal
+     * nunca lo invoca. Devuelve la URI también, por si el test la quiere.
+     */
+    private fun useTestSafDocument(result: MethodChannel.Result) {
+        try {
+            val dir = File(cacheDir, "acceptance_test").apply { mkdirs() }
+            val file = File(dir, "acceptance.lcp")
+            if (!file.exists()) file.createNewFile()
+            val uri = FileProvider.getUriForFile(
+                this,
+                "com.example.lcp_builder.acceptancetest.fileprovider",
+                file,
+            )
+            testSafUriOverride = uri
+            result.success(uri.toString())
+        } catch (e: Exception) {
+            result.error("use_test_saf_document_failed", e.message, null)
+        }
+    }
+
     private fun startCreateDocument(suggestedName: String, result: MethodChannel.Result) {
+        testSafUriOverride?.let {
+            result.success(it.toString())
+            return
+        }
         if (pendingCreateDocumentResult != null) {
             result.error("already_in_progress", "Ya hay un selector de guardado abierto", null)
             return
@@ -149,6 +197,10 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun startOpenDocument(result: MethodChannel.Result) {
+        testSafUriOverride?.let {
+            result.success(it.toString())
+            return
+        }
         if (pendingOpenDocumentResult != null) {
             result.error("already_in_progress", "Ya hay un selector de apertura abierto", null)
             return

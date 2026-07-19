@@ -26,6 +26,7 @@ import 'package:lcp_builder/presentation/session/edit_session.dart';
 // principio del proyecto de "extraer con un segundo consumidor real" pide
 // evitar. `integration_test/` puede importar desde `test/` vía ruta relativa
 // sin problema (ambos son directorios normales del paquete, no solo `lib/`).
+import '../test/support/android_test_saf.dart';
 import '../test/support/fill_required_fields.dart';
 import '../test/support/minimal_valid_values.dart';
 
@@ -68,6 +69,11 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 
+  // Sustituye el selector nativo de guardar/abrir por una URI content://
+  // de test — sin esto, `flutter test -d emulator` cuelga al abrir el
+  // selector real, que nadie puede automatizar (ver armAndroidTestSaf).
+  await armAndroidTestSaf();
+
   // --- Crear: escribe de verdad, vía el selector interceptado. ---
   final crearSession = CrearSession();
   final schema = config.buildSchema();
@@ -108,8 +114,8 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // del disco más abajo.
 
   // La URI real que acaba de usar Crear — se recupera pidiendo otra vez al
-  // selector (interceptado: siempre responde con la misma URI durante todo
-  // este test, ver MainActivityTest.kt).
+  // selector, que con el override armado devuelve siempre la misma URI
+  // durante todo este test (ver useTestSafDocument en MainActivity.kt).
   final lcpUri = await androidSafChannel.invokeMethod<String>('openDocument');
   expect(lcpUri, isNotNull);
 
