@@ -1,0 +1,38 @@
+name: Acceptance Tests - Linux
+
+# Manual (workflow_dispatch) o reutilizable (workflow_call, para que
+# acceptance-tests.yml lo llame junto con el de Android) — mismo job en
+# los dos casos. Smoke test que complementa los tests de aceptación ya
+# existentes en test/application/use_cases/, que ya corren con E/S real
+# de dart:io sobre este mismo Linux (ver
+# vault/Aprendizajes/Principios y decisiones clave.md).
+on:
+  workflow_dispatch: {}
+  workflow_call: {}
+
+jobs:
+  linux-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+
+      - name: Dependencias de Linux desktop + Xvfb
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev xvfb
+
+      - name: flutter pub get
+        working-directory: app
+        run: flutter pub get
+
+      - name: Habilitar Linux desktop
+        working-directory: app
+        run: flutter config --enable-linux-desktop
+
+      - name: Smoke test de aceptación (binario real, bajo Xvfb)
+        working-directory: app
+        run: xvfb-run --auto-servernum flutter test integration_test/app_smoke_test.dart -d linux
