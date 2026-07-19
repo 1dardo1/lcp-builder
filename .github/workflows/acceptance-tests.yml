@@ -20,9 +20,12 @@ jobs:
     # Sin esto, un cuelgue real (visto una vez: el job se quedó sin dar
     # ninguna señal tras instalar el APK, sin error ni progreso) se come
     # las 360 min por defecto de un job de GitHub Actions antes de que
-    # nadie se entere — un run normal, entre build y test, tarda unos
-    # 6-7 min.
-    timeout-minutes: 15
+    # nadie se entere. Con las 20 entidades del ciclo completo
+    # (crear_editar_todas_entidades_acceptance_test.dart) además del test
+    # de fabricante ya existente, un run normal puede tardar bastante más
+    # que los 6-7 min de cuando solo había un test — margen generoso, no
+    # medido todavía en un run real.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -61,7 +64,7 @@ jobs:
           # persiste el `cd` entre líneas), a diferencia de un `run:` normal de
           # GitHub Actions — con dos líneas, `flutter test` se ejecutaba desde la
           # raíz del repo y fallaba con "No pubspec.yaml file found".
-          script: cd app && flutter test integration_test/editar_android_acceptance_test.dart -d emulator-5554
+          script: cd app && flutter test integration_test/editar_android_acceptance_test.dart integration_test/crear_editar_todas_entidades_acceptance_test.dart -d emulator-5554
 
   linux-smoke:
     runs-on: ubuntu-latest
