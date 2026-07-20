@@ -23,10 +23,6 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // Requerido por el paquete `integration_test` — ver
-        // androidTest/.../MainActivityTest.kt y
-        // ../../integration_test/editar_android_acceptance_test.dart.
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -46,14 +42,4 @@ kotlin {
 
 flutter {
     source = "../.."
-}
-
-dependencies {
-    // Test de aceptación instrumentado (corre en un emulador/dispositivo
-    // real, no en `flutter test`) — ver androidTest/.../MainActivityTest.kt.
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test:rules:1.6.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
 }

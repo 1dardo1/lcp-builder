@@ -7,17 +7,18 @@
 
     <application>
         <!--
-          Solo para el test de aceptación instrumentado (ver
-          androidTest/.../MainActivityTest.kt) — vive en el source set
+          Solo para los tests de aceptación (ver
+          ../../../integration_test/*_acceptance_test.dart y el método
+          `useTestSafDocument` en MainActivity.kt) — vive en el source set
           `debug`, así que el merge de manifests lo añade a builds de
           debug/profile pero NUNCA a un .apk/.aab de release real.
-          Espresso-Intents intercepta ACTION_CREATE_DOCUMENT/
-          ACTION_OPEN_DOCUMENT antes de que se abra el selector real de
-          Android y responde con una URI content:// de este proveedor —
-          así el resto del flujo (ContentResolver, permisos, truncado)
-          se ejercita de verdad, sin depender de la UI de otra app
-          (DocumentsUI), que cambia entre versiones/fabricantes y sería
-          frágil de automatizar.
+          `useTestSafDocument` mint una URI content:// de este proveedor a
+          un archivo en la caché de la app y hace que el selector de
+          guardar/abrir la devuelva sin abrir el selector real del sistema
+          (imposible de automatizar bajo `flutter test -d emulator`) — así
+          el resto del flujo (ContentResolver, truncado, lectura) se
+          ejercita de verdad, sin depender de la UI de otra app
+          (DocumentsUI).
         -->
         <provider
             android:name="androidx.core.content.FileProvider"

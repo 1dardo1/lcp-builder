@@ -26,6 +26,7 @@ import 'package:lcp_builder/presentation/session/edit_session.dart';
 // principio del proyecto de "extraer con un segundo consumidor real" pide
 // evitar. `integration_test/` puede importar desde `test/` vía ruta relativa
 // sin problema (ambos son directorios normales del paquete, no solo `lib/`).
+import '../test/support/android_test_saf.dart';
 import '../test/support/fill_required_fields.dart';
 import '../test/support/minimal_valid_values.dart';
 
@@ -68,6 +69,11 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 
+  // Sustituye el selector nativo de guardar/abrir por una URI content://
+  // de test — sin esto, `flutter test -d emulator` cuelga al abrir el
+  // selector real, que nadie puede automatizar (ver armAndroidTestSaf).
+  await armAndroidTestSaf();
+
   // --- Crear: escribe de verdad, vía el selector interceptado. ---
   final crearSession = CrearSession();
   final schema = config.buildSchema();
@@ -108,8 +114,8 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // del disco más abajo.
 
   // La URI real que acaba de usar Crear — se recupera pidiendo otra vez al
-  // selector (interceptado: siempre responde con la misma URI durante todo
-  // este test, ver MainActivityTest.kt).
+  // selector, que con el override armado devuelve siempre la misma URI
+  // durante todo este test (ver useTestSafDocument en MainActivity.kt).
   final lcpUri = await androidSafChannel.invokeMethod<String>('openDocument');
   expect(lcpUri, isNotNull);
 
@@ -138,17 +144,51 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   );
   await tester.pumpAndSettle();
 
-  await tester.tap(find.text('Editar'));
+  // `ensureVisible` + `pumpAndSettle` antes de cada tap: algunos
+  // formularios (weapon mod) son más altos que el viewport y el botón,
+  // aunque construido, no es "hitteable" sin desplazarlo a la vista; y en
+  // el emulador (reloj real, no el simulado del host) hay que dejar
+  // asentar el scroll/rebuild antes de tocar, o el tap se pierde en
+  // silencio y la acción no ocurre (fallos intermitentes, entidad distinta
+  // cada run).
+  final editarBtn = find.text('Editar').first;
+  await tester.ensureVisible(editarBtn);
+  await tester.pumpAndSettle();
+  await tester.tap(editarBtn);
   await tester.pumpAndSettle();
 
   // Todas las 20 entidades tienen un campo `name` de nivel superior
   // (verificado antes de escribir este test), así que sirve como edición
   // genérica sin conocer nada más del esquema concreto.
+  //
+  // En el emulador (reloj real) `enterText` sobre un campo recién
+  // navegado no siempre dispara `onChanged` si el campo no tiene el foco
+  // —el valor visible cambia pero el `GenericFormController` no—, así que
+  // primero se toca el campo para enfocarlo. `pumpAndSettle` entre pasos
+  // deja asentar el scroll/rebuild antes de cada gesto.
   const nombreEditado = 'Editado por el test de aceptación';
-  await tester.enterText(find.byKey(const ValueKey('name')), nombreEditado);
-  await tester.tap(find.text('Guardar cambios'));
+  final nameField = find.byKey(const ValueKey('name'));
+  await tester.ensureVisible(nameField);
+  await tester.pumpAndSettle();
+  await tester.tap(nameField);
+  await tester.pumpAndSettle();
+  await tester.enterText(nameField, nombreEditado);
   await tester.pumpAndSettle();
 
+  final guardarCambios = find.text('Guardar cambios');
+  await tester.ensureVisible(guardarCambios);
+  await tester.pumpAndSettle();
+  await tester.tap(guardarCambios);
+  await tester.pumpAndSettle();
+
+  // El cambio llegó a la sesión EN MEMORIA (antes de tocar el disco) — si
+  // esto falla, el problema está en la edición/validación del formulario,
+  // no en la E/S SAF; si pasa pero la relectura de disco de más abajo no,
+  // el problema está en la escritura/lectura real.
+  expect(
+    editSession.packFor(lcpUri)!.contentByKey[config.contentKey]!.first['name'],
+    nombreEditado,
+  );
   expect(editSession.isDirty(lcpUri), isTrue);
 
   // Guardar de verdad en disco — el canal nativo real, con el truncado
@@ -164,6 +204,7 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   );
   await tester.pumpAndSettle();
 
+  await tester.ensureVisible(find.text('Guardar .lcp'));
   await tester.tap(find.text('Guardar .lcp'));
   await tester.pumpAndSettle();
 

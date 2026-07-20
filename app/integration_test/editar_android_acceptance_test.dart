@@ -16,6 +16,8 @@ import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_scre
 import 'package:lcp_builder/presentation/session/crear_session.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
+import '../test/support/android_test_saf.dart';
+
 /// Igual que `test/support/test_app.dart`'s `wrapWithLocalization`, pero
 /// duplicado aquí en vez de importado — este archivo vive en
 /// `integration_test/`, aparte de `test/`, y se mantiene autocontenido.
@@ -34,22 +36,25 @@ Widget _wrapWithLocalization(Widget home) => MaterialApp(
 );
 
 /// Test de aceptación real de Android — corre en un emulador/dispositivo
-/// de verdad (`flutter test integration_test/` apuntando a un dispositivo,
-/// o `./gradlew connectedAndroidTest` en `android/`), NUNCA en el host.
-/// A diferencia de todo lo que hay en `test/`, aquí no se inyecta ningún
-/// `loadContent`/`saveContent`/`fileWriter` de mentira: se deja que la
-/// app use sus adapters reales (`AndroidSafFileWriter`/`AndroidSafFileReader`,
-/// el canal nativo de `MainActivity.kt`), que es justo el código donde
-/// vivían los tres bugs reales corregidos en #37/#38/#39 — ninguno de
-/// ellos lo habría atrapado un test con el canal mockeado, porque
-/// `Platform.isAndroid` es `false` en el host donde corre `flutter test`.
+/// de verdad (`flutter test integration_test/... -d emulator`), NUNCA en el
+/// host. A diferencia de todo lo que hay en `test/`, aquí no se inyecta
+/// ningún `loadContent`/`saveContent`/`fileWriter` de mentira: se deja que
+/// la app use sus adapters reales (`AndroidSafFileWriter`/
+/// `AndroidSafFileReader`, el canal nativo de `MainActivity.kt`), que es
+/// justo el código donde vivían los tres bugs reales corregidos en
+/// #37/#38/#39 — ninguno lo habría atrapado un test con el canal mockeado,
+/// porque `Platform.isAndroid` es `false` en el host donde corre
+/// `flutter test`.
 ///
-/// El selector nativo de archivos (`ACTION_CREATE_DOCUMENT`/
-/// `ACTION_OPEN_DOCUMENT`) está interceptado por Espresso-Intents desde
-/// el lado nativo (ver `android/app/src/androidTest/.../MainActivityTest.kt`)
-/// — responde con la URI de un `FileProvider` de test (solo en el
-/// manifest de `debug`), así que no hace falta automatizar la UI de
-/// DocumentsUI (otra app, frágil entre versiones/fabricantes).
+/// Lo único que no es real es el selector nativo de archivos
+/// (`ACTION_CREATE_DOCUMENT`/`ACTION_OPEN_DOCUMENT`): `armAndroidTestSaf()`
+/// hace que devuelva directamente una URI `content://` de un FileProvider
+/// de test (ver `useTestSafDocument` en `MainActivity.kt`), sin abrir la UI
+/// de DocumentsUI. Bajo `flutter test -d emulator` esa UI es imposible de
+/// automatizar (la app va por el VM service, no por instrumentación) y
+/// colgaría el test para siempre; y de todas formas no es lo que este test
+/// quiere probar — lo que aporta es la E/S SAF real que viene *después* de
+/// esa URI (ContentResolver, truncado, lectura).
 ///
 /// Cada pantalla se monta directamente (como en los tests de `test/`),
 /// no navegando desde `HomeScreen` — más robusto para un test que no se
@@ -74,6 +79,11 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
+
+      // Sustituye el selector nativo de guardar/abrir por una URI content://
+      // de test — sin esto, `flutter test -d emulator` cuelga al abrir el
+      // selector real, que nadie puede automatizar (ver armAndroidTestSaf).
+      await armAndroidTestSaf();
 
       // --- Crear: escribe de verdad, vía el selector interceptado. ---
       final crearSession = CrearSession();
@@ -126,8 +136,9 @@ void main() {
       // bytes reales del disco más abajo.
 
       // La URI real que acaba de usar Crear — se recupera pidiendo otra
-      // vez al selector (interceptado: siempre responde con la misma
-      // URI durante todo este test, ver MainActivityTest.kt).
+      // vez al selector, que con el override armado devuelve siempre la
+      // misma URI durante todo este test (ver useTestSafDocument en
+      // MainActivity.kt).
       final lcpUri = await androidSafChannel.invokeMethod<String>(
         'openDocument',
       );
