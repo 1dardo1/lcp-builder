@@ -160,12 +160,25 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // Todas las 20 entidades tienen un campo `name` de nivel superior
   // (verificado antes de escribir este test), así que sirve como edición
   // genérica sin conocer nada más del esquema concreto.
+  //
+  // En el emulador (reloj real) `enterText` sobre un campo recién
+  // navegado no siempre dispara `onChanged` si el campo no tiene el foco
+  // —el valor visible cambia pero el `GenericFormController` no—, así que
+  // primero se toca el campo para enfocarlo. `pumpAndSettle` entre pasos
+  // deja asentar el scroll/rebuild antes de cada gesto.
   const nombreEditado = 'Editado por el test de aceptación';
   final nameField = find.byKey(const ValueKey('name'));
   await tester.ensureVisible(nameField);
   await tester.pumpAndSettle();
+  await tester.tap(nameField);
+  await tester.pumpAndSettle();
   await tester.enterText(nameField, nombreEditado);
   await tester.pumpAndSettle();
+
+  // DIAGNÓSTICO (temporal): en la propia pantalla de edición, antes de
+  // navegar atrás, ¿el campo llegó a mostrar el texto editado? Si no,
+  // `enterText` no prendió (foco/conexión de entrada).
+  final editadoEnEdicion = find.text(nombreEditado).evaluate().isNotEmpty;
 
   final guardarCambios = find.text('Guardar cambios');
   await tester.ensureVisible(guardarCambios);
@@ -193,7 +206,8 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   expect(
     rawRecibido['name'],
     nombreEditado,
-    reason: 'DIAG ${config.title}: validacionAbortada=$validacionAbortada '
+    reason: 'DIAG ${config.title}: editadoEnEdicion=$editadoEnEdicion '
+        'validacionAbortada=$validacionAbortada '
         'textoEnPantalla=$textoEnPantalla sigueEnEditar=$sigueEnEditar '
         'dirty=${editSession.isDirty(lcpUri)} rawRecibido=$rawRecibido',
   );
