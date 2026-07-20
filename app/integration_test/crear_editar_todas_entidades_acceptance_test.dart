@@ -144,7 +144,12 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   );
   await tester.pumpAndSettle();
 
-  await tester.tap(find.text('Editar'));
+  // `ensureVisible` antes de cada tap: algunos formularios (weapon mod) son
+  // más altos que el viewport y el botón, aunque construido, no es
+  // "hitteable" sin desplazarlo a la vista — sin esto el tap se pierde en
+  // silencio y la acción no ocurre.
+  await tester.ensureVisible(find.text('Editar').first);
+  await tester.tap(find.text('Editar').first);
   await tester.pumpAndSettle();
 
   // Todas las 20 entidades tienen un campo `name` de nivel superior
@@ -152,9 +157,18 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // genérica sin conocer nada más del esquema concreto.
   const nombreEditado = 'Editado por el test de aceptación';
   await tester.enterText(find.byKey(const ValueKey('name')), nombreEditado);
+  await tester.ensureVisible(find.text('Guardar cambios'));
   await tester.tap(find.text('Guardar cambios'));
   await tester.pumpAndSettle();
 
+  // El cambio llegó a la sesión EN MEMORIA (antes de tocar el disco) — si
+  // esto falla, el problema está en la edición/validación del formulario,
+  // no en la E/S SAF; si pasa pero la relectura de disco de más abajo no,
+  // el problema está en la escritura/lectura real.
+  expect(
+    editSession.packFor(lcpUri)!.contentByKey[config.contentKey]!.first['name'],
+    nombreEditado,
+  );
   expect(editSession.isDirty(lcpUri), isTrue);
 
   // Guardar de verdad en disco — el canal nativo real, con el truncado
@@ -170,6 +184,7 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   );
   await tester.pumpAndSettle();
 
+  await tester.ensureVisible(find.text('Guardar .lcp'));
   await tester.tap(find.text('Guardar .lcp'));
   await tester.pumpAndSettle();
 

@@ -89,7 +89,13 @@ class EntityDisplayCard extends StatelessWidget {
     }
 
     return switch (field) {
-      GroupFieldSpec() => Padding(
+      // Un [GroupFieldSpec] espera un mapa (sus sub-campos), pero el JSON
+      // real puede no coincidir con el esquema (un `.lcp` ajeno a este
+      // Builder, o una entidad cuyo `jsonKey` de grupo apunta de hecho a
+      // una lista). Si el valor no es un mapa, se degrada a resumen en vez
+      // de romper toda la tarjeta con un cast fallido — una tarjeta de
+      // solo lectura nunca debe tumbar la pantalla por un dato inesperado.
+      GroupFieldSpec() when value is Map<String, dynamic> => Padding(
         padding: const EdgeInsets.only(top: 6, bottom: 2),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,17 +105,16 @@ class EntityDisplayCard extends StatelessWidget {
               padding: const EdgeInsets.only(left: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: _buildFields(
-                  context,
-                  field.fields,
-                  value as Map<String, dynamic>,
-                ),
+                children: _buildFields(context, field.fields, value),
               ),
             ),
           ],
         ),
       ),
-      ListFieldSpec() => _textRow(label, t.nElementos((value as List).length)),
+      ListFieldSpec() when value is List => _textRow(
+        label,
+        t.nElementos(value.length),
+      ),
       _ => _textRow(label, _formatScalar(value)),
     };
   }

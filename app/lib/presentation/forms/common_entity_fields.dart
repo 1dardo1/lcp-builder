@@ -844,8 +844,27 @@ IActiveEffectData activeEffectFromGroup(Map<String, dynamic> item) =>
 /// a diferencia de `textOrActiveEffectField`) — ej. `on_attack`/`on_hit`/
 /// `on_crit`/`on_miss` de `IWeaponModData`, que en la spec son siempre un
 /// active effect estructurado, nunca texto libre.
-FieldSpec activeEffectGroupField(String key, String label) =>
-    GroupFieldSpec(key: key, label: label, fields: activeEffectFields());
+FieldSpec activeEffectGroupField(String key, String label) => GroupFieldSpec(
+  key: key,
+  // La clave real en el `.lcp` es snake_case (`on_miss`, `on_attack`...),
+  // no la camelCase del formulario (ver `domain_json_mapper.dart`). Sin
+  // este `jsonKey`, Mostrar (`EntityDisplayCard`) y la hidratación de
+  // Editar (`form_values_from_json.dart`) buscaban `json['onMiss']`, que no
+  // existe — así que estos efectos se perdían al reabrir la entidad y, al
+  // ser sus campos obligatorios, la validación bloqueaba el guardado
+  // (bug real de Editar en weapon mod, encontrado por el test de
+  // aceptación).
+  jsonKey: _camelToSnake(key),
+  label: label,
+  fields: activeEffectFields(),
+);
+
+/// `onMiss` → `on_miss`. Los `jsonKey` de estos grupos deben coincidir con
+/// la grafía snake_case que escribe el mapper (no se guardan a mano por
+/// campo, se derivan de la key camelCase para no repetir la conversión en
+/// cada uno de los ~8 sitios que llaman a [activeEffectGroupField]).
+String _camelToSnake(String s) =>
+    s.replaceAllMapped(RegExp('[A-Z]'), (m) => '_${m[0]!.toLowerCase()}');
 
 IActiveEffectData? activeEffectFromGroupOrNull(
   Map<String, dynamic> item,
