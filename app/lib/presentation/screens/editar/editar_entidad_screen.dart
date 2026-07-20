@@ -111,7 +111,10 @@ class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
             FilledButton(onPressed: _guardar, child: Text(t.guardarCambios)),
             if (_errorMessage != null) ...[
               const SizedBox(height: 8),
-              Text(_errorMessage!),
+              Text(
+                _errorMessage!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ],
           ],
         ),
