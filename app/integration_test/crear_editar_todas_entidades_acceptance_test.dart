@@ -165,9 +165,20 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // esto falla, el problema está en la edición/validación del formulario,
   // no en la E/S SAF; si pasa pero la relectura de disco de más abajo no,
   // el problema está en la escritura/lectura real.
+  //
+  // DIAGNÓSTICO (temporal): si la edición no llegó, capturamos por qué —
+  // si el banner de validación está visible, el guardado abortó por un
+  // campo requerido vacío (hidratación); y volcamos el JSON crudo que
+  // Editar recibió para ver qué campo falta.
+  final validacionAbortada =
+      find.text('Revisa los campos marcados en rojo.').evaluate().isNotEmpty;
+  final rawRecibido =
+      editSession.packFor(lcpUri)!.contentByKey[config.contentKey]!.first;
   expect(
-    editSession.packFor(lcpUri)!.contentByKey[config.contentKey]!.first['name'],
+    rawRecibido['name'],
     nombreEditado,
+    reason: 'DIAG ${config.title}: validacionAbortada=$validacionAbortada '
+        'rawRecibido=$rawRecibido',
   );
   expect(editSession.isDirty(lcpUri), isTrue);
 
