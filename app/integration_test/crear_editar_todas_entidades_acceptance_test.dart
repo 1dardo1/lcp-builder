@@ -144,21 +144,33 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   );
   await tester.pumpAndSettle();
 
-  // `ensureVisible` antes de cada tap: algunos formularios (weapon mod) son
-  // más altos que el viewport y el botón, aunque construido, no es
-  // "hitteable" sin desplazarlo a la vista — sin esto el tap se pierde en
-  // silencio y la acción no ocurre.
-  await tester.ensureVisible(find.text('Editar').first);
-  await tester.tap(find.text('Editar').first);
+  // `ensureVisible` + `pumpAndSettle` antes de cada tap: algunos
+  // formularios (weapon mod) son más altos que el viewport y el botón,
+  // aunque construido, no es "hitteable" sin desplazarlo a la vista; y en
+  // el emulador (reloj real, no el simulado del host) hay que dejar
+  // asentar el scroll/rebuild antes de tocar, o el tap se pierde en
+  // silencio y la acción no ocurre (fallos intermitentes, entidad distinta
+  // cada run).
+  final editarBtn = find.text('Editar').first;
+  await tester.ensureVisible(editarBtn);
+  await tester.pumpAndSettle();
+  await tester.tap(editarBtn);
   await tester.pumpAndSettle();
 
   // Todas las 20 entidades tienen un campo `name` de nivel superior
   // (verificado antes de escribir este test), así que sirve como edición
   // genérica sin conocer nada más del esquema concreto.
   const nombreEditado = 'Editado por el test de aceptación';
-  await tester.enterText(find.byKey(const ValueKey('name')), nombreEditado);
-  await tester.ensureVisible(find.text('Guardar cambios'));
-  await tester.tap(find.text('Guardar cambios'));
+  final nameField = find.byKey(const ValueKey('name'));
+  await tester.ensureVisible(nameField);
+  await tester.pumpAndSettle();
+  await tester.enterText(nameField, nombreEditado);
+  await tester.pumpAndSettle();
+
+  final guardarCambios = find.text('Guardar cambios');
+  await tester.ensureVisible(guardarCambios);
+  await tester.pumpAndSettle();
+  await tester.tap(guardarCambios);
   await tester.pumpAndSettle();
 
   // El cambio llegó a la sesión EN MEMORIA (antes de tocar el disco) — si
@@ -166,19 +178,24 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // no en la E/S SAF; si pasa pero la relectura de disco de más abajo no,
   // el problema está en la escritura/lectura real.
   //
-  // DIAGNÓSTICO (temporal): si la edición no llegó, capturamos por qué —
-  // si el banner de validación está visible, el guardado abortó por un
-  // campo requerido vacío (hidratación); y volcamos el JSON crudo que
-  // Editar recibió para ver qué campo falta.
+  // DIAGNÓSTICO (temporal): si la edición no llegó, distinguimos la causa —
+  // `validacionAbortada`: el banner de "revisa campos" está visible (campo
+  // requerido vacío); `textoEnPantalla`: el TextField llegó a mostrar el
+  // nombre editado (enterText sí prendió); `sigueEnEditar`: seguimos en la
+  // pantalla de edición (el tap de Guardar no navegó atrás → no se guardó);
+  // `dirty`: la sesión quedó marcada como sucia.
   final validacionAbortada =
       find.text('Revisa los campos marcados en rojo.').evaluate().isNotEmpty;
+  final textoEnPantalla = find.text(nombreEditado).evaluate().isNotEmpty;
+  final sigueEnEditar = find.text('Guardar cambios').evaluate().isNotEmpty;
   final rawRecibido =
       editSession.packFor(lcpUri)!.contentByKey[config.contentKey]!.first;
   expect(
     rawRecibido['name'],
     nombreEditado,
     reason: 'DIAG ${config.title}: validacionAbortada=$validacionAbortada '
-        'rawRecibido=$rawRecibido',
+        'textoEnPantalla=$textoEnPantalla sigueEnEditar=$sigueEnEditar '
+        'dirty=${editSession.isDirty(lcpUri)} rawRecibido=$rawRecibido',
   );
   expect(editSession.isDirty(lcpUri), isTrue);
 
