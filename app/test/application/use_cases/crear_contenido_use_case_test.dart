@@ -277,7 +277,7 @@ void main() {
         ]),
       );
 
-      Object decode(String name) =>
+      Object? decode(String name) =>
           jsonDecode(utf8.decode(archive.findFile(name)!.content as List<int>));
 
       expect((decode('weapons.json') as List).first['id'], 'mw_multi');

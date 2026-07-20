@@ -9,6 +9,15 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  language:
+    # Prohíbe los downcasts implícitos de `dynamic` (ej. `json['x']` usado
+    # como `String` sin `as String`): fuerza que toda conversión desde
+    # `dynamic` sea explícita, para que el analizador atrape en compilación
+    # justo la clase de bug que endurecimos a mano en el lector de .lcp
+    # (un `as Map` que reventaba con TypeError ante entrada no confiable).
+    strict-casts: true
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`
