@@ -175,11 +175,6 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   await tester.enterText(nameField, nombreEditado);
   await tester.pumpAndSettle();
 
-  // DIAGNÓSTICO (temporal): en la propia pantalla de edición, antes de
-  // navegar atrás, ¿el campo llegó a mostrar el texto editado? Si no,
-  // `enterText` no prendió (foco/conexión de entrada).
-  final editadoEnEdicion = find.text(nombreEditado).evaluate().isNotEmpty;
-
   final guardarCambios = find.text('Guardar cambios');
   await tester.ensureVisible(guardarCambios);
   await tester.pumpAndSettle();
@@ -190,26 +185,9 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // esto falla, el problema está en la edición/validación del formulario,
   // no en la E/S SAF; si pasa pero la relectura de disco de más abajo no,
   // el problema está en la escritura/lectura real.
-  //
-  // DIAGNÓSTICO (temporal): si la edición no llegó, distinguimos la causa —
-  // `validacionAbortada`: el banner de "revisa campos" está visible (campo
-  // requerido vacío); `textoEnPantalla`: el TextField llegó a mostrar el
-  // nombre editado (enterText sí prendió); `sigueEnEditar`: seguimos en la
-  // pantalla de edición (el tap de Guardar no navegó atrás → no se guardó);
-  // `dirty`: la sesión quedó marcada como sucia.
-  final validacionAbortada =
-      find.text('Revisa los campos marcados en rojo.').evaluate().isNotEmpty;
-  final textoEnPantalla = find.text(nombreEditado).evaluate().isNotEmpty;
-  final sigueEnEditar = find.text('Guardar cambios').evaluate().isNotEmpty;
-  final rawRecibido =
-      editSession.packFor(lcpUri)!.contentByKey[config.contentKey]!.first;
   expect(
-    rawRecibido['name'],
+    editSession.packFor(lcpUri)!.contentByKey[config.contentKey]!.first['name'],
     nombreEditado,
-    reason: 'DIAG ${config.title}: editadoEnEdicion=$editadoEnEdicion '
-        'validacionAbortada=$validacionAbortada '
-        'textoEnPantalla=$textoEnPantalla sigueEnEditar=$sigueEnEditar '
-        'dirty=${editSession.isDirty(lcpUri)} rawRecibido=$rawRecibido',
   );
   expect(editSession.isDirty(lcpUri), isTrue);
 
