@@ -161,4 +161,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get elegirTipoTitle => 'Elegir tipo de entidad';
+
+  @override
+  String get editarPaquete => 'Editar paquete';
+
+  @override
+  String get manifestAutor => 'Autor';
+
+  @override
+  String get manifestVersion => 'Versión (X.Y.Z)';
+
+  @override
+  String get manifestDescripcion => 'Descripción';
 }

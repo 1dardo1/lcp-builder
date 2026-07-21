@@ -38,5 +38,9 @@
   "guardarLcp": "Save .lcp",
   "sinEntidades": "No entities of this type left.",
   "crearTipoNuevo": "Create new entity type",
-  "elegirTipoTitle": "Choose entity type"
+  "elegirTipoTitle": "Choose entity type",
+  "editarPaquete": "Edit package",
+  "manifestAutor": "Author",
+  "manifestVersion": "Version (X.Y.Z)",
+  "manifestDescripcion": "Description"
 }
