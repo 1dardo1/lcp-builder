@@ -9,12 +9,12 @@
         <!--
           Mismo FileProvider de test que el source set `debug` (ver
           ../debug/AndroidManifest.xml), duplicado aquí para que los tests
-          de aceptación puedan correr también con `flutter drive --profile`
-          (AOT + tree-shaking, cercano al release que instala la persona
-          usuaria) — el modo debug esconde fallos que solo aparecen en
-          profile/release (p.ej. un widget que revienta al construirse
+          de aceptación puedan correr también con `flutter drive` en modo
+          profile (AOT + tree-shaking, cercano al release que instala la
+          persona usuaria) — el modo debug esconde fallos que solo aparecen
+          en profile/release (p.ej. un widget que revienta al construirse
           muestra el `ErrorWidget` gris en release, no la pantalla roja de
-          debug). Vive solo en `debug`+`profile`, NUNCA en un .apk/.aab de
+          debug). Vive solo en `debug` y `profile`, NUNCA en un .apk/.aab de
           release real. Ver `useTestSafDocument` en MainActivity.kt.
         -->
         <provider
