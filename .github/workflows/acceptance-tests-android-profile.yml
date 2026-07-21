@@ -1,14 +1,18 @@
 name: Acceptance Tests - Android (profile)
 
-# Igual que acceptance-tests-android.yml pero corriendo la app en modo
-# **profile** (AOT + tree-shaking) con `flutter drive`, en vez de debug
-# (JIT) con `flutter test`. Cubre el ángulo que a la suite de debug se le
-# escapa: fallos que solo aparecen cerca del release que instala la
-# persona usuaria — un widget que revienta al construirse muestra el
-# `ErrorWidget` gris en profile/release, no la pantalla roja de debug, así
-# que `flutter test` (siempre debug) nunca lo vería. Requiere el driver
-# `test_driver/integration_test.dart` y el FileProvider de test replicado
-# en el source set `profile` (ver app/android/app/src/profile).
+# Corre en modo **profile** (AOT + tree-shaking) con `flutter drive` un
+# smoke de RENDER de la pantalla de Editar (`editar_render_profile_test`),
+# no el ciclo interactivo completo. Motivo: la fragilidad de `flutter
+# drive` sobre un emulador real está en la ENTRADA (taps/enterText sobre el
+# lienzo gigante 1080×20000 del test de aceptación, más grande que la
+# pantalla física, no registran), no en el renderizado — así que el smoke
+# solo pinta pantallas con datos ya construidos y comprueba que no
+# revientan. Ese es justo el ángulo que a la suite de debug se le escapa:
+# un widget que revienta al construirse muestra el `ErrorWidget` gris en
+# profile/release, no la pantalla roja de debug que vería `flutter test`.
+# El ciclo interactivo Crear→Editar→disco completo sigue cubierto en debug
+# por acceptance-tests-android.yml. Requiere el driver
+# `test_driver/integration_test.dart`.
 on:
   workflow_dispatch: {}
   workflow_call: {}
@@ -61,7 +65,7 @@ jobs:
             bash -c 'set -x; adb logcat -c; adb logcat > /tmp/logcat.txt &
             LOGCAT_PID=$!; cd app; timeout 1500 flutter drive --verbose
             --driver=test_driver/integration_test.dart
-            --target=integration_test/crear_editar_todas_entidades_acceptance_test.dart
+            --target=integration_test/editar_render_profile_test.dart
             --profile -d emulator-5554; EXIT=$?;
             kill $LOGCAT_PID 2>/dev/null || true;
             echo "--- últimas 300 líneas de logcat ---"; tail -n 300

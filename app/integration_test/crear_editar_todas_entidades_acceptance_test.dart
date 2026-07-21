@@ -99,25 +99,14 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // "Continuar" (para añadir sin finalizar), así que hay que acotar la
   // búsqueda al propio AlertDialog para no ambigüar.
   //
-  // Se espera activamente a que aparezca el TextField del diálogo (en
-  // profile puede tardar más frames que un solo `pumpAndSettle`). Si no
-  // aparece, el diagnóstico distingue la causa: si está visible el banner
-  // de validación, es que `fillRequiredFields` no prendió y el guardado se
-  // abortó (el diálogo nunca se abrió); si no, es otra cosa.
+  // Se espera activamente a que aparezca el TextField del diálogo (más
+  // fiable que un único `pumpAndSettle`).
   final dialog = find.byType(AlertDialog);
   final dialogField = find.descendant(
     of: dialog,
     matching: find.byType(TextField),
   );
-  final dialogAparecio = await pumpUntilFound(tester, dialogField);
-  if (!dialogAparecio) {
-    debugPrint(
-      'DIAG-CREAR ${config.title}: dialogField=false '
-      'hayDialog=${dialog.evaluate().isNotEmpty} '
-      'validacionAbortada=${find.text('Revisa los campos marcados en rojo.').evaluate().isNotEmpty} '
-      'sigueEnCrear=${find.text('Finalizar lcp').evaluate().isNotEmpty}',
-    );
-  }
+  await pumpUntilFound(tester, dialogField);
   await focusAndEnterText(tester, dialogField, 'AcceptanceTestCorp');
   await tester.tap(
     find.descendant(of: dialog, matching: find.text('Continuar')),
