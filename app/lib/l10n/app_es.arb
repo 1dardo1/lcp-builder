@@ -66,5 +66,9 @@
   "guardarLcp": "Guardar .lcp",
   "sinEntidades": "No quedan entidades de este tipo.",
   "crearTipoNuevo": "Crear entidad de tipo nuevo",
-  "elegirTipoTitle": "Elegir tipo de entidad"
+  "elegirTipoTitle": "Elegir tipo de entidad",
+  "editarPaquete": "Editar paquete",
+  "manifestAutor": "Autor",
+  "manifestVersion": "Versión (X.Y.Z)",
+  "manifestDescripcion": "Descripción"
 }

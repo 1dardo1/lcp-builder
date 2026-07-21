@@ -4,6 +4,7 @@ import '../../application/use_cases/crear_contenido_use_case.dart';
 import '../../domain/domain.dart';
 import '../../infrastructure/file_system/platform_file_writer.dart';
 import '../../infrastructure/lcp/zip_content_pack_exporter.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../platform/lcp_save_location.dart';
 import 'crear_session.dart';
 
@@ -41,6 +42,7 @@ Future<void> finalizarLcp(
   Object? pendingContent,
   CrearContenidoUseCase? useCase,
 }) async {
+  final t = AppLocalizations.of(context);
   final packName = await showDialog<String>(
     context: context,
     builder: (dialogContext) => const _NombrePaqueteDialog(),
@@ -80,13 +82,13 @@ Future<void> finalizarLcp(
     if (!context.mounted) return;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text('Generado: $outputPath')));
+    ).showSnackBar(SnackBar(content: Text(t.generadoSnackbar(outputPath))));
     Navigator.of(context).popUntil((route) => route.isFirst);
   } catch (e) {
     if (!context.mounted) return;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    ).showSnackBar(SnackBar(content: Text(t.errorPrefix('$e'))));
   }
 }
 
@@ -108,24 +110,23 @@ class _NombrePaqueteDialogState extends State<_NombrePaqueteDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('Nombre del paquete'),
+      title: Text(t.nombrePaqueteTitle),
       content: TextField(
         controller: _controller,
         autofocus: true,
-        decoration: const InputDecoration(
-          labelText: 'Nombre (identifica el .lcp en COMP/CON)',
-        ),
+        decoration: InputDecoration(labelText: t.nombrePaqueteLabel),
         onSubmitted: (value) => Navigator.pop(context, value),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
+          child: Text(t.cancelar),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, _controller.text),
-          child: const Text('Continuar'),
+          child: Text(t.continuar),
         ),
       ],
     );

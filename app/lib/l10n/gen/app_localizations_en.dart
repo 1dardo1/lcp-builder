@@ -161,4 +161,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get elegirTipoTitle => 'Choose entity type';
+
+  @override
+  String get editarPaquete => 'Edit package';
+
+  @override
+  String get manifestAutor => 'Author';
+
+  @override
+  String get manifestVersion => 'Version (X.Y.Z)';
+
+  @override
+  String get manifestDescripcion => 'Description';
 }

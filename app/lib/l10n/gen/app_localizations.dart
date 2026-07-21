@@ -331,6 +331,30 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Elegir tipo de entidad'**
   String get elegirTipoTitle;
+
+  /// No description provided for @editarPaquete.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar paquete'**
+  String get editarPaquete;
+
+  /// No description provided for @manifestAutor.
+  ///
+  /// In es, this message translates to:
+  /// **'Autor'**
+  String get manifestAutor;
+
+  /// No description provided for @manifestVersion.
+  ///
+  /// In es, this message translates to:
+  /// **'Versión (X.Y.Z)'**
+  String get manifestVersion;
+
+  /// No description provided for @manifestDescripcion.
+  ///
+  /// In es, this message translates to:
+  /// **'Descripción'**
+  String get manifestDescripcion;
 }
 
 class _AppLocalizationsDelegate

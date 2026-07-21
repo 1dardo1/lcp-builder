@@ -97,4 +97,67 @@ void main() {
     expect(parsed.contentByKey['weapons'], hasLength(1));
     expect(parsed.contentByKey.containsKey('raro'), isFalse);
   });
+
+  Archive archiveWith(void Function(void Function(String, List<int>)) build) {
+    final archive = Archive();
+    build((name, bytes) => archive.addFile(ArchiveFile(name, bytes.length, bytes)));
+    return archive;
+  }
+
+  List<int> jsonBytes(Object content) => utf8.encode(jsonEncode(content));
+
+  test('un manifest que es JSON válido pero no un objeto (una lista) lanza '
+      'FormatException, no un TypeError opaco', () {
+    final archive = archiveWith((add) {
+      add('lcp_manifest.json', jsonBytes([1, 2, 3]));
+    });
+    expect(
+      () => ZipContentPackReader().read(ZipEncoder().encode(archive)),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
+  test('un archivo de contenido con JSON inválido se ignora, no tumba la '
+      'lectura del resto del paquete', () {
+    final archive = archiveWith((add) {
+      add('lcp_manifest.json', jsonBytes({
+        'name': 'x',
+        'author': 'x',
+        'description': 'x',
+        'version': '1.0.0',
+      }));
+      add('weapons.json', jsonBytes([
+        {'id': 'mw_test', 'name': 'Arma'},
+      ]));
+      // JSON truncado/corrupto en un archivo suelto.
+      add('roto.json', utf8.encode('{ esto no es json'));
+    });
+
+    final parsed = ZipContentPackReader().read(ZipEncoder().encode(archive));
+
+    expect(parsed.contentByKey['weapons'], hasLength(1));
+    expect(parsed.contentByKey.containsKey('roto'), isFalse);
+  });
+
+  test('un archivo de contenido con bytes que no son UTF-8 válido se '
+      'ignora, no tumba la lectura del resto', () {
+    final archive = archiveWith((add) {
+      add('lcp_manifest.json', jsonBytes({
+        'name': 'x',
+        'author': 'x',
+        'description': 'x',
+        'version': '1.0.0',
+      }));
+      add('weapons.json', jsonBytes([
+        {'id': 'mw_test', 'name': 'Arma'},
+      ]));
+      // Bytes inválidos como UTF-8 (0xFF no aparece en UTF-8 bien formado).
+      add('binario.json', [0xFF, 0xFE, 0x00, 0x01]);
+    });
+
+    final parsed = ZipContentPackReader().read(ZipEncoder().encode(archive));
+
+    expect(parsed.contentByKey['weapons'], hasLength(1));
+    expect(parsed.contentByKey.containsKey('binario'), isFalse);
+  });
 }

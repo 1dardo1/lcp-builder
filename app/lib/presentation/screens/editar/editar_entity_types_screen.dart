@@ -14,6 +14,7 @@ import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import 'editar_elegir_tipo_screen.dart';
 import 'editar_entity_cards_screen.dart';
+import 'editar_manifest_screen.dart';
 
 /// Adapter real por defecto de [EditarEntityTypesScreen.saveContent] —
 /// extraído a función propia (en vez de vivir inline en `_guardar()`) para
@@ -138,6 +139,19 @@ class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
                           child: Text(
                             pack.manifest.name,
                             style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined),
+                          tooltip: t.editarPaquete,
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => EditarManifestScreen(
+                                session: widget.session,
+                                lcpPath: widget.lcpPath,
+                                localeController: widget.localeController,
+                              ),
+                            ),
                           ),
                         ),
                         if (dirty)
