@@ -12,6 +12,10 @@ name: Acceptance Tests - Android (profile)
 on:
   workflow_dispatch: {}
   workflow_call: {}
+  # TEMPORAL (estabilización): se dispara en push para poder iterar el
+  # arreglo del suite en profile en su propia rama. Quitar antes de mergear.
+  push:
+    branches: [claude/repo-contents-270i7m]
 
 jobs:
   android-emulator-profile:
