@@ -12,6 +12,12 @@ name: Acceptance Tests - Android (profile)
 on:
   workflow_dispatch: {}
   workflow_call: {}
+  # TEMPORAL: workflow_dispatch por API solo encuentra workflows que ya
+  # están en la rama por defecto; este es nuevo, así que para validarlo en
+  # su propia rama se dispara en push. Quitar antes de mergear — la
+  # convención del repo es solo dispatch/call.
+  push:
+    branches: [claude/repo-contents-270i7m]
 
 jobs:
   android-emulator-profile:
