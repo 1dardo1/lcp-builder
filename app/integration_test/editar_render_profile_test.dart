@@ -140,4 +140,33 @@ void main() {
       expect(find.text('The Butlers Corp'), findsOneWidget);
     },
   );
+
+  // Las dos formas concretas del `.lcp` real que hacían pantalla gris al
+  // editar (regresión cubierta también en host por
+  // `editar_lcp_real_regression_test`), ejercitadas aquí en profile/AOT:
+  // un `val` numérico en el daño de un arma, y `mechtype` como lista de
+  // strings en un frame.
+  testWidgets(
+    'arma con val numérico (int) en el daño: Editar no revienta en profile',
+    (tester) async {
+      final config = crearEntidadConfigsByContentKey['weapons']!;
+      final rawEntity = entityDataToJson(
+        config.fromFormValues(minimalValidValues(config.buildSchema())),
+      )..['damage'] = [
+          {'type': 'Kinetic', 'val': 1},
+        ];
+      await _montarEditar(tester, config, rawEntity);
+    },
+  );
+
+  testWidgets(
+    'frame con mechtype como lista de strings: Editar no revienta en profile',
+    (tester) async {
+      final config = crearEntidadConfigsByContentKey['frames']!;
+      final rawEntity = entityDataToJson(
+        config.fromFormValues(minimalValidValues(config.buildSchema())),
+      )..['mechtype'] = ['Striker', 'Support'];
+      await _montarEditar(tester, config, rawEntity);
+    },
+  );
 }

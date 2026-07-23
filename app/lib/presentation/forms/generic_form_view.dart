@@ -246,7 +246,11 @@ class GenericFormView extends StatelessWidget {
     final t = AppLocalizations.of(context);
     return _ControlledTextField(
       key: key,
-      current: current as String?,
+      // `?.toString()` y no `as String?`: un `.lcp` real puede traer en un
+      // campo de texto un valor no-String (p.ej. `val: 1` numérico en el
+      // daño de un arma, que el propio Crear serializa como int) — se
+      // muestra su forma textual en vez de reventar la pantalla de Editar.
+      current: current?.toString(),
       maxLines: f.maxLines,
       labelText: _tr(f.label) + (f.required ? ' *' : ''),
       onChanged: onChanged,
@@ -327,7 +331,9 @@ class GenericFormView extends StatelessWidget {
     final hint = _tr(f.patternHint);
     return TextFormField(
       key: key,
-      initialValue: current as String?,
+      // Ver nota en `_buildText`: se coacciona a texto en vez de castear,
+      // para no reventar si el `.lcp` trae un no-String aquí.
+      initialValue: current?.toString(),
       decoration: InputDecoration(
         labelText: _tr(f.label) + (f.required ? ' *' : ''),
         helperText: hint,

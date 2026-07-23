@@ -86,23 +86,48 @@ void _hydrateField(
       if (parsed.isNotEmpty) values[field.key] = parsed;
 
     case GroupFieldSpec f:
-      values[field.key] = raw is List
-          // Caso 6 (TierValue.perTier/NpcSize): el JSON es un array
-          // posicional, no un objeto — cada posición corresponde al campo
-          // de [f.fields] en el mismo índice, no a una clave con nombre.
-          ? _hydratePositionalGroup(f.fields, raw)
-          : formValuesFromJson(f.fields, raw as Map<String, dynamic>);
+      if (raw is List) {
+        // Caso 6 (TierValue.perTier/NpcSize): el JSON es un array
+        // posicional, no un objeto — cada posición corresponde al campo
+        // de [f.fields] en el mismo índice, no a una clave con nombre.
+        values[field.key] = _hydratePositionalGroup(f.fields, raw);
+      } else if (raw is Map<String, dynamic>) {
+        values[field.key] = formValuesFromJson(f.fields, raw);
+      }
+    // Si `raw` no es ni lista ni mapa (un `.lcp` con una forma inesperada
+    // para este grupo), se omite en vez de reventar toda la pantalla de
+    // Editar con un cast fallido.
 
     case ListFieldSpec f:
-      values[field.key] = [
-        for (final item in raw as List)
-          formValuesFromJson(f.itemFields, item as Map<String, dynamic>),
-      ];
+      if (raw is List) {
+        values[field.key] = [
+          for (final item in raw) _hydrateListItem(f.itemFields, item),
+        ];
+      }
 
     case ShapeChoiceFieldSpec():
     case CatalogFieldSpec():
       break; // ya resueltos arriba, inalcanzable aquí.
   }
+}
+
+/// Hidrata un ítem de [ListFieldSpec]. Normalmente cada ítem es un objeto
+/// (`{...}`), pero un `.lcp` real puede guardar una lista de escalares donde
+/// el formulario modela una lista de objetos de un solo campo — p.ej.
+/// `mechtype: ["Striker", "Support"]` frente al esquema `[{id: ...}]` (lo
+/// que produce el propio mapper al exportar, ver `mapStringIdItems`). En ese
+/// caso se envuelve el escalar bajo la clave del único campo del ítem, de
+/// modo que el roundtrip Crear→Editar no revienta. Si el ítem no es un mapa
+/// y el ítem tiene más de un campo, no hay forma sensata de mapearlo → ítem
+/// vacío, sin lanzar.
+Map<String, dynamic> _hydrateListItem(List<FieldSpec> itemFields, dynamic item) {
+  if (item is Map<String, dynamic>) {
+    return formValuesFromJson(itemFields, item);
+  }
+  if (itemFields.length == 1) {
+    return formValuesFromJson(itemFields, {itemFields.single.jsonKey: item});
+  }
+  return {};
 }
 
 /// Hidrata un [GroupFieldSpec] cuyo JSON es un array posicional (ej.
