@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/forms/field_spec.dart';
 
+import 'robust_interactions.dart';
+
 /// Simula la interacción real de un usuario rellenando los campos
 /// obligatorios de un esquema con los valores producidos por
 /// `minimalValidValues` (mismo criterio de alcance: nivel superior +
@@ -23,14 +25,16 @@ Future<void> fillRequiredFields(
       case TextFieldSpec(:final key):
       case PatternTextFieldSpec(:final key):
         if (values.containsKey(key)) {
-          await tester.enterText(
+          await focusAndEnterText(
+            tester,
             find.byKey(ValueKey('$keyPrefix$key')),
             values[key] as String,
           );
         }
       case NumberFieldSpec(:final key):
         if (values.containsKey(key)) {
-          await tester.enterText(
+          await focusAndEnterText(
+            tester,
             find.byKey(ValueKey('$keyPrefix$key')),
             values[key].toString(),
           );

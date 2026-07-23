@@ -4,4 +4,27 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application>
+        <!--
+          Mismo FileProvider de test que el source set `debug` (ver
+          ../debug/AndroidManifest.xml), duplicado aquí para que los tests
+          de aceptación puedan correr también con `flutter drive` en modo
+          profile (AOT + tree-shaking, cercano al release que instala la
+          persona usuaria) — el modo debug esconde fallos que solo aparecen
+          en profile/release (p.ej. un widget que revienta al construirse
+          muestra el `ErrorWidget` gris en release, no la pantalla roja de
+          debug). Vive solo en `debug` y `profile`, NUNCA en un .apk/.aab de
+          release real. Ver `useTestSafDocument` en MainActivity.kt.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.lcp_builder.acceptancetest.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
 </manifest>

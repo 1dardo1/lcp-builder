@@ -1,0 +1,68 @@
+name: Acceptance Tests - Android (profile)
+
+# Corre en modo **profile** (AOT + tree-shaking) con `flutter drive` un
+# smoke de RENDER de la pantalla de Editar (`editar_render_profile_test`),
+# no el ciclo interactivo completo. Motivo: la fragilidad de `flutter
+# drive` sobre un emulador real está en la ENTRADA (taps/enterText sobre el
+# lienzo gigante 1080×20000 del test de aceptación, más grande que la
+# pantalla física, no registran), no en el renderizado — así que el smoke
+# solo pinta pantallas con datos ya construidos y comprueba que no
+# revientan. Ese es justo el ángulo que a la suite de debug se le escapa:
+# un widget que revienta al construirse muestra el `ErrorWidget` gris en
+# profile/release, no la pantalla roja de debug que vería `flutter test`.
+# El ciclo interactivo Crear→Editar→disco completo sigue cubierto en debug
+# por acceptance-tests-android.yml. Requiere el driver
+# `test_driver/integration_test.dart`.
+on:
+  workflow_dispatch: {}
+  workflow_call: {}
+
+jobs:
+  android-emulator-profile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+
+      - name: flutter pub get
+        working-directory: app
+        run: flutter pub get
+
+      - name: Habilitar KVM para el emulador
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Test de aceptación en profile (flutter drive)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          emulator-options: -no-window -no-snapshot -no-audio -no-boot-anim -camera-back none
+          disable-animations: true
+          # Mismo patrón de diagnóstico que el workflow de debug: logcat en
+          # segundo plano, `timeout` interno para fallar limpio si se
+          # cuelga, y `--verbose`. `flutter drive --profile` compila AOT e
+          # instala el APK de profile, así que el primer arranque tarda más
+          # que en debug — de ahí el margen.
+          script: >-
+            bash -c 'set -x; adb logcat -c; adb logcat > /tmp/logcat.txt &
+            LOGCAT_PID=$!; cd app; timeout 1500 flutter drive --verbose
+            --driver=test_driver/integration_test.dart
+            --target=integration_test/editar_render_profile_test.dart
+            --profile -d emulator-5554; EXIT=$?;
+            kill $LOGCAT_PID 2>/dev/null || true;
+            echo "--- últimas 300 líneas de logcat ---"; tail -n 300
+            /tmp/logcat.txt; exit $EXIT'

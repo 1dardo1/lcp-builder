@@ -29,6 +29,7 @@ import 'package:lcp_builder/presentation/session/edit_session.dart';
 import '../test/support/android_test_saf.dart';
 import '../test/support/fill_required_fields.dart';
 import '../test/support/minimal_valid_values.dart';
+import '../test/support/robust_interactions.dart';
 
 Widget _wrapWithLocalization(Widget home) => MaterialApp(
   locale: const Locale('es'),
@@ -97,11 +98,16 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // "Continuar" — el formulario de debajo también tiene un botón
   // "Continuar" (para añadir sin finalizar), así que hay que acotar la
   // búsqueda al propio AlertDialog para no ambigüar.
+  //
+  // Se espera activamente a que aparezca el TextField del diálogo (más
+  // fiable que un único `pumpAndSettle`).
   final dialog = find.byType(AlertDialog);
-  await tester.enterText(
-    find.descendant(of: dialog, matching: find.byType(TextField)),
-    'AcceptanceTestCorp',
+  final dialogField = find.descendant(
+    of: dialog,
+    matching: find.byType(TextField),
   );
+  await pumpUntilFound(tester, dialogField);
+  await focusAndEnterText(tester, dialogField, 'AcceptanceTestCorp');
   await tester.tap(
     find.descendant(of: dialog, matching: find.text('Continuar')),
   );

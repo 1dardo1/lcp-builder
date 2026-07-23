@@ -131,13 +131,18 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
               onCreateReference: _onCreateReference,
             ),
             const SizedBox(height: 16),
-            Row(
+            // `Wrap` y no `Row`: en un móvil real (no el lienzo gigante de
+            // los tests) los dos botones no caben en una línea y un `Row`
+            // desbordaba por la derecha — con `Wrap` el segundo botón baja a
+            // la línea siguiente en vez de recortarse.
+            Wrap(
+              spacing: 12,
+              runSpacing: 8,
               children: [
                 OutlinedButton(
                   onPressed: _continuar,
                   child: Text(t.continuar),
                 ),
-                const SizedBox(width: 12),
                 FilledButton(
                   onPressed: _finalizar,
                   child: Text(t.finalizarLcp),
