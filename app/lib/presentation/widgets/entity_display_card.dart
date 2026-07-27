@@ -67,20 +67,24 @@ class EntityDisplayCard extends StatelessWidget {
     bool present,
   ) {
     final t = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
     final label = translateFieldText(field.label, locale);
 
     if (!present) {
+      // Falta un campo obligatorio: es un defecto del propio `.lcp`, así que
+      // se marca con el color de error del tema (antes un `Colors.orange`
+      // fijo que no encajaba con el tema oscuro).
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.warning_amber, size: 16, color: Colors.orange),
+            Icon(Icons.error_outline, size: 16, color: scheme.error),
             const SizedBox(width: 6),
             Expanded(
               child: Text(
                 t.campoFaltante(label),
-                style: const TextStyle(color: Colors.orange),
+                style: TextStyle(color: scheme.error),
               ),
             ),
           ],

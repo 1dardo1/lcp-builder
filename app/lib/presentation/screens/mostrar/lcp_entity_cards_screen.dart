@@ -4,6 +4,7 @@ import '../../forms/crear_entidad_configs.dart';
 import '../../i18n/locale_controller.dart';
 import '../../widgets/entity_display_card.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/page_body.dart';
 
 /// Última pantalla del flujo Mostrar: una [EntityDisplayCard] por cada
 /// instancia de [contentKey] encontrada en el `.lcp`, reutilizando el
@@ -31,11 +32,14 @@ class LcpEntityCardsScreen extends StatelessWidget {
         title: Text(entityDisplayTitle(contentKey, locale)),
         actions: [LanguageSwitcher(controller: localeController)],
       ),
-      body: ListView(
-        children: [
-          for (final entity in entities)
-            EntityDisplayCard(schema: schema, data: entity, locale: locale),
-        ],
+      body: PageBody(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          children: [
+            for (final entity in entities)
+              EntityDisplayCard(schema: schema, data: entity, locale: locale),
+          ],
+        ),
       ),
     );
   }

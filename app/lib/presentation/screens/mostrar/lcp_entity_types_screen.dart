@@ -8,6 +8,8 @@ import '../../../l10n/gen/app_localizations.dart';
 import '../../forms/crear_entidad_configs.dart';
 import '../../i18n/locale_controller.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/message_placeholder.dart';
+import '../../widgets/page_body.dart';
 import 'lcp_entity_cards_screen.dart';
 
 /// Lee y parsea el `.lcp` elegido (suelto o desde [LcpFolderScreen]) y
@@ -64,47 +66,81 @@ class _LcpEntityTypesScreenState extends State<LcpEntityTypesScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(
-              child: Text(t.errorPrefix(snapshot.error.toString())),
+            return MessagePlaceholder(
+              icon: Icons.error_outline,
+              tone: MessageTone.error,
+              message: t.errorPrefix(snapshot.error.toString()),
             );
           }
           final parsed = snapshot.data!;
           final entries = parsed.contentByKey.entries
               .where((entry) => entry.value.isNotEmpty)
               .toList();
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
+          final theme = Theme.of(context);
+          return PageBody(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+              children: [
+                Text(
                   parsed.manifest.name,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: theme.textTheme.headlineSmall,
                 ),
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    for (final entry in entries)
-                      ListTile(
-                        title: Text(entityDisplayTitle(entry.key, locale)),
-                        trailing: Text(t.tipoCount(entry.value.length)),
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => LcpEntityCardsScreen(
-                              contentKey: entry.key,
-                              entities: entry.value,
-                              localeController: widget.localeController,
+                const SizedBox(height: 16),
+                Card(
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < entries.length; i++) ...[
+                        if (i > 0) const Divider(height: 1),
+                        ListTile(
+                          title: Text(
+                            entityDisplayTitle(entries[i].key, locale),
+                          ),
+                          trailing: _CountBadge(entries[i].value.length),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => LcpEntityCardsScreen(
+                                contentKey: entries[i].key,
+                                entities: entries[i].value,
+                                localeController: widget.localeController,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                      ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// Recuento de instancias de un tipo, como pastilla tenue a la derecha de la
+/// fila.
+class _CountBadge extends StatelessWidget {
+  final int count;
+
+  const _CountBadge(this.count);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        '$count',
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: scheme.onSurfaceVariant,
+        ),
       ),
     );
   }
