@@ -6,6 +6,7 @@ import 'presentation/i18n/locale_controller.dart';
 import 'presentation/screens/home/home_screen.dart';
 import 'presentation/session/crear_session.dart';
 import 'presentation/session/edit_session.dart';
+import 'presentation/theme/app_theme.dart';
 
 void main() {
   runApp(LcpBuilderApp());
@@ -38,9 +39,11 @@ class LcpBuilderApp extends StatelessWidget {
       listenable: localeController,
       builder: (context, _) => MaterialApp(
         title: 'LCP Builder',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        // Arranca en oscuro (estética COMP/CON); el claro queda disponible
+        // para quien prefiera el tema del sistema en el futuro.
+        themeMode: ThemeMode.dark,
         locale: localeController.locale,
         localizationsDelegates: const [
           AppLocalizations.delegate,

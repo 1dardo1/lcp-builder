@@ -122,6 +122,30 @@ abstract class AppLocalizations {
   /// **'Editar'**
   String get homeEditar;
 
+  /// Subtítulo/eslogan bajo el título en la pantalla de inicio.
+  ///
+  /// In es, this message translates to:
+  /// **'Genera paquetes de contenido .lcp para Lancer'**
+  String get homeTagline;
+
+  /// No description provided for @homeCrearDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea contenido nuevo desde cero y expórtalo a un .lcp'**
+  String get homeCrearDesc;
+
+  /// No description provided for @homeMostrarDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Abre un .lcp y revisa todo lo que contiene'**
+  String get homeMostrarDesc;
+
+  /// No description provided for @homeEditarDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Abre un .lcp para modificar, añadir o borrar contenido'**
+  String get homeEditarDesc;
+
   /// No description provided for @noImplementado.
   ///
   /// In es, this message translates to:
