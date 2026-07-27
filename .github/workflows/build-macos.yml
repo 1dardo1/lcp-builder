@@ -1,0 +1,43 @@
+name: Build macOS
+
+# Solo manual (workflow_dispatch), mismo criterio que build-linux.yml /
+# build-windows.yml / build-apk.yml: se lanza a demanda desde la pestaña
+# Actions. Es la verificación real de que la app compila, enlaza y registra
+# sus plugins en macOS — el soporte de escritorio de macOS sale casi gratis
+# del diseño de adapters de ADR-002 (el mismo camino desktop que Linux y
+# Windows, `Platform.isAndroid ? … : …`), pero "casi gratis" hay que
+# demostrarlo compilando en un runner macOS de verdad. `flutter test`
+# ejercita además, en un host macOS real, la misma E/S de disco (dart:io)
+# que ya cubren los tests de escritorio.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+
+      - run: flutter pub get
+
+      - run: flutter analyze
+
+      - run: flutter test
+
+      - run: flutter config --enable-macos-desktop
+
+      - run: flutter build macos --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcp-builder-macos
+          path: app/build/macos/Build/Products/Release
+          retention-days: 30

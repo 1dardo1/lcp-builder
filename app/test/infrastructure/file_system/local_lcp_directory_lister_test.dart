@@ -19,13 +19,15 @@ void main() {
           tempDir.path,
         );
 
-        expect(
-          result,
-          [
-            '${tempDir.path}/alfa.lcp',
-            '${tempDir.path}/zeta.lcp',
-          ],
-        );
+        // Se comparan los NOMBRES, no las rutas completas: `Directory.list()`
+        // devuelve la ruta con el separador del SO (`\` en Windows, `/` en
+        // Linux/macOS), así que comparar contra rutas construidas con `/` a
+        // mano fallaba solo en Windows (visto en CI). Lo que importa aquí es
+        // que solo salen los `.lcp`, ordenados y sin el `.txt`.
+        final names = result
+            .map((path) => path.split(RegExp(r'[/\\]')).last)
+            .toList();
+        expect(names, ['alfa.lcp', 'zeta.lcp']);
       } finally {
         await tempDir.delete(recursive: true);
       }

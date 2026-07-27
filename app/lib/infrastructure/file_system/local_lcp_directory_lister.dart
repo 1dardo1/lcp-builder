@@ -2,8 +2,9 @@ import 'dart:io';
 
 import '../../domain/ports/lcp_directory_lister.dart';
 
-/// Adapter de Linux (`dart:io`, ruta real). Suficiente por ahora — el
-/// selector de carpetas de Android (`getDirectoryPath`, vía
+/// Adapter de escritorio (Linux/Windows/macOS): `dart:io`, ruta real —
+/// `Directory.list()` es agnóstico al separador (`/` o `\`). El selector
+/// de carpetas de Android (`getDirectoryPath`, vía
 /// `ACTION_OPEN_DOCUMENT_TREE`) devuelve una URI de árbol SAF, no una
 /// ruta de archivo, y `Directory.list()` no sabe recorrerla; hace falta
 /// un adapter nativo aparte (`DocumentsContract`) para Android, todavía

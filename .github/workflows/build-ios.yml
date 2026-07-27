@@ -1,0 +1,40 @@
+name: Build iOS
+
+# Solo manual (workflow_dispatch), mismo criterio que el resto de
+# build-*.yml: se lanza a demanda desde la pestaña Actions. Verifica que la
+# app compila y enlaza para iOS en un runner macOS de verdad. Se compila con
+# `--no-codesign` porque en CI no hay certificados de firma de Apple (ni son
+# necesarios para comprobar que el build de iOS es válido); firmar/empaquetar
+# el IPA es un paso aparte de publicación, fuera del alcance de esta
+# verificación. `flutter test` corre además en un host macOS real, la misma
+# E/S de disco (dart:io) que ya cubren los tests de escritorio.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+
+      - run: flutter pub get
+
+      - run: flutter analyze
+
+      - run: flutter test
+
+      - run: flutter build ios --release --no-codesign
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcp-builder-ios
+          path: app/build/ios/iphoneos
+          retention-days: 30

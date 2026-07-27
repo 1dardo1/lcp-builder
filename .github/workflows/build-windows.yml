@@ -1,0 +1,41 @@
+name: Build Windows
+
+# Solo manual (workflow_dispatch), mismo criterio que build-linux.yml /
+# build-apk.yml: se lanza a demanda desde la pestaña Actions. Es la
+# verificación real de que la app compila, enlaza y registra sus plugins
+# en Windows — el soporte de escritorio de Windows sale casi gratis del
+# diseño de adapters de ADR-002 (el mismo camino desktop que Linux), pero
+# "casi gratis" hay que demostrarlo compilando en un runner Windows de
+# verdad.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+
+      - run: flutter pub get
+
+      - run: flutter analyze
+
+      - run: flutter test
+
+      - run: flutter config --enable-windows-desktop
+
+      - run: flutter build windows --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcp-builder-windows
+          path: app/build/windows/x64/runner/Release
+          retention-days: 30

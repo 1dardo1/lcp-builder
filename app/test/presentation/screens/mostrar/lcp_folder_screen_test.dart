@@ -43,6 +43,25 @@ void main() {
     expect(find.text('paquete_b.lcp'), findsOneWidget);
   });
 
+  testWidgets('extrae el nombre de una ruta estilo Windows (separador \\ y '
+      'letra de unidad)', (tester) async {
+    await tester.pumpWidget(
+      wrapWithLocalization(
+        LcpFolderScreen(
+          directoryPath: r'C:\Users\dev\lcps',
+          localeController: LocaleController(),
+          listLcpFiles: (_) async => const [
+            r'C:\Users\dev\lcps\TheButlersCorp.lcp',
+          ],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // No la ruta completa con backslashes: solo el nombre del archivo.
+    expect(find.text('TheButlersCorp.lcp'), findsOneWidget);
+  });
+
   testWidgets('tocar un .lcp navega a la pantalla de tipos de entidad', (
     tester,
   ) async {
