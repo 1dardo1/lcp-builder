@@ -10,11 +10,6 @@ name: Build iOS
 # E/S de disco (dart:io) que ya cubren los tests de escritorio.
 on:
   workflow_dispatch: {}
-  # TEMPORAL: para validar este workflow nuevo en su propia rama
-  # (workflow_dispatch por API solo ve workflows ya en main). Quitar antes
-  # de mergear.
-  push:
-    branches: [claude/repo-contents-270i7m]
 
 jobs:
   build-ios:
