@@ -9,11 +9,12 @@ import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/crear_session.dart';
 import '../../session/finalizar_lcp.dart';
+import '../../widgets/form_error_banner.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/page_body.dart';
 
 /// Pantalla Crear genérica: una sola implementación para las 24 entidades,
-/// parametrizada por [EntityCrearConfig]. Sin diseño de Figma todavía
-/// (`vault/UI-UX`): Material por defecto, funcional, no definitivo.
+/// parametrizada por [EntityCrearConfig].
 ///
 /// Dos botones al final del formulario, ambos añaden la entidad ya
 /// ensamblada a [session] (no crean un `.lcp` por sí solos):
@@ -119,9 +120,9 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
         title: Text(translateFieldText(widget.config.title, locale)),
         actions: [LanguageSwitcher(controller: widget.localeController)],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: PageBody(
         child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
           children: [
             GenericFormView(
               fields: _schema,
@@ -130,31 +131,17 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
               locale: locale,
               onCreateReference: _onCreateReference,
             ),
-            const SizedBox(height: 16),
-            // `Wrap` y no `Row`: en un móvil real (no el lienzo gigante de
-            // los tests) los dos botones no caben en una línea y un `Row`
-            // desbordaba por la derecha — con `Wrap` el segundo botón baja a
-            // la línea siguiente en vez de recortarse.
-            Wrap(
-              spacing: 12,
-              runSpacing: 8,
-              children: [
-                OutlinedButton(
-                  onPressed: _continuar,
-                  child: Text(t.continuar),
-                ),
-                FilledButton(
-                  onPressed: _finalizar,
-                  child: Text(t.finalizarLcp),
-                ),
-              ],
-            ),
+            const SizedBox(height: 24),
+            // Botones a lo ancho y apilados (el primario abajo): en un móvil
+            // real los dos no caben en una línea, y apilarlos a ancho
+            // completo lo evita de raíz además de hacer la acción más clara
+            // que dos botones pequeños uno al lado del otro.
+            OutlinedButton(onPressed: _continuar, child: Text(t.continuar)),
+            const SizedBox(height: 10),
+            FilledButton(onPressed: _finalizar, child: Text(t.finalizarLcp)),
             if (_errorMessage != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                _errorMessage!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
+              const SizedBox(height: 16),
+              FormErrorBanner(message: _errorMessage!),
             ],
           ],
         ),
