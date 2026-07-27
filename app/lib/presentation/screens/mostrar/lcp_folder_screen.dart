@@ -5,6 +5,9 @@ import '../../../infrastructure/file_system/platform_lcp_directory_lister.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/message_placeholder.dart';
+import '../../widgets/nav_option_card.dart';
+import '../../widgets/page_body.dart';
 import 'lcp_entity_types_screen.dart';
 
 /// Lista los `.lcp` de la carpeta elegida en `MostrarMenuScreen` — un
@@ -62,31 +65,38 @@ class _LcpFolderScreenState extends State<LcpFolderScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(
-              child: Text(t.errorPrefix(snapshot.error.toString())),
+            return MessagePlaceholder(
+              icon: Icons.error_outline,
+              tone: MessageTone.error,
+              message: t.errorPrefix(snapshot.error.toString()),
             );
           }
           final files = snapshot.data!;
           if (files.isEmpty) {
-            return Center(child: Text(t.carpetaSinLcp));
+            return MessagePlaceholder(
+              icon: Icons.folder_off_outlined,
+              message: t.carpetaSinLcp,
+            );
           }
-          return ListView(
-            children: [
-              for (final path in files)
-                ListTile(
-                  leading: const Icon(Icons.description_outlined),
-                  title: Text(_displayName(path)),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LcpEntityTypesScreen(
-                        lcpPath: path,
-                        localeController: widget.localeController,
-                        loadContent: widget.loadContent,
-                      ),
+          return PageBody(
+            child: ListView.separated(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+              itemCount: files.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              itemBuilder: (context, i) => NavOptionCard(
+                icon: Icons.description_outlined,
+                title: _displayName(files[i]),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => LcpEntityTypesScreen(
+                      lcpPath: files[i],
+                      localeController: widget.localeController,
+                      loadContent: widget.loadContent,
                     ),
                   ),
                 ),
-            ],
+              ),
+            ),
           );
         },
       ),
