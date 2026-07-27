@@ -115,7 +115,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get abrirLcp => 'Open a .lcp';
 
   @override
+  String get abrirLcpDesc => 'A single .lcp file';
+
+  @override
   String get abrirCarpeta => 'Open a folder';
+
+  @override
+  String get abrirCarpetaDesc => 'Every .lcp in a folder at once';
+
+  @override
+  String get crearMenuPrompt => 'What do you want to create?';
 
   @override
   String get carpetaSinLcp => 'This folder has no .lcp files.';

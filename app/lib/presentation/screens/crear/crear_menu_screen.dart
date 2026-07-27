@@ -7,11 +7,11 @@ import '../../i18n/locale_controller.dart';
 import '../../session/crear_session.dart';
 import '../../session/finalizar_lcp.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/page_body.dart';
 import 'crear_entidad_screen.dart';
 
-/// Pantalla de inicio del flujo Crear: menú de entidades disponibles. Sin
-/// diseño de Figma todavía — Material por defecto, funcional, no
-/// definitivo (ver `vault/UI-UX`).
+/// Pantalla de inicio del flujo Crear: el catálogo de tipos de entidad que
+/// se pueden crear, como lista de filas dentro de una tarjeta.
 ///
 /// Además de la lista de entidades, muestra el estado de la sesión de
 /// Crear en curso ([CrearSession]) — cuántas entidades se han acumulado ya
@@ -41,43 +41,113 @@ class CrearMenuScreen extends StatelessWidget {
       ),
       body: ListenableBuilder(
         listenable: session,
-        builder: (context, _) => Column(
-          children: [
-            if (!session.isEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(t.entidadCount(session.entityCount)),
-                    ),
-                    FilledButton(
-                      onPressed: () => finalizarLcp(context, session),
-                      child: Text(t.finalizarLcp),
-                    ),
-                  ],
+        builder: (context, _) => PageBody(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+            children: [
+              if (!session.isEmpty) ...[
+                _SessionSummaryCard(
+                  countLabel: t.entidadCount(session.entityCount),
+                  finalizarLabel: t.finalizarLcp,
+                  onFinalizar: () => finalizarLcp(context, session),
                 ),
-              ),
-            Expanded(
-              child: ListView(
-                children: [
-                  for (final config in crearEntidadConfigs)
-                    ListTile(
-                      title: Text(translateFieldText(config.title, locale)),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => CrearEntidadScreen(
-                            config: config,
-                            session: session,
-                            localeController: localeController,
+                const SizedBox(height: 24),
+              ],
+              _SectionLabel(t.crearMenuPrompt),
+              const SizedBox(height: 12),
+              Card(
+                child: Column(
+                  children: [
+                    for (var i = 0; i < crearEntidadConfigs.length; i++) ...[
+                      if (i > 0) const Divider(height: 1),
+                      ListTile(
+                        title: Text(
+                          translateFieldText(
+                            crearEntidadConfigs[i].title,
+                            locale,
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => CrearEntidadScreen(
+                              config: crearEntidadConfigs[i],
+                              session: session,
+                              localeController: localeController,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                    ],
+                  ],
+                ),
               ),
-            ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Resumen de la sesión de Crear en curso: cuántas entidades se llevan
+/// acumuladas para el `.lcp` que se está montando, con el botón de
+/// finalizarlo. Se destaca como tarjeta tonal porque es la llamada a la
+/// acción ("ya tienes contenido, ciérralo en un .lcp"), no una fila más.
+class _SessionSummaryCard extends StatelessWidget {
+  final String countLabel;
+  final String finalizarLabel;
+  final VoidCallback onFinalizar;
+
+  const _SessionSummaryCard({
+    required this.countLabel,
+    required this.finalizarLabel,
+    required this.onFinalizar,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Card(
+      color: scheme.surfaceContainerHigh,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(Icons.inventory_2_outlined, color: scheme.primary),
+            const SizedBox(width: 14),
+            Expanded(child: Text(countLabel, style: theme.textTheme.bodyLarge)),
+            const SizedBox(width: 12),
+            FilledButton(onPressed: onFinalizar, child: Text(finalizarLabel)),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Etiqueta de sección en versalitas con tracking — el toque "tech" del
+/// tema, para separar bloques sin meter una cabecera pesada.
+class _SectionLabel extends StatelessWidget {
+  final String text;
+
+  const _SectionLabel(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Text(
+        text.toUpperCase(),
+        style: theme.textTheme.labelMedium?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+          letterSpacing: 1.2,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
