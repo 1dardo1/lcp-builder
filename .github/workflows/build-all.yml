@@ -11,11 +11,6 @@ name: Build todos los SO
 # retención corta; el job `empaquetar` los reúne en el artefacto final.
 on:
   workflow_dispatch: {}
-  # TEMPORAL: para validar este workflow nuevo en su propia rama
-  # (workflow_dispatch por API solo ve workflows ya en main). Quitar antes
-  # de mergear.
-  push:
-    branches: [claude/repo-contents-270i7m]
 
 jobs:
   android:
