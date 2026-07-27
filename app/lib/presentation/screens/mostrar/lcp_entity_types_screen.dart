@@ -7,6 +7,7 @@ import '../../../infrastructure/lcp/zip_content_pack_reader.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../forms/crear_entidad_configs.dart';
 import '../../i18n/locale_controller.dart';
+import '../../widgets/count_badge.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/message_placeholder.dart';
 import '../../widgets/page_body.dart';
@@ -95,7 +96,7 @@ class _LcpEntityTypesScreenState extends State<LcpEntityTypesScreen> {
                           title: Text(
                             entityDisplayTitle(entries[i].key, locale),
                           ),
-                          trailing: _CountBadge(entries[i].value.length),
+                          trailing: CountBadge('${entries[i].value.length}'),
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => LcpEntityCardsScreen(
@@ -114,33 +115,6 @@ class _LcpEntityTypesScreenState extends State<LcpEntityTypesScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-/// Recuento de instancias de un tipo, como pastilla tenue a la derecha de la
-/// fila.
-class _CountBadge extends StatelessWidget {
-  final int count;
-
-  const _CountBadge(this.count);
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        '$count',
-        style: theme.textTheme.labelLarge?.copyWith(
-          color: scheme.onSurfaceVariant,
-        ),
       ),
     );
   }

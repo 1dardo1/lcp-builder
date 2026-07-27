@@ -7,6 +7,7 @@ import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/entity_display_card.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/page_body.dart';
 import 'editar_entidad_screen.dart';
 
 /// Lista de entidades de [contentKey] dentro del `.lcp` de [lcpPath], cada
@@ -122,50 +123,67 @@ class EditarEntityCardsScreen extends StatelessWidget {
                 );
           if (entities.isEmpty) {
             return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [Text(t.sinEntidades), ?crearButton],
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.inbox_outlined,
+                      size: 48,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(t.sinEntidades, textAlign: TextAlign.center),
+                    if (crearButton != null) ...[
+                      const SizedBox(height: 20),
+                      crearButton,
+                    ],
+                  ],
+                ),
               ),
             );
           }
-          return ListView(
-            children: [
-              ?crearButton,
-              for (var i = 0; i < entities.length; i++)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      EntityDisplayCard(
-                        schema: schema,
-                        data: entities[i],
-                        locale: locale,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            TextButton.icon(
-                              onPressed: config == null
-                                  ? null
-                                  : () => _editar(context, i, entities[i]),
-                              icon: const Icon(Icons.edit_outlined),
-                              label: Text(t.editar),
-                            ),
-                            const SizedBox(width: 8),
-                            TextButton.icon(
-                              onPressed: () => _confirmarEliminar(context, i),
-                              icon: const Icon(Icons.delete_outline),
-                              label: Text(t.eliminar),
-                            ),
-                          ],
+          return PageBody(
+            child: ListView(
+              children: [
+                ?crearButton,
+                for (var i = 0; i < entities.length; i++)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        EntityDisplayCard(
+                          schema: schema,
+                          data: entities[i],
+                          locale: locale,
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: [
+                              TextButton.icon(
+                                onPressed: config == null
+                                    ? null
+                                    : () => _editar(context, i, entities[i]),
+                                icon: const Icon(Icons.edit_outlined),
+                                label: Text(t.editar),
+                              ),
+                              const SizedBox(width: 8),
+                              TextButton.icon(
+                                onPressed: () => _confirmarEliminar(context, i),
+                                icon: const Icon(Icons.delete_outline),
+                                label: Text(t.eliminar),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           );
         },
       ),
