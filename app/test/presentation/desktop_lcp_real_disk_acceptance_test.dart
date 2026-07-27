@@ -11,6 +11,7 @@ import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
 import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/editar/editar_entidad_screen.dart';
+import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../support/minimal_valid_values.dart';
@@ -129,6 +130,71 @@ void main() {
         );
         expect(find.byType(TextFormField), findsWidgets);
       }
+    },
+  );
+
+  /// El análogo de escritorio de la aserción FUERTE del test de aceptación de
+  /// Android (`editar_android_acceptance_test`): editar una entidad, GUARDAR
+  /// por el camino de guardado REAL de la app (`defaultEditarSaveContent` →
+  /// `EditarContenidoUseCase` con el `LocalFileWriter` de escritorio) y releer
+  /// los BYTES del disco para comprobar que el cambio persistió y el resto de
+  /// entidades quedaron intactas. Cubre en escritorio lo que en Android cazó
+  /// los bugs de guardado #37/#38/#39 (que ahí eran de truncado/SAF); es un
+  /// `test` normal, no `testWidgets`, así que la E/S real de `dart:io` corre
+  /// sin FakeAsync y sin envolver en `runAsync`.
+  test(
+    'editar una entidad y Guardar persiste en el disco real (y no toca el '
+    'resto) — por el camino de guardado de escritorio',
+    () async {
+      // Genera un .lcp con las 20 entidades y escríbelo a disco real.
+      final content = <String, List<Object>>{
+        for (final config in crearEntidadConfigs)
+          config.contentKey: [
+            config.fromFormValues(minimalValidValues(config.buildSchema())),
+          ],
+      };
+      final bytes = ZipContentPackExporter().export(
+        manifest: const ILcpManifestData(
+          name: 'Paquete de escritorio',
+          author: 'Test',
+          description: 'd',
+          version: '1.0.0',
+        ),
+        content: content,
+      );
+      final path = '${tempDir.path}${Platform.pathSeparator}editar.lcp';
+      await LocalFileWriter().write(path, bytes);
+
+      // Abre en sesión de edición y cambia el nombre del primer fabricante.
+      final pack = ZipContentPackReader().read(await LocalFileReader().read(path));
+      final session = EditSession()..load(path, pack);
+      final original = Map<String, dynamic>.from(
+        pack.contentByKey['manufacturers']!.first,
+      );
+      session.replaceEntity(path, 'manufacturers', 0, {
+        ...original,
+        'name': 'Editado en disco real',
+      });
+
+      // Guarda con el MISMO adapter que usa la pantalla en escritorio.
+      await defaultEditarSaveContent()(session.packFor(path)!, path);
+      session.markSaved(path);
+      expect(session.isDirty(path), isFalse);
+
+      // Verificación fuerte: releer los BYTES del disco, sin pasar por el
+      // estado en memoria de la sesión.
+      final reread = ZipContentPackReader().read(
+        await LocalFileReader().read(path),
+      );
+      expect(
+        reread.contentByKey['manufacturers']!.first['name'],
+        'Editado en disco real',
+      );
+      // El resto de tipos siguen ahí: guardar no se comió nada.
+      expect(
+        reread.contentByKey.keys,
+        containsAll(crearEntidadConfigs.map((c) => c.contentKey)),
+      );
     },
   );
 }
