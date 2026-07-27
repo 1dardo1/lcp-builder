@@ -6,6 +6,7 @@ import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/page_body.dart';
 import 'editar_entidad_screen.dart';
 
 /// Lista las 24 entidades registradas (mismo `crearEntidadConfigs` que
@@ -37,24 +38,44 @@ class EditarElegirTipoScreen extends StatelessWidget {
         title: Text(t.elegirTipoTitle),
         actions: [LanguageSwitcher(controller: localeController)],
       ),
-      body: ListView(
-        children: [
-          for (final config in crearEntidadConfigs)
-            ListTile(
-              title: Text(translateFieldText(config.title, locale)),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => EditarEntidadScreen(
-                    config: config,
-                    session: session,
-                    lcpPath: lcpPath,
-                    contentKey: config.contentKey,
-                    localeController: localeController,
-                  ),
-                ),
+      body: PageBody(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          children: [
+            Card(
+              child: Column(
+                children: [
+                  for (var i = 0; i < crearEntidadConfigs.length; i++) ...[
+                    if (i > 0) const Divider(height: 1),
+                    ListTile(
+                      title: Text(
+                        translateFieldText(
+                          crearEntidadConfigs[i].title,
+                          locale,
+                        ),
+                      ),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => EditarEntidadScreen(
+                            config: crearEntidadConfigs[i],
+                            session: session,
+                            lcpPath: lcpPath,
+                            contentKey: crearEntidadConfigs[i].contentKey,
+                            localeController: localeController,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

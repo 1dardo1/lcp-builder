@@ -11,7 +11,10 @@ import '../../../l10n/gen/app_localizations.dart';
 import '../../forms/crear_entidad_configs.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
+import '../../widgets/count_badge.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/message_placeholder.dart';
+import '../../widgets/page_body.dart';
 import 'editar_elegir_tipo_screen.dart';
 import 'editar_entity_cards_screen.dart';
 import 'editar_manifest_screen.dart';
@@ -90,9 +93,9 @@ class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
       await saveContent(pack, widget.lcpPath);
       widget.session.markSaved(widget.lcpPath);
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(t.generadoSnackbar(widget.lcpPath))));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(t.generadoSnackbar(widget.lcpPath))),
+      );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -116,29 +119,31 @@ class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(
-              child: Text(t.errorPrefix(snapshot.error.toString())),
+            return MessagePlaceholder(
+              icon: Icons.error_outline,
+              tone: MessageTone.error,
+              message: t.errorPrefix(snapshot.error.toString()),
             );
           }
           return ListenableBuilder(
             listenable: widget.session,
             builder: (context, _) {
+              final theme = Theme.of(context);
               final pack = widget.session.packFor(widget.lcpPath)!;
               final entries = pack.contentByKey.entries
                   .where((entry) => entry.value.isNotEmpty)
                   .toList();
               final dirty = widget.session.isDirty(widget.lcpPath);
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
+              return PageBody(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                  children: [
+                    Row(
                       children: [
                         Expanded(
                           child: Text(
                             pack.manifest.name,
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: theme.textTheme.headlineSmall,
                           ),
                         ),
                         IconButton(
@@ -154,56 +159,63 @@ class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
                             ),
                           ),
                         ),
-                        if (dirty)
-                          FilledButton(
-                            onPressed: _guardar,
-                            child: Text(t.guardarLcp),
-                          ),
                       ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: OutlinedButton.icon(
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => EditarElegirTipoScreen(
-                              session: widget.session,
-                              lcpPath: widget.lcpPath,
-                              localeController: widget.localeController,
-                            ),
+                    // Guardar a disco: solo aparece cuando hay cambios sin
+                    // guardar; a lo ancho, porque es la acción importante de
+                    // esta pantalla en ese momento.
+                    if (dirty) ...[
+                      const SizedBox(height: 12),
+                      FilledButton.icon(
+                        onPressed: _guardar,
+                        icon: const Icon(Icons.save_outlined),
+                        label: Text(t.guardarLcp),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => EditarElegirTipoScreen(
+                            session: widget.session,
+                            lcpPath: widget.lcpPath,
+                            localeController: widget.localeController,
                           ),
                         ),
-                        icon: const Icon(Icons.add),
-                        label: Text(t.crearTipoNuevo),
                       ),
+                      icon: const Icon(Icons.add),
+                      label: Text(t.crearTipoNuevo),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        for (final entry in entries)
-                          ListTile(
-                            title: Text(entityDisplayTitle(entry.key, locale)),
-                            trailing: Text(t.tipoCount(entry.value.length)),
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => EditarEntityCardsScreen(
-                                  session: widget.session,
-                                  lcpPath: widget.lcpPath,
-                                  contentKey: entry.key,
-                                  localeController: widget.localeController,
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Column(
+                        children: [
+                          for (var i = 0; i < entries.length; i++) ...[
+                            if (i > 0) const Divider(height: 1),
+                            ListTile(
+                              title: Text(
+                                entityDisplayTitle(entries[i].key, locale),
+                              ),
+                              trailing: CountBadge(
+                                t.tipoCount(entries[i].value.length),
+                              ),
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => EditarEntityCardsScreen(
+                                    session: widget.session,
+                                    lcpPath: widget.lcpPath,
+                                    contentKey: entries[i].key,
+                                    localeController: widget.localeController,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                          ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           );

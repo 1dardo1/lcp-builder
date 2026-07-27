@@ -5,6 +5,7 @@ import '../../../l10n/gen/app_localizations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/page_body.dart';
 
 /// Edita el manifest del `.lcp` de [lcpPath] dentro del flujo Editar:
 /// nombre, autor, versión y descripción del paquete (los campos que un
@@ -36,8 +37,9 @@ class EditarManifestScreen extends StatefulWidget {
 
 class _EditarManifestScreenState extends State<EditarManifestScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final ILcpManifestData _original =
-      widget.session.packFor(widget.lcpPath)!.manifest;
+  late final ILcpManifestData _original = widget.session
+      .packFor(widget.lcpPath)!
+      .manifest;
   late final _nombre = TextEditingController(text: _original.name);
   late final _autor = TextEditingController(text: _original.author);
   late final _version = TextEditingController(text: _original.version);
@@ -83,16 +85,18 @@ class _EditarManifestScreenState extends State<EditarManifestScreen> {
         title: Text(t.editarPaquete),
         actions: [LanguageSwitcher(controller: widget.localeController)],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: PageBody(
         child: Form(
           key: _formKey,
           child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
             children: [
               TextFormField(
                 key: const ValueKey('manifestName'),
                 controller: _nombre,
-                decoration: InputDecoration(labelText: '${t.nombrePaqueteLabel} *'),
+                decoration: InputDecoration(
+                  labelText: '${t.nombrePaqueteLabel} *',
+                ),
                 validator: requerido,
               ),
               const SizedBox(height: 12),
@@ -106,7 +110,9 @@ class _EditarManifestScreenState extends State<EditarManifestScreen> {
               TextFormField(
                 key: const ValueKey('manifestVersion'),
                 controller: _version,
-                decoration: InputDecoration(labelText: '${t.manifestVersion} *'),
+                decoration: InputDecoration(
+                  labelText: '${t.manifestVersion} *',
+                ),
                 validator: requerido,
               ),
               const SizedBox(height: 12),
@@ -117,10 +123,7 @@ class _EditarManifestScreenState extends State<EditarManifestScreen> {
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
-              FilledButton(
-                onPressed: _guardar,
-                child: Text(t.guardarCambios),
-              ),
+              FilledButton(onPressed: _guardar, child: Text(t.guardarCambios)),
             ],
           ),
         ),
