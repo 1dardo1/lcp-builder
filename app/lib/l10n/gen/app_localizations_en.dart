@@ -21,6 +21,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeEditar => 'Edit';
 
   @override
+  String get homeTagline => 'Build .lcp content packs for Lancer';
+
+  @override
+  String get homeCrearDesc =>
+      'Create new content from scratch and export it to an .lcp';
+
+  @override
+  String get homeMostrarDesc => 'Open an .lcp and browse everything inside';
+
+  @override
+  String get homeEditarDesc => 'Open an .lcp to modify, add or remove content';
+
+  @override
   String get noImplementado => 'Not implemented yet.';
 
   @override

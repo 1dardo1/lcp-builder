@@ -21,6 +21,20 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeEditar => 'Editar';
 
   @override
+  String get homeTagline => 'Genera paquetes de contenido .lcp para Lancer';
+
+  @override
+  String get homeCrearDesc =>
+      'Crea contenido nuevo desde cero y expórtalo a un .lcp';
+
+  @override
+  String get homeMostrarDesc => 'Abre un .lcp y revisa todo lo que contiene';
+
+  @override
+  String get homeEditarDesc =>
+      'Abre un .lcp para modificar, añadir o borrar contenido';
+
+  @override
   String get noImplementado => 'Aún no se ha implementado.';
 
   @override
