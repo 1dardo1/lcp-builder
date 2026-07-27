@@ -94,12 +94,15 @@ class _LcpFolderScreenState extends State<LcpFolderScreen> {
   }
 }
 
-/// En Linux [path] ya es un nombre de archivo legible; en Android es una
-/// URI `content://` con el nombre codificado en el último segmento tras
-/// decodificar (ver `AndroidSafDirectoryLister`) — en ambos casos, el
-/// último trozo entre `/` o `:` es el nombre que le interesa al usuario.
+/// En escritorio (Linux/Windows/macOS) [path] ya es una ruta de archivo
+/// real; en Android es una URI `content://` con el nombre codificado en el
+/// último segmento tras decodificar (ver `AndroidSafDirectoryLister`). En
+/// todos los casos el nombre que le interesa al usuario es el último trozo
+/// entre separadores: `/` (POSIX/URI), `\` (Windows) o `:` (segmentos de
+/// URI SAF y letra de unidad en Windows).
 String _displayName(String path) {
   final decoded = Uri.decodeComponent(path);
-  final segments = decoded.split(RegExp(r'[/:]'))..removeWhere((s) => s.isEmpty);
+  final segments = decoded.split(RegExp(r'[/:\\]'))
+    ..removeWhere((s) => s.isEmpty);
   return segments.isNotEmpty ? segments.last : decoded;
 }

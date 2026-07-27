@@ -97,9 +97,10 @@ class _EditarFolderScreenState extends State<EditarFolderScreen> {
 }
 
 /// Mismo criterio que `lcp_folder_screen.dart` — ver ese archivo para el
-/// porqué de decodificar y trocear por `/`/`:`.
+/// porqué de decodificar y trocear por `/`, `\` o `:`.
 String _displayName(String path) {
   final decoded = Uri.decodeComponent(path);
-  final segments = decoded.split(RegExp(r'[/:]'))..removeWhere((s) => s.isEmpty);
+  final segments = decoded.split(RegExp(r'[/:\\]'))
+    ..removeWhere((s) => s.isEmpty);
   return segments.isNotEmpty ? segments.last : decoded;
 }
