@@ -9,7 +9,9 @@ import '../../forms/generic_form_view.dart';
 import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
+import '../../widgets/form_error_banner.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/page_body.dart';
 
 /// Pantalla de edición (o creación) de una entidad, dentro del flujo
 /// Editar: reutiliza el mismo [GenericFormView]/[EntityCrearConfig] que
@@ -97,9 +99,9 @@ class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
         title: Text(translateFieldText(widget.config.title, locale)),
         actions: [LanguageSwitcher(controller: widget.localeController)],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: PageBody(
         child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
           children: [
             GenericFormView(
               fields: _schema,
@@ -107,14 +109,11 @@ class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
               formKey: _formKey,
               locale: locale,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             FilledButton(onPressed: _guardar, child: Text(t.guardarCambios)),
             if (_errorMessage != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                _errorMessage!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
+              const SizedBox(height: 16),
+              FormErrorBanner(message: _errorMessage!),
             ],
           ],
         ),

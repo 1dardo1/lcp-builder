@@ -37,10 +37,11 @@ class _FieldContext {
 }
 
 /// Motor genérico: interpreta una `List<FieldSpec>` y la pinta como
-/// formulario Material, sin saber nada de qué entidad de dominio hay
-/// detrás. Es deliberadamente feo (sin diseño de Figma todavía, ver
-/// `vault/UI-UX`) — el objetivo de este primer corte es probar que el
-/// mecanismo funciona, no la experiencia visual.
+/// formulario, sin saber nada de qué entidad de dominio hay detrás. Los
+/// campos base (texto/número/enum...) heredan el estilo del tema de la app
+/// (inputs rellenos y redondeados, ver `app_theme.dart`); los ítems de lista
+/// van en tarjetas. La delineación visual de los grupos queda pendiente (ver
+/// nota en `_buildGroup`).
 ///
 /// Convención de `key` para campos anidados (ver `field_spec.dart`):
 /// - [ShapeChoiceFieldSpec] con `key = 'x'` guarda la rama elegida (el
@@ -277,8 +278,7 @@ class GenericFormView extends StatelessWidget {
       ),
       onChanged: (text) => onChanged(num.tryParse(text)),
       validator: f.required
-          ? (value) =>
-                (value == null || value.isEmpty) ? t.requerido : null
+          ? (value) => (value == null || value.isEmpty) ? t.requerido : null
           : null,
     );
   }
@@ -316,7 +316,9 @@ class GenericFormView extends StatelessWidget {
           DropdownMenuItem(value: option, child: Text(f.labelFor(option))),
       ],
       onChanged: onChanged,
-      validator: f.required ? (value) => value == null ? t.requerido : null : null,
+      validator: f.required
+          ? (value) => value == null ? t.requerido : null
+          : null,
     );
   }
 
@@ -446,6 +448,11 @@ class GenericFormView extends StatelessWidget {
     _FieldContext ctx,
   ) {
     final groupCtx = _groupContext(f.key, ctx);
+    // Nota: se probó enmarcar el grupo en un recuadro con padding horizontal
+    // para delimitarlo, pero robaba ancho y desbordaba el contenido anidado a
+    // tamaño de móvil real (varios campos ya iban justos de ancho). La
+    // delineación de grupos queda pendiente de una pasada que primero relaje
+    // esa fragilidad de ancho del contenido anidado.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
