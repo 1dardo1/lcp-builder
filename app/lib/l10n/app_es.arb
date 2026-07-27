@@ -49,7 +49,11 @@
   "idioma": "Idioma",
   "mostrarMenuTitle": "Mostrar",
   "abrirLcp": "Abrir un .lcp",
+  "abrirLcpDesc": "Un solo archivo .lcp",
   "abrirCarpeta": "Abrir una carpeta",
+  "abrirCarpetaDesc": "Todos los .lcp de una carpeta a la vez",
+  "crearMenuPrompt": "¿Qué quieres crear?",
+  "@crearMenuPrompt": {"description": "Encabezado sobre la lista de tipos de entidad en el menú Crear."},
   "carpetaSinLcp": "Esta carpeta no tiene ningún archivo .lcp.",
   "campoFaltante": "Falta: {label}",
   "@campoFaltante": {

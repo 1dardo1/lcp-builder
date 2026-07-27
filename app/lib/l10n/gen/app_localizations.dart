@@ -272,11 +272,29 @@ abstract class AppLocalizations {
   /// **'Abrir un .lcp'**
   String get abrirLcp;
 
+  /// No description provided for @abrirLcpDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Un solo archivo .lcp'**
+  String get abrirLcpDesc;
+
   /// No description provided for @abrirCarpeta.
   ///
   /// In es, this message translates to:
   /// **'Abrir una carpeta'**
   String get abrirCarpeta;
+
+  /// No description provided for @abrirCarpetaDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los .lcp de una carpeta a la vez'**
+  String get abrirCarpetaDesc;
+
+  /// Encabezado sobre la lista de tipos de entidad en el menú Crear.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Qué quieres crear?'**
+  String get crearMenuPrompt;
 
   /// No description provided for @carpetaSinLcp.
   ///

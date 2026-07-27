@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../widgets/language_switcher.dart';
+import '../../widgets/nav_option_card.dart';
+import '../../widgets/page_body.dart';
 import 'lcp_entity_types_screen.dart';
 import 'lcp_folder_screen.dart';
 
@@ -55,19 +57,25 @@ class MostrarMenuScreen extends StatelessWidget {
         title: Text(t.mostrarMenuTitle),
         actions: [LanguageSwitcher(controller: localeController)],
       ),
-      body: ListView(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.description_outlined),
-            title: Text(t.abrirLcp),
-            onTap: () => _abrirLcp(context),
-          ),
-          ListTile(
-            leading: const Icon(Icons.folder_outlined),
-            title: Text(t.abrirCarpeta),
-            onTap: () => _abrirCarpeta(context),
-          ),
-        ],
+      body: PageBody(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          children: [
+            NavOptionCard(
+              icon: Icons.description_outlined,
+              title: t.abrirLcp,
+              description: t.abrirLcpDesc,
+              onTap: () => _abrirLcp(context),
+            ),
+            const SizedBox(height: 14),
+            NavOptionCard(
+              icon: Icons.folder_outlined,
+              title: t.abrirCarpeta,
+              description: t.abrirCarpetaDesc,
+              onTap: () => _abrirCarpeta(context),
+            ),
+          ],
+        ),
       ),
     );
   }
