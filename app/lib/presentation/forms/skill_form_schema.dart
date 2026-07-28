@@ -37,7 +37,8 @@ List<FieldSpec> buildSkillFormSchema() => [
     required: true,
     options: SkillFamily.values,
     displayLabel: (f) => f.jsonValue,
-    fromJsonValue: (s) => SkillFamily.values.firstWhere((f) => f.jsonValue == s),
+    fromJsonValue: (s) =>
+        SkillFamily.values.firstWhere((f) => f.jsonValue == s),
   ),
 ];
 

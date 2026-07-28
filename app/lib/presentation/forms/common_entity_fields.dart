@@ -520,7 +520,8 @@ FieldSpec resistanceCatalogField() => CatalogFieldSpec<ResistanceKind>(
 
 String resistanceValueLabel(ResistanceValue v) => v.name;
 
-ResistanceValue resistanceValueFromJson(String v) => ResistanceValue.values.byName(v);
+ResistanceValue resistanceValueFromJson(String v) =>
+    ResistanceValue.values.byName(v);
 
 /// `immunity` es el nombre de un `ResistanceValue` conocido o un id de
 /// status/condition arbitrario — ambos son strings, así que a diferencia
@@ -1012,9 +1013,7 @@ IActionData actionFromItem(Map<String, dynamic> item) {
 
 // --- Sección 4: IBonusData (con todos sus filtros, no solo id/val) ---
 
-final _bonusIdByJsonValue = {
-  for (final id in BonusId.values) id.jsonValue: id,
-};
+final _bonusIdByJsonValue = {for (final id in BonusId.values) id.jsonValue: id};
 
 FieldSpec bonusCatalogField() => CatalogFieldSpec<BonusId>(
   key: 'bonus',
@@ -1461,18 +1460,7 @@ List<FieldSpec> deployableItemFields() => [
     label: 'Añade resist/vulnerability/immunity',
     itemFields: resistanceItemFields(),
   ),
-  const ListFieldSpec(
-    key: 'tags',
-    label: 'Tags',
-    itemFields: [
-      TextFieldSpec(
-        key: 'id',
-        label: 'ID del tag',
-        required: true,
-        helpText: tagIdHelpText,
-      ),
-    ],
-  ),
+  const ListFieldSpec(key: 'tags', label: 'Tags', itemFields: tagItemFields),
   const BoolFieldSpec(
     key: 'pilot',
     label: 'Pilot (default true si el padre es Pilot Equipment)',
@@ -1571,8 +1559,33 @@ ICounterData counterFromItem(Map<String, dynamic> item) => ICounterData(
 
 // --- Sección 6: ITagInstance ---
 
-ITagInstance tagFromItem(Map<String, dynamic> item) =>
-    ITagInstance(id: item['id'] as String);
+/// Campos de un tag de item (`ITagInstance`): el id del catálogo y, para los
+/// tags que llevan un número (Thrown 5, Reliable 2, Limited 3, Blast 1…), su
+/// valor — sustituye el token `{VAL}` del catálogo (ver [tagIdHelpText]). El
+/// `.lcp` real guarda ese número como tal (`{"id":"tg_reliable","val":2}`),
+/// por eso `val` es un campo numérico y no de texto. Compartido por todas las
+/// entidades con `tags` (arma, sistema, mod, pilot gear...), en vez de repetir
+/// el esquema en cada una.
+const tagItemFields = [
+  TextFieldSpec(
+    key: 'id',
+    label: 'ID del tag',
+    required: true,
+    helpText: tagIdHelpText,
+  ),
+  NumberFieldSpec(
+    key: 'val',
+    label: 'Valor (solo si el tag lo lleva, p. ej. Thrown 5)',
+    allowDecimal: false,
+  ),
+];
+
+ITagInstance tagFromItem(Map<String, dynamic> item) => ITagInstance(
+  id: item['id'] as String,
+  // `Object?` en el dominio (string|number); en la práctica los tags con
+  // valor del Core son numéricos, y el campo es un NumberFieldSpec.
+  val: (item['val'] as num?)?.toInt(),
+);
 
 // --- Sección 3: TextOrActiveEffect ---
 
@@ -1811,18 +1824,7 @@ List<FieldSpec> mechSystemBaseFields() => [
     helpText: 'Texto de sabor/ambientación, sin efecto mecánico.',
   ),
   const NumberFieldSpec(key: 'sp', label: 'SP'),
-  const ListFieldSpec(
-    key: 'tags',
-    label: 'Tags',
-    itemFields: [
-      TextFieldSpec(
-        key: 'id',
-        label: 'ID del tag',
-        required: true,
-        helpText: tagIdHelpText,
-      ),
-    ],
-  ),
+  const ListFieldSpec(key: 'tags', label: 'Tags', itemFields: tagItemFields),
   ListFieldSpec(
     key: 'actions',
     label: 'Actions',

@@ -29,18 +29,7 @@ List<FieldSpec> _pilotWeaponFields() => [
   ),
   ListFieldSpec(key: 'range', label: 'Alcance', itemFields: rangeItemFields()),
   ListFieldSpec(key: 'damage', label: 'Daño', itemFields: damageItemFields()),
-  const ListFieldSpec(
-    key: 'tags',
-    label: 'Tags',
-    itemFields: [
-      TextFieldSpec(
-        key: 'id',
-        label: 'ID del tag',
-        required: true,
-        helpText: tagIdHelpText,
-      ),
-    ],
-  ),
+  const ListFieldSpec(key: 'tags', label: 'Tags', itemFields: tagItemFields),
   ListFieldSpec(
     key: 'actions',
     label: 'Actions (solo disponibles con el piloto UNMOUNTED)',
@@ -81,18 +70,7 @@ List<FieldSpec> _pilotArmorOrGearFields() => [
     maxLines: 3,
     helpText: 'Texto de reglas y/o sabor de este equipo de piloto.',
   ),
-  const ListFieldSpec(
-    key: 'tags',
-    label: 'Tags',
-    itemFields: [
-      TextFieldSpec(
-        key: 'id',
-        label: 'ID del tag',
-        required: true,
-        helpText: tagIdHelpText,
-      ),
-    ],
-  ),
+  const ListFieldSpec(key: 'tags', label: 'Tags', itemFields: tagItemFields),
   ListFieldSpec(
     key: 'actions',
     label: 'Actions',

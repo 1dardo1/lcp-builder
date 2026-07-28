@@ -337,18 +337,7 @@ List<FieldSpec> buildWeaponFormSchema() => [
   ),
   _weaponTypeField,
   ListFieldSpec(key: 'ammo', label: 'Ammo', itemFields: _ammoItemFields()),
-  const ListFieldSpec(
-    key: 'tags',
-    label: 'Tags',
-    itemFields: [
-      TextFieldSpec(
-        key: 'id',
-        label: 'ID del tag',
-        required: true,
-        helpText: tagIdHelpText,
-      ),
-    ],
-  ),
+  const ListFieldSpec(key: 'tags', label: 'Tags', itemFields: tagItemFields),
   const BoolFieldSpec(
     key: 'noAttack',
     jsonKey: 'no_attack',

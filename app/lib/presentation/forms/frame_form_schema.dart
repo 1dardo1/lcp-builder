@@ -285,18 +285,7 @@ List<FieldSpec> _coreSystemFields() => [
       ),
     ],
   ),
-  const ListFieldSpec(
-    key: 'tags',
-    label: 'Tags',
-    itemFields: [
-      TextFieldSpec(
-        key: 'id',
-        label: 'ID del tag',
-        required: true,
-        helpText: tagIdHelpText,
-      ),
-    ],
-  ),
+  const ListFieldSpec(key: 'tags', label: 'Tags', itemFields: tagItemFields),
 ];
 
 ICoreSystemData _coreSystemFromGroup(Map<String, dynamic> group) =>

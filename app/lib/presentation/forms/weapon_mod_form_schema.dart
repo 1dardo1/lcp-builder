@@ -40,14 +40,7 @@ List<FieldSpec> buildWeaponModFormSchema() => [
     key: 'addedTags',
     jsonKey: 'added_tags',
     label: 'Tags añadidos (se quitan si el mod se quita)',
-    itemFields: [
-      TextFieldSpec(
-        key: 'id',
-        label: 'ID del tag',
-        required: true,
-        helpText: tagIdHelpText,
-      ),
-    ],
+    itemFields: tagItemFields,
   ),
   ListFieldSpec(
     key: 'addedDamage',

@@ -332,5 +332,6 @@ class CatalogFieldSpec<TId> extends FieldSpec {
   FieldSpec fieldFor(dynamic id) => valueFieldFor(id as TId);
 
   /// Mismo motivo que [EnumFieldSpec.valueFromJson].
-  dynamic idFromJsonDynamic(Map<String, dynamic> json) => idFromJson?.call(json);
+  dynamic idFromJsonDynamic(Map<String, dynamic> json) =>
+      idFromJson?.call(json);
 }

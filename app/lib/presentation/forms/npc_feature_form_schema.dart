@@ -53,18 +53,7 @@ List<FieldSpec> npcFeatureBaseFields() => [
     label: 'Modifica a (ID de otra feature)',
     helpText: 'El ID de la feature que esta modifica, no su nombre visible.',
   ),
-  const ListFieldSpec(
-    key: 'tags',
-    label: 'Tags',
-    itemFields: [
-      TextFieldSpec(
-        key: 'id',
-        label: 'ID del tag',
-        required: true,
-        helpText: tagIdHelpText,
-      ),
-    ],
-  ),
+  const ListFieldSpec(key: 'tags', label: 'Tags', itemFields: tagItemFields),
   ListFieldSpec(
     key: 'actions',
     label: 'Actions',
@@ -172,7 +161,11 @@ FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
         label: 'Datos de tech',
         inline: true,
         fields: [
-          tierValueField('attackBonus', 'Attack bonus', jsonKey: 'attack_bonus'),
+          tierValueField(
+            'attackBonus',
+            'Attack bonus',
+            jsonKey: 'attack_bonus',
+          ),
           tierValueField('accuracy', 'Accuracy'),
         ],
       ),
@@ -205,7 +198,11 @@ FieldSpec _npcFeatureKindField() => ShapeChoiceFieldSpec(
             itemFields: rangeItemFields(),
           ),
           tierValueField('attacks', 'Nº de ataques'),
-          tierValueField('attackBonus', 'Attack bonus', jsonKey: 'attack_bonus'),
+          tierValueField(
+            'attackBonus',
+            'Attack bonus',
+            jsonKey: 'attack_bonus',
+          ),
           tierValueField('accuracy', 'Accuracy'),
           activeEffectGroupField('onAttack', 'Al atacar'),
           activeEffectGroupField('onHit', 'Al acertar'),
