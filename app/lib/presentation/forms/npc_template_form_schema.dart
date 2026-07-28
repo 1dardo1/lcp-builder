@@ -31,7 +31,8 @@ List<FieldSpec> buildNpcTemplateFormSchema() => [
     label: 'Force tag (bloquea el tag NPC, no editable por el usuario)',
     options: NpcForceTag.values,
     displayLabel: (t) => t.jsonValue,
-    fromJsonValue: (s) => NpcForceTag.values.firstWhere((t) => t.jsonValue == s),
+    fromJsonValue: (s) =>
+        NpcForceTag.values.firstWhere((t) => t.jsonValue == s),
   ),
   ListFieldSpec(
     key: 'prohibitTemplates',
