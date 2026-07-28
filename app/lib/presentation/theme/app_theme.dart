@@ -75,9 +75,7 @@ abstract final class AppTheme {
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: scheme.outlineVariant.withValues(alpha: 0.6),
-          ),
+          side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.6)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -94,6 +92,17 @@ abstract final class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: scheme.primary, width: 1.5),
+        ),
+        // Los inputs rellenos van sin borde por defecto; sin estos, un campo
+        // con error de validación no se distinguiría (solo el texto de error
+        // debajo). Con un contorno rojo, el campo marcado se ve de un vistazo.
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: scheme.error, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: scheme.error, width: 2),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
