@@ -40,8 +40,8 @@ class _FieldContext {
 /// formulario, sin saber nada de qué entidad de dominio hay detrás. Los
 /// campos base (texto/número/enum...) heredan el estilo del tema de la app
 /// (inputs rellenos y redondeados, ver `app_theme.dart`); los ítems de lista
-/// van en tarjetas. La delineación visual de los grupos queda pendiente (ver
-/// nota en `_buildGroup`).
+/// van en tarjetas y los grupos se delinean con una cabecera de sección sin
+/// robar ancho (ver `_buildGroup`).
 ///
 /// Convención de `key` para campos anidados (ver `field_spec.dart`):
 /// - [ShapeChoiceFieldSpec] con `key = 'x'` guarda la rama elegida (el
@@ -448,17 +448,40 @@ class GenericFormView extends StatelessWidget {
     _FieldContext ctx,
   ) {
     final groupCtx = _groupContext(f.key, ctx);
-    // Nota: se probó enmarcar el grupo en un recuadro con padding horizontal
-    // para delimitarlo, pero robaba ancho y desbordaba el contenido anidado a
-    // tamaño de móvil real (varios campos ya iban justos de ancho). La
-    // delineación de grupos queda pendiente de una pasada que primero relaje
-    // esa fragilidad de ancho del contenido anidado.
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(_tr(f.label), style: Theme.of(context).textTheme.labelLarge),
-        for (final field in f.fields) _buildField(context, field, groupCtx),
-      ],
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    // Delinea el sub-formulario SIN robar ancho horizontal: una cabecera de
+    // sección (icono + etiqueta + línea) y los campos debajo a ancho completo.
+    // Enmarcarlo en un recuadro con padding lo delimitaba mejor pero desbordaba
+    // el contenido anidado a tamaño de móvil real (varios campos van justos de
+    // ancho) — de ahí que la caja se descartara y esto no meta inset lateral.
+    // La etiqueta va en `Expanded` para que se ajuste en vez de desbordar la
+    // cabecera si es larga.
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, bottom: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.segment, size: 18, color: scheme.primary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _tr(f.label),
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Divider(height: 1, color: scheme.outlineVariant),
+          const SizedBox(height: 8),
+          for (final field in f.fields) _buildField(context, field, groupCtx),
+        ],
+      ),
     );
   }
 
