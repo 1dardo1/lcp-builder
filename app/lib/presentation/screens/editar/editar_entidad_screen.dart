@@ -6,6 +6,7 @@ import '../../forms/entity_crear_config.dart';
 import '../../forms/form_values_from_json.dart';
 import '../../forms/generic_form_controller.dart';
 import '../../forms/generic_form_view.dart';
+import '../../forms/validate_and_scroll.dart';
 import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
@@ -62,7 +63,7 @@ class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
   String? _errorMessage;
 
   void _guardar() {
-    if (!(_formKey.currentState?.validate() ?? true)) {
+    if (!validateAndScrollToFirstError(_formKey)) {
       setState(
         () => _errorMessage = AppLocalizations.of(context).revisaCamposMarcados,
       );

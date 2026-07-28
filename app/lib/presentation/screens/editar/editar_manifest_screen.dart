@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/entities/lcp_manifest_data.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../i18n/locale_controller.dart';
+import '../../forms/validate_and_scroll.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/page_body.dart';
@@ -55,7 +56,7 @@ class _EditarManifestScreenState extends State<EditarManifestScreen> {
   }
 
   void _guardar() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!validateAndScrollToFirstError(_formKey)) return;
     widget.session.replaceManifest(
       widget.lcpPath,
       ILcpManifestData(

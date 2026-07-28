@@ -5,6 +5,7 @@ import '../../forms/crear_entidad_configs.dart';
 import '../../forms/entity_crear_config.dart';
 import '../../forms/generic_form_controller.dart';
 import '../../forms/generic_form_view.dart';
+import '../../forms/validate_and_scroll.dart';
 import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/crear_session.dart';
@@ -55,7 +56,7 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
   String? _errorMessage;
 
   Object? _ensamblar() {
-    if (!(_formKey.currentState?.validate() ?? true)) {
+    if (!validateAndScrollToFirstError(_formKey)) {
       setState(
         () => _errorMessage = AppLocalizations.of(context).revisaCamposMarcados,
       );
