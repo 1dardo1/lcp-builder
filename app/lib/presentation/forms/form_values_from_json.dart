@@ -68,10 +68,21 @@ void _hydrateField(
   if (raw == null) return;
 
   switch (field) {
+    // Un campo de TEXTO guarda siempre texto en el controlador: un `.lcp`
+    // ajeno (o el propio, si serializa un dado como número) puede traer un
+    // número donde el formulario tiene un campo de texto — p.ej.
+    // `damage.val: 1`. Se coacciona a su forma textual, igual que ya hace el
+    // display (`generic_form_view._buildText` usa `?.toString()`). Sin esto,
+    // el valor quedaría como `int` en el controlador y el ensamblado al
+    // Guardar (`item['val'] as String?`) reventaría con un TypeError — la
+    // gemela por el lado de Guardar del bug de la "pantalla gris" (#59), que
+    // solo se había arreglado por el lado de mostrar.
     case TextFieldSpec():
+    case PatternTextFieldSpec():
+      values[field.key] = raw.toString();
+
     case NumberFieldSpec():
     case BoolFieldSpec():
-    case PatternTextFieldSpec():
       values[field.key] = raw;
 
     case EnumFieldSpec f:
@@ -120,7 +131,10 @@ void _hydrateField(
 /// modo que el roundtrip Crear→Editar no revienta. Si el ítem no es un mapa
 /// y el ítem tiene más de un campo, no hay forma sensata de mapearlo → ítem
 /// vacío, sin lanzar.
-Map<String, dynamic> _hydrateListItem(List<FieldSpec> itemFields, dynamic item) {
+Map<String, dynamic> _hydrateListItem(
+  List<FieldSpec> itemFields,
+  dynamic item,
+) {
   if (item is Map<String, dynamic>) {
     return formValuesFromJson(itemFields, item);
   }
