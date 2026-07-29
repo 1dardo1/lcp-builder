@@ -34,4 +34,18 @@ void main() {
     expect(tag['id'], 'tg_thrown');
     expect(tag['val'], 5);
   });
+
+  test('un id de tag con espacios sobrantes se recorta al ensamblar', () {
+    // Caso real: se guardó `"tg_thrown "` (con espacio) y COMP/CON, que compara
+    // ids exactos, no reconocía el tag ni lo pintaba.
+    final config = crearEntidadConfigsByContentKey['weapons']!;
+    final schema = config.buildSchema();
+    final values = minimalValidValues(schema)
+      ..['tags'] = [
+        {'id': '  tg_thrown ', 'val': 5},
+      ];
+
+    final json = entityDataToJson(config.fromFormValues(values));
+    expect((json['tags'] as List).first, {'id': 'tg_thrown', 'val': 5});
+  });
 }

@@ -1581,7 +1581,11 @@ const tagItemFields = [
 ];
 
 ITagInstance tagFromItem(Map<String, dynamic> item) => ITagInstance(
-  id: item['id'] as String,
+  // Se recorta: el id es una referencia de coincidencia EXACTA al catálogo de
+  // Lancer; un espacio sobrante (fácil al copiar/teclear, p. ej. `"tg_thrown "`)
+  // hace que COMP/CON no reconozca el tag y no lo pinte, sin ningún error
+  // visible. Recortar aquí lo evita de raíz.
+  id: (item['id'] as String).trim(),
   // `Object?` en el dominio (string|number); en la práctica los tags con
   // valor del Core son numéricos, y el campo es un NumberFieldSpec.
   val: (item['val'] as num?)?.toInt(),
