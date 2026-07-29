@@ -70,6 +70,7 @@ class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
       return;
     }
     try {
+      _controller.trimTextValues();
       final content = widget.config.fromFormValues(_controller.values);
       final rawJson = entityDataToJson(content);
       final index = widget.index;

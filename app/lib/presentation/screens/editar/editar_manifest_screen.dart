@@ -60,10 +60,13 @@ class _EditarManifestScreenState extends State<EditarManifestScreen> {
     widget.session.replaceManifest(
       widget.lcpPath,
       ILcpManifestData(
-        name: _nombre.text,
-        author: _autor.text,
-        version: _version.text,
-        description: _descripcion.text,
+        // Recortados al Guardar, igual que los formularios de entidad
+        // (`GenericFormController.trimTextValues`): un espacio sobrante en
+        // campos como `version` o `author` no debería colarse al `.lcp`.
+        name: _nombre.text.trim(),
+        author: _autor.text.trim(),
+        version: _version.text.trim(),
+        description: _descripcion.text.trim(),
         // Campos no editados aquí: se conservan del original para no
         // perderlos al guardar (ver doc de la clase).
         imageUrl: _original.imageUrl,
