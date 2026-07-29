@@ -63,6 +63,7 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
       return null;
     }
     try {
+      _controller.trimTextValues();
       final content = widget.config.fromFormValues(_controller.values);
       setState(() => _errorMessage = null);
       return content;

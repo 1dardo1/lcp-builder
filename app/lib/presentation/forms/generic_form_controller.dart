@@ -30,4 +30,44 @@ class GenericFormController extends ChangeNotifier {
   }
 
   Map<String, dynamic> get values => Map.unmodifiable(_values);
+
+  /// Recorta (`trim`) todos los textos del árbol de valores. Se llama al
+  /// Guardar (Crear y Editar), justo antes de ensamblar el dominio, para que
+  /// ningún texto —ids incluidos— llegue con espacios sobrantes.
+  ///
+  /// Nace de #73: un `tg_thrown ` con un espacio al final rompía el tag en
+  /// COMP/CON en silencio (compara ids de forma exacta contra el Core). En
+  /// vez de recortar campo a campo en cada `xFromFormValues` —que fue justo
+  /// lo que dejó el hueco: el mismo campo estaba duplicado en varios sitios—
+  /// se hace aquí, el punto único por el que pasan ambos flujos de guardado.
+  ///
+  /// Recorta in situ (no reconstruye el árbol) a propósito: los ensambladores
+  /// castean listas de ítems a `List<Map<String, dynamic>>`, y rehacerlas como
+  /// `List<dynamic>` rompería ese cast. Mutar solo los strings de dentro
+  /// conserva el tipo en tiempo de ejecución de cada lista.
+  void trimTextValues() {
+    for (final key in _values.keys.toList()) {
+      _values[key] = _deepTrim(_values[key]);
+    }
+  }
+
+  static dynamic _deepTrim(dynamic value) {
+    if (value is String) return value.trim();
+    if (value is Map) {
+      // Se reconstruye como Map<String, dynamic> (el tipo que esperan todos
+      // los `as Map<String, dynamic>?` de los ensambladores).
+      final trimmed = <String, dynamic>{};
+      value.forEach((k, v) => trimmed[k as String] = _deepTrim(v));
+      return trimmed;
+    }
+    if (value is List) {
+      // In situ: conserva el tipo de la lista (p.ej. List<Map<String,
+      // dynamic>>) — solo se sustituye cada elemento por su versión recortada.
+      for (var i = 0; i < value.length; i++) {
+        value[i] = _deepTrim(value[i]);
+      }
+      return value;
+    }
+    return value;
+  }
 }
