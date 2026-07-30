@@ -1,5 +1,5 @@
 import '../../domain/domain.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IBackgroundData] (sección 11.1 del modelo de
@@ -53,7 +53,7 @@ IBackgroundData backgroundFromFormValues(Map<String, dynamic> values) =>
       skills: _skillIdsFromValues(values),
     );
 
-final backgroundCrearConfig = EntityCrearConfig(
+final backgroundCreateConfig = EntityCreateConfig(
   title: 'Crear background',
   contentKey: 'backgrounds',
   buildSchema: buildBackgroundFormSchema,

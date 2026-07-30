@@ -9,7 +9,7 @@ import '../../domain/ports/content_pack_reader.dart';
 /// permitiendo reemplazar o eliminar entidades concretas sin tocar el
 /// resto, y sabiendo qué paquetes tienen cambios sin guardar.
 ///
-/// Vive en `presentation/` por el mismo motivo que [CrearSession]: es
+/// Vive en `presentation/` por el mismo motivo que [CreateSession]: es
 /// estado de UI efímero de la sesión de edición, no del dominio. Se crea
 /// una única instancia al entrar en el flujo Editar y se pasa por toda su
 /// jerarquía de pantallas, para que editar una entidad en un `.lcp` y

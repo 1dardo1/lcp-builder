@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../infrastructure/lcp/domain_json_mapper.dart';
 import '../../../l10n/gen/app_localizations.dart';
-import '../../forms/entity_crear_config.dart';
+import '../../forms/entity_create_config.dart';
 import '../../forms/form_values_from_json.dart';
 import '../../forms/generic_form_controller.dart';
 import '../../forms/generic_form_view.dart';
@@ -15,7 +15,7 @@ import '../../widgets/language_switcher.dart';
 import '../../widgets/page_body.dart';
 
 /// Pantalla de edición (o creación) de una entidad, dentro del flujo
-/// Editar: reutiliza el mismo [GenericFormView]/[EntityCrearConfig] que
+/// Editar: reutiliza el mismo [GenericFormView]/[EntityCreateConfig] que
 /// Crear.
 ///
 /// Dos modos, según si se pasa [index]/[rawEntity] o no:
@@ -31,7 +31,7 @@ import '../../widgets/page_body.dart';
 /// todavía — el guardado a disco es una acción aparte, ver
 /// `EditEntityTypesScreen`.
 class EditEntityScreen extends StatefulWidget {
-  final EntityCrearConfig config;
+  final EntityCreateConfig config;
   final EditSession session;
   final String lcpPath;
   final String contentKey;

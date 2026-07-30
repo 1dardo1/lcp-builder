@@ -1,5 +1,5 @@
 import '../../domain/domain.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IBondData] (sección 11.7 del modelo de dominio).
@@ -145,7 +145,7 @@ IBondData bondFromFormValues(Map<String, dynamic> values) {
   );
 }
 
-final bondCrearConfig = EntityCrearConfig(
+final bondCreateConfig = EntityCreateConfig(
   title: 'Crear bond',
   contentKey: 'bonds',
   buildSchema: buildBondFormSchema,

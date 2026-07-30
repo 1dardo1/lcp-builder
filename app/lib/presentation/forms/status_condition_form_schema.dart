@@ -1,5 +1,5 @@
 import '../../domain/domain.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IStatusConditionData] (sección 17.4 del modelo de
@@ -75,7 +75,7 @@ IStatusConditionData statusConditionFromFormValues(
   exclusive: values['exclusive'] as ExclusiveTarget?,
 );
 
-final statusConditionCrearConfig = EntityCrearConfig(
+final statusConditionCreateConfig = EntityCreateConfig(
   title: 'Crear status/condition',
   contentKey: 'statuses',
   buildSchema: buildStatusConditionFormSchema,

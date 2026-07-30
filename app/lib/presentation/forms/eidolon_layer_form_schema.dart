@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 import 'npc_feature_form_schema.dart';
 
@@ -181,7 +181,7 @@ IEidolonLayerData eidolonLayerFromFormValues(Map<String, dynamic> values) =>
       activeEffects: mapItems(values['activeEffects'], activeEffectFromGroup),
     );
 
-final eidolonLayerCrearConfig = EntityCrearConfig(
+final eidolonLayerCreateConfig = EntityCreateConfig(
   title: 'Crear eidolon layer',
   contentKey: 'eidolons',
   buildSchema: buildEidolonLayerFormSchema,

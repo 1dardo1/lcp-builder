@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/gen/app_localizations.dart';
 import '../../i18n/locale_controller.dart';
-import '../../session/crear_session.dart';
+import '../../session/create_session.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/nav_option_card.dart';
@@ -21,7 +21,7 @@ import '../show/show_menu_screen.dart';
 /// pero en las ventanas anchas de escritorio (Windows/macOS/Linux) las
 /// tarjetas no se estiran de lado a lado.
 class HomeScreen extends StatelessWidget {
-  final CrearSession session;
+  final CreateSession session;
   final EditSession editSession;
   final LocaleController localeController;
 

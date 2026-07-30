@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IMechSystemData] (sección 13.4 del modelo de
@@ -38,7 +38,7 @@ IMechSystemData mechSystemFromFormValues(Map<String, dynamic> values) {
   );
 }
 
-final mechSystemCrearConfig = EntityCrearConfig(
+final mechSystemCreateConfig = EntityCreateConfig(
   title: 'Crear mech system',
   contentKey: 'systems',
   buildSchema: buildMechSystemFormSchema,

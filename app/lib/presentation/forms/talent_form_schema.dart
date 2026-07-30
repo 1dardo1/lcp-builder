@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [ITalentData] (sección 11.6 del modelo de
@@ -157,7 +157,7 @@ ITalentData talentFromFormValues(Map<String, dynamic> values) {
   );
 }
 
-final talentCrearConfig = EntityCrearConfig(
+final talentCreateConfig = EntityCreateConfig(
   title: 'Crear talent',
   contentKey: 'talents',
   buildSchema: buildTalentFormSchema,

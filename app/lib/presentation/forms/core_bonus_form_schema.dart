@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [ICoreBonusData] (sección 11.2 del modelo de
@@ -129,7 +129,7 @@ ICoreBonusData coreBonusFromFormValues(Map<String, dynamic> values) =>
       specialEquipment: mapStringIdItems(values['specialEquipment']),
     );
 
-final coreBonusCrearConfig = EntityCrearConfig(
+final coreBonusCreateConfig = EntityCreateConfig(
   title: 'Crear core bonus',
   contentKey: 'core_bonuses',
   buildSchema: buildCoreBonusFormSchema,

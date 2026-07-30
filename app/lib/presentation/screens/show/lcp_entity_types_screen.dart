@@ -5,7 +5,7 @@ import '../../../domain/ports/content_pack_reader.dart';
 import '../../../infrastructure/file_system/platform_file_reader.dart';
 import '../../../infrastructure/lcp/zip_content_pack_reader.dart';
 import '../../../l10n/gen/app_localizations.dart';
-import '../../forms/crear_entidad_configs.dart';
+import '../../forms/create_entity_configs.dart';
 import '../../i18n/locale_controller.dart';
 import '../../widgets/count_badge.dart';
 import '../../widgets/language_switcher.dart';

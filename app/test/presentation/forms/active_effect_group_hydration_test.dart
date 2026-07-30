@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/infrastructure/lcp/domain_json_mapper.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/forms/field_spec.dart';
 import 'package:lcp_builder/presentation/forms/form_values_from_json.dart';
 import 'package:lcp_builder/presentation/i18n/field_translations.dart';
@@ -30,7 +30,7 @@ void main() {
     'formValuesFromJson hidrata los grupos on_miss/on_attack/... de weapon '
     'mod (jsonKey snake_case correcto)',
     () {
-      final config = crearEntidadConfigsByContentKey['mods']!;
+      final config = createEntityConfigsByContentKey['mods']!;
       final schema = config.buildSchema();
       final createdJson = entityDataToJson(
         config.fromFormValues(minimalValidValues(schema)),

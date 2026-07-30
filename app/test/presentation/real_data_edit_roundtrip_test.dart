@@ -4,8 +4,8 @@ import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/lcp/domain_json_mapper.dart';
 import 'package:lcp_builder/infrastructure/lcp/lcp_zip_encoder.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
-import 'package:lcp_builder/presentation/forms/entity_crear_config.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
+import 'package:lcp_builder/presentation/forms/entity_create_config.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
@@ -23,7 +23,7 @@ import '../support/test_app.dart';
 /// pantalla de tamaño real, que es justo lo que hace la persona usuaria.
 Future<void> abrirEditarTrasDisco(
   WidgetTester tester,
-  EntityCrearConfig config,
+  EntityCreateConfig config,
   Map<String, dynamic> rawEntity,
 ) async {
   usePhoneMetrics(tester);
@@ -69,7 +69,7 @@ Future<void> abrirEditarTrasDisco(
 void main() {
   // Cobertura amplia: las 20 entidades, con datos mínimos pero pasando por
   // el ciclo real de disco y a tamaño real.
-  for (final config in crearEntidadConfigs) {
+  for (final config in createEntityConfigs) {
     testWidgets(
       '${config.title}: abrir Editar tras Crear→escribir→releer no revienta '
       'a tamaño de móvil real',
@@ -110,7 +110,7 @@ void main() {
       );
       await abrirEditarTrasDisco(
         tester,
-        crearEntidadConfigsByContentKey['manufacturers']!,
+        createEntityConfigsByContentKey['manufacturers']!,
         rawEntity,
       );
 

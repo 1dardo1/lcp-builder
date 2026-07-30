@@ -13,7 +13,7 @@ import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/create/create_entity_screen.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_cards_screen.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_types_screen.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../test/support/android_test_saf.dart';
@@ -86,11 +86,11 @@ void main() {
       await armAndroidTestSaf();
 
       // --- Crear: escribe de verdad, vía el selector interceptado. ---
-      final crearSession = CrearSession();
+      final crearSession = CreateSession();
       await tester.pumpWidget(
         _wrapWithLocalization(
           CreateEntityScreen(
-            config: manufacturerCrearConfig,
+            config: manufacturerCreateConfig,
             session: crearSession,
             localeController: LocaleController(),
           ),

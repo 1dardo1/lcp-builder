@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 /// Diccionario de traducción es→en para el contenido dinámico de los
 /// esquemas de formulario (`FieldSpec.label`/`helpText`/`patternHint`,
-/// `EntityCrearConfig.title`) — a diferencia del "armazón" fijo de la app
+/// `EntityCreateConfig.title`) — a diferencia del "armazón" fijo de la app
 /// (menús, botones, diálogos), que usa `AppLocalizations` generado desde
 /// ARB (ver `l10n/app_es.arb`/`app_en.arb`).
 ///
@@ -687,7 +687,7 @@ final Map<String, String> esToEnFieldText = {
   'Speed por tier': 'Speed by tier',
   'Systems por tier': 'Systems by tier',
 
-  // Títulos de EntityCrearConfig (menú Crear).
+  // Títulos de EntityCreateConfig (menú Crear).
   'Crear arma': 'Create weapon',
   'Crear fabricante': 'Create manufacturer',
   'Crear tag': 'Create tag',

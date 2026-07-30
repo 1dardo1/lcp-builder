@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IReserveData] (sección 11.4 del modelo de
@@ -116,7 +116,7 @@ IReserveData reserveFromFormValues(Map<String, dynamic> values) => IReserveData(
   activeEffects: mapItems(values['activeEffects'], activeEffectFromGroup),
 );
 
-final reserveCrearConfig = EntityCrearConfig(
+final reserveCreateConfig = EntityCreateConfig(
   title: 'Crear reserve',
   contentKey: 'reserves',
   buildSchema: buildReserveFormSchema,

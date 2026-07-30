@@ -4,7 +4,7 @@ import 'field_spec.dart';
 /// tratar una entidad concreta, sin que el motor necesite conocer sus 24
 /// tipos de dominio. Cada esquema de entidad (`weapon_form_schema.dart`,
 /// `manufacturer_form_schema.dart`...) expone una instancia de esta clase.
-class EntityCrearConfig {
+class EntityCreateConfig {
   /// Título de la pantalla y de la entrada en el menú Crear.
   final String title;
 
@@ -20,7 +20,7 @@ class EntityCrearConfig {
   final String Function(Object content) idOf;
   final String Function(Object content) nameOf;
 
-  const EntityCrearConfig({
+  const EntityCreateConfig({
     required this.title,
     required this.contentKey,
     required this.buildSchema,

@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IWeaponModData] (sección 13.5 del modelo de
@@ -118,7 +118,7 @@ IWeaponModData weaponModFromFormValues(Map<String, dynamic> values) {
   );
 }
 
-final weaponModCrearConfig = EntityCrearConfig(
+final weaponModCreateConfig = EntityCreateConfig(
   title: 'Crear weapon mod',
   contentKey: 'mods',
   buildSchema: buildWeaponModFormSchema,

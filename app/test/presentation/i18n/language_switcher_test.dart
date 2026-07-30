@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/home/home_screen.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../../support/test_app.dart';
@@ -39,7 +39,7 @@ void main() {
       await tester.pumpWidget(
         wrapWithLocalization(
           HomeScreen(
-            session: CrearSession(),
+            session: CreateSession(),
             editSession: EditSession(),
             localeController: localeController,
           ),

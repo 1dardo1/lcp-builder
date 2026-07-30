@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/gen/app_localizations.dart';
-import '../../forms/crear_entidad_configs.dart';
+import '../../forms/create_entity_configs.dart';
 import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
-import '../../session/crear_session.dart';
+import '../../session/create_session.dart';
 import '../../session/finalizar_lcp.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/page_body.dart';
@@ -14,14 +14,14 @@ import 'create_entity_screen.dart';
 /// se pueden crear, como lista de filas dentro de una tarjeta.
 ///
 /// Además de la lista de entidades, muestra el estado de la sesión de
-/// Crear en curso ([CrearSession]) — cuántas entidades se han acumulado ya
+/// Crear en curso ([CreateSession]) — cuántas entidades se han acumulado ya
 /// (de cualquier tipo) para el `.lcp` que se está montando, con un botón
 /// para finalizarlo. Escucha la sesión (`ListenableBuilder`) porque vuelve
 /// a esta pantalla cada vez que se completa una entidad (botón "Continuar"
 /// de `CreateEntityScreen`), y el resumen debe reflejarlo sin reconstruir
 /// la pantalla entera a mano.
 class CreateMenuScreen extends StatelessWidget {
-  final CrearSession session;
+  final CreateSession session;
   final LocaleController localeController;
 
   const CreateMenuScreen({
@@ -58,12 +58,12 @@ class CreateMenuScreen extends StatelessWidget {
               Card(
                 child: Column(
                   children: [
-                    for (var i = 0; i < crearEntidadConfigs.length; i++) ...[
+                    for (var i = 0; i < createEntityConfigs.length; i++) ...[
                       if (i > 0) const Divider(height: 1),
                       ListTile(
                         title: Text(
                           translateFieldText(
-                            crearEntidadConfigs[i].title,
+                            createEntityConfigs[i].title,
                             locale,
                           ),
                         ),
@@ -74,7 +74,7 @@ class CreateMenuScreen extends StatelessWidget {
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => CreateEntityScreen(
-                              config: crearEntidadConfigs[i],
+                              config: createEntityConfigs[i],
                               session: session,
                               localeController: localeController,
                             ),

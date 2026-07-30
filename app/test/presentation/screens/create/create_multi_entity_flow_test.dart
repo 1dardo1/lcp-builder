@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/create/create_menu_screen.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 
 import '../../../support/test_app.dart';
 
@@ -22,7 +22,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final session = CrearSession();
+      final session = CreateSession();
       await tester.pumpWidget(
         wrapWithLocalization(
           CreateMenuScreen(session: session, localeController: LocaleController()),

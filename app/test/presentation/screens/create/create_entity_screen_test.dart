@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/forms/manufacturer_form_schema.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/create/create_entity_screen.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 
 import '../../../support/test_app.dart';
 
@@ -22,8 +22,8 @@ void main() {
     await tester.pumpWidget(
       wrapWithLocalization(
         CreateEntityScreen(
-          config: manufacturerCrearConfig,
-          session: CrearSession(),
+          config: manufacturerCreateConfig,
+          session: CreateSession(),
           localeController: LocaleController(),
         ),
       ),
@@ -45,11 +45,11 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final session = CrearSession();
+      final session = CreateSession();
       await tester.pumpWidget(
         wrapWithLocalization(
           CreateEntityScreen(
-            config: manufacturerCrearConfig,
+            config: manufacturerCreateConfig,
             session: session,
             localeController: LocaleController(),
           ),
@@ -109,11 +109,11 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final session = CrearSession();
+      final session = CreateSession();
       await tester.pumpWidget(
         wrapWithLocalization(
           CreateEntityScreen(
-            config: manufacturerCrearConfig,
+            config: manufacturerCreateConfig,
             session: session,
             localeController: LocaleController(),
           ),

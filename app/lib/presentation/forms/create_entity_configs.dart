@@ -5,7 +5,7 @@ import 'background_form_schema.dart';
 import 'bond_form_schema.dart';
 import 'core_bonus_form_schema.dart';
 import 'eidolon_layer_form_schema.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'environment_form_schema.dart';
 import 'frame_form_schema.dart';
 import 'manufacturer_form_schema.dart';
@@ -24,7 +24,7 @@ import 'weapon_form_schema.dart';
 import 'weapon_mod_form_schema.dart';
 
 /// Registro de entidades disponibles en el flujo Crear — cada esquema
-/// aporta su propio [EntityCrearConfig]; ni `CreateMenuScreen` ni
+/// aporta su propio [EntityCreateConfig]; ni `CreateMenuScreen` ni
 /// `CreateEntityScreen` conocen ningún tipo de dominio concreto, solo esta
 /// lista. Añadir una entidad nueva es añadir una línea aquí.
 ///
@@ -35,43 +35,43 @@ import 'weapon_mod_form_schema.dart';
 /// ver `generic_form_view.dart`) — y `create_menu_screen.dart` ya importa
 /// `create_entity_screen.dart`, así que ponerlo ahí habría creado un import
 /// circular entre las dos pantallas.
-final List<EntityCrearConfig> crearEntidadConfigs = [
-  weaponCrearConfig,
-  manufacturerCrearConfig,
-  tagCrearConfig,
-  skillCrearConfig,
-  statusConditionCrearConfig,
-  sitrepCrearConfig,
-  environmentCrearConfig,
-  backgroundCrearConfig,
-  bondCrearConfig,
-  reserveCrearConfig,
-  coreBonusCrearConfig,
-  talentCrearConfig,
-  mechSystemCrearConfig,
-  weaponModCrearConfig,
-  pilotGearCrearConfig,
-  frameCrearConfig,
-  npcFeatureCrearConfig,
-  npcClassCrearConfig,
-  npcTemplateCrearConfig,
-  eidolonLayerCrearConfig,
+final List<EntityCreateConfig> createEntityConfigs = [
+  weaponCreateConfig,
+  manufacturerCreateConfig,
+  tagCreateConfig,
+  skillCreateConfig,
+  statusConditionCreateConfig,
+  sitrepCreateConfig,
+  environmentCreateConfig,
+  backgroundCreateConfig,
+  bondCreateConfig,
+  reserveCreateConfig,
+  coreBonusCreateConfig,
+  talentCreateConfig,
+  mechSystemCreateConfig,
+  weaponModCreateConfig,
+  pilotGearCreateConfig,
+  frameCreateConfig,
+  npcFeatureCreateConfig,
+  npcClassCreateConfig,
+  npcTemplateCreateConfig,
+  eidolonLayerCreateConfig,
 ];
 
 /// Mismo registro, indexado por `contentKey` — lo usa `CreateEntityScreen`
-/// para resolver el `EntityCrearConfig` de una referencia
+/// para resolver el `EntityCreateConfig` de una referencia
 /// (`referenceEntityKey`) sin recorrer la lista cada vez.
-final Map<String, EntityCrearConfig> crearEntidadConfigsByContentKey = {
-  for (final config in crearEntidadConfigs) config.contentKey: config,
+final Map<String, EntityCreateConfig> createEntityConfigsByContentKey = {
+  for (final config in createEntityConfigs) config.contentKey: config,
 };
 
 /// Título legible de un tipo de entidad para Mostrar, a partir del mismo
-/// `EntityCrearConfig.title` que usa el menú Crear ("Crear arma"/"Create
+/// `EntityCreateConfig.title` que usa el menú Crear ("Crear arma"/"Create
 /// weapon") — quitando el prefijo de acción, que no aplica al leer. Si
 /// [contentKey] no está registrado (`.lcp` con datos que esta app no
 /// modela todavía), se muestra tal cual como último recurso.
 String entityDisplayTitle(String contentKey, Locale locale) {
-  final config = crearEntidadConfigsByContentKey[contentKey];
+  final config = createEntityConfigsByContentKey[contentKey];
   final title = translateFieldText(config?.title ?? contentKey, locale);
   for (final prefix in const ['Crear ', 'Create ']) {
     if (title.startsWith(prefix)) return title.substring(prefix.length);

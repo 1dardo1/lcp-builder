@@ -8,13 +8,13 @@ import 'package:lcp_builder/infrastructure/file_system/android_saf_channel.dart'
 import 'package:lcp_builder/infrastructure/file_system/android_saf_file_reader.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
 import 'package:lcp_builder/l10n/gen/app_localizations.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
-import 'package:lcp_builder/presentation/forms/entity_crear_config.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
+import 'package:lcp_builder/presentation/forms/entity_create_config.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/create/create_entity_screen.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_cards_screen.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_types_screen.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 // A diferencia de `_wrapWithLocalization` en `editar_android_acceptance_test.dart`
@@ -46,7 +46,7 @@ Widget _wrapWithLocalization(Widget home) => MaterialApp(
 /// Ciclo de aceptación completo (Crear → Guardar → Editar → Guardar →
 /// Releer), con E/S real (SAF, sin mocks) — igual que
 /// `editar_android_acceptance_test.dart`, pero generalizado a cualquier
-/// [EntityCrearConfig] en vez de fijo a fabricante, y con los datos
+/// [EntityCreateConfig] en vez de fijo a fabricante, y con los datos
 /// mínimos válidos rellenados por `minimalValidValues`/`fillRequiredFields`
 /// en vez de a mano campo a campo.
 ///
@@ -59,7 +59,7 @@ Widget _wrapWithLocalization(Widget home) => MaterialApp(
 /// específico, campos propios) sobrevive intacto un roundtrip de disco de
 /// verdad, no solo el camino en memoria ya cubierto por los 291 tests de
 /// host.
-Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) async {
+Future<void> _cicloAceptacion(WidgetTester tester, EntityCreateConfig config) async {
   // Algunos esquemas (weapon mod, con 4 grupos onMiss/onAttack/onHit/onCrit)
   // son mucho más largos que la pantalla real del emulador — sin esto, la
   // ListView solo construye lo que cabe en el viewport + cache extent, y
@@ -76,7 +76,7 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   await armAndroidTestSaf();
 
   // --- Crear: escribe de verdad, vía el selector interceptado. ---
-  final crearSession = CrearSession();
+  final crearSession = CreateSession();
   final schema = config.buildSchema();
   await tester.pumpWidget(
     _wrapWithLocalization(
@@ -226,7 +226,7 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  for (final config in crearEntidadConfigs) {
+  for (final config in createEntityConfigs) {
     testWidgets(
       '${config.title}: ciclo real de escritura/lectura en Android (SAF '
       'real, sin mocks) sobrevive Crear→Guardar→Editar→Guardar→Releer',

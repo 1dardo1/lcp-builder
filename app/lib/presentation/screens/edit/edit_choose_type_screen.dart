@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/gen/app_localizations.dart';
-import '../../forms/crear_entidad_configs.dart';
+import '../../forms/create_entity_configs.dart';
 import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
@@ -9,7 +9,7 @@ import '../../widgets/language_switcher.dart';
 import '../../widgets/page_body.dart';
 import 'edit_entity_screen.dart';
 
-/// Lista las 24 entidades registradas (mismo `crearEntidadConfigs` que
+/// Lista las 24 entidades registradas (mismo `createEntityConfigs` que
 /// `CreateMenuScreen`) para elegir de qué tipo crear la primera instancia
 /// dentro del `.lcp` de [lcpPath] — a diferencia del botón de crear que ya
 /// tiene `EditEntityCardsScreen`, este no exige que el tipo tenga ya
@@ -45,12 +45,12 @@ class EditChooseTypeScreen extends StatelessWidget {
             Card(
               child: Column(
                 children: [
-                  for (var i = 0; i < crearEntidadConfigs.length; i++) ...[
+                  for (var i = 0; i < createEntityConfigs.length; i++) ...[
                     if (i > 0) const Divider(height: 1),
                     ListTile(
                       title: Text(
                         translateFieldText(
-                          crearEntidadConfigs[i].title,
+                          createEntityConfigs[i].title,
                           locale,
                         ),
                       ),
@@ -61,10 +61,10 @@ class EditChooseTypeScreen extends StatelessWidget {
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => EditEntityScreen(
-                            config: crearEntidadConfigs[i],
+                            config: createEntityConfigs[i],
                             session: session,
                             lcpPath: lcpPath,
-                            contentKey: crearEntidadConfigs[i].contentKey,
+                            contentKey: createEntityConfigs[i].contentKey,
                             localeController: localeController,
                           ),
                         ),

@@ -6,7 +6,7 @@ import '../../infrastructure/file_system/platform_file_writer.dart';
 import '../../infrastructure/lcp/zip_content_pack_exporter.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../platform/lcp_save_location.dart';
-import 'crear_session.dart';
+import 'create_session.dart';
 
 /// Pide el nombre del paquete, dónde guardarlo, y exporta todo el contenido
 /// acumulado en [session] como un único `.lcp`. Limpia la sesión y vuelve
@@ -37,7 +37,7 @@ import 'crear_session.dart';
 /// `pump`/`pumpAndSettle` (ver discusión en ese archivo de test).
 Future<void> finalizarLcp(
   BuildContext context,
-  CrearSession session, {
+  CreateSession session, {
   String? pendingContentKey,
   Object? pendingContent,
   CreateContentUseCase? useCase,

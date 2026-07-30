@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
@@ -33,7 +33,7 @@ void main() {
   final pack = ZipContentPackReader().read(bytes);
 
   for (final entry in pack.contentByKey.entries) {
-    final config = crearEntidadConfigsByContentKey[entry.key];
+    final config = createEntityConfigsByContentKey[entry.key];
     if (config == null || entry.value.isEmpty) continue;
 
     testWidgets(

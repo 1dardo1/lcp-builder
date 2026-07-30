@@ -8,7 +8,7 @@ import '../../../infrastructure/file_system/platform_file_writer.dart';
 import '../../../infrastructure/lcp/zip_content_pack_reader.dart';
 import '../../../infrastructure/lcp/zip_raw_content_pack_exporter.dart';
 import '../../../l10n/gen/app_localizations.dart';
-import '../../forms/crear_entidad_configs.dart';
+import '../../forms/create_entity_configs.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/count_badge.dart';

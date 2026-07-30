@@ -1,5 +1,5 @@
 import '../../domain/domain.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [ISkillData] (Trigger, sección 11.5 del modelo de
@@ -50,7 +50,7 @@ ISkillData skillFromFormValues(Map<String, dynamic> values) => ISkillData(
   family: values['family'] as SkillFamily,
 );
 
-final skillCrearConfig = EntityCrearConfig(
+final skillCreateConfig = EntityCreateConfig(
   title: 'Crear skill (trigger)',
   contentKey: 'skills',
   buildSchema: buildSkillFormSchema,
