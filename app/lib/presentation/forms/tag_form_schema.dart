@@ -1,5 +1,5 @@
 import '../../domain/domain.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [ITagData] — catálogo de tags (sección 6 del
@@ -46,7 +46,7 @@ ITagData tagFromFormValues(Map<String, dynamic> values) => ITagData(
   filterIgnore: values['filterIgnore'] as bool?,
 );
 
-final tagCrearConfig = EntityCrearConfig(
+final tagCreateConfig = EntityCreateConfig(
   title: 'Crear tag',
   contentKey: 'tags',
   buildSchema: buildTagFormSchema,

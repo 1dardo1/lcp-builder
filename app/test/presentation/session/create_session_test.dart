@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 
 void main() {
-  group('CrearSession', () {
+  group('CreateSession', () {
     test('acumula entidades por contentKey y cuenta el total', () {
-      final session = CrearSession();
+      final session = CreateSession();
       expect(session.isEmpty, isTrue);
 
       session.add('weapons', Object());
@@ -18,7 +18,7 @@ void main() {
     });
 
     test('notifica a los listeners al añadir', () {
-      final session = CrearSession();
+      final session = CreateSession();
       var notified = 0;
       session.addListener(() => notified++);
 
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('clear() vacía la sesión y notifica', () {
-      final session = CrearSession();
+      final session = CreateSession();
       session.add('weapons', Object());
       var notified = 0;
       session.addListener(() => notified++);

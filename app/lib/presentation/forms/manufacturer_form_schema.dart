@@ -1,5 +1,5 @@
 import '../../domain/domain.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IManufacturerData] — entidad simple, sin casos
@@ -76,7 +76,7 @@ IManufacturerData manufacturerFromFormValues(Map<String, dynamic> values) =>
       iconUrl: values['iconUrl'] as String?,
     );
 
-final manufacturerCrearConfig = EntityCrearConfig(
+final manufacturerCreateConfig = EntityCreateConfig(
   title: 'Crear fabricante',
   contentKey: 'manufacturers',
   buildSchema: buildManufacturerFormSchema,

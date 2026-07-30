@@ -7,8 +7,8 @@ import 'package:lcp_builder/infrastructure/lcp/domain_json_mapper.dart';
 import 'package:lcp_builder/infrastructure/lcp/lcp_zip_encoder.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
 import 'package:lcp_builder/l10n/gen/app_localizations.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
-import 'package:lcp_builder/presentation/forms/entity_crear_config.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
+import 'package:lcp_builder/presentation/forms/entity_create_config.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
@@ -44,7 +44,7 @@ Widget _wrap(Widget home) => MaterialApp(
 
 Future<void> _montarEditar(
   WidgetTester tester,
-  EntityCrearConfig config,
+  EntityCreateConfig config,
   Map<String, dynamic> rawEntity,
 ) async {
   // Tamaño de móvil real, no el lienzo gigante del test de aceptación.
@@ -96,7 +96,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   // Las 20 entidades, con datos mínimos, a tamaño real y en profile.
-  for (final config in crearEntidadConfigs) {
+  for (final config in createEntityConfigs) {
     testWidgets(
       '${config.title}: la pantalla de Editar se construye sin reventar '
       '(profile, tamaño de móvil real)',
@@ -134,7 +134,7 @@ void main() {
       );
       await _montarEditar(
         tester,
-        crearEntidadConfigsByContentKey['manufacturers']!,
+        createEntityConfigsByContentKey['manufacturers']!,
         rawEntity,
       );
       expect(find.text('The Butlers Corp'), findsOneWidget);
@@ -149,7 +149,7 @@ void main() {
   testWidgets(
     'arma con val numérico (int) en el daño: Editar no revienta en profile',
     (tester) async {
-      final config = crearEntidadConfigsByContentKey['weapons']!;
+      final config = createEntityConfigsByContentKey['weapons']!;
       final rawEntity = entityDataToJson(
         config.fromFormValues(minimalValidValues(config.buildSchema())),
       )..['damage'] = [
@@ -162,7 +162,7 @@ void main() {
   testWidgets(
     'frame con mechtype como lista de strings: Editar no revienta en profile',
     (tester) async {
-      final config = crearEntidadConfigsByContentKey['frames']!;
+      final config = createEntityConfigsByContentKey['frames']!;
       final rawEntity = entityDataToJson(
         config.fromFormValues(minimalValidValues(config.buildSchema())),
       )..['mechtype'] = ['Striker', 'Support'];

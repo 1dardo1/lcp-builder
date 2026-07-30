@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IFrameData] (sección 13.2 del modelo de dominio).
@@ -521,7 +521,7 @@ IFrameData frameFromFormValues(Map<String, dynamic> values) {
   );
 }
 
-final frameCrearConfig = EntityCrearConfig(
+final frameCreateConfig = EntityCreateConfig(
   title: 'Crear frame',
   contentKey: 'frames',
   buildSchema: buildFrameFormSchema,

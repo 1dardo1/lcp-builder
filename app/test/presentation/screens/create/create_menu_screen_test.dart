@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/domain/domain.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/create/create_menu_screen.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 
 import '../../../support/test_app.dart';
 
@@ -23,7 +23,7 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         wrapWithLocalization(
-          CreateMenuScreen(session: CrearSession(), localeController: LocaleController()),
+          CreateMenuScreen(session: CreateSession(), localeController: LocaleController()),
         ),
       );
 
@@ -33,7 +33,7 @@ void main() {
   );
 
   testWidgets(
-    'las 20 entidades registradas en crearEntidadConfigs aparecen como '
+    'las 20 entidades registradas en createEntityConfigs aparecen como '
     'entradas del menú',
     (tester) async {
       tester.view.physicalSize = const Size(1080, 4000);
@@ -43,12 +43,12 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          CreateMenuScreen(session: CrearSession(), localeController: LocaleController()),
+          CreateMenuScreen(session: CreateSession(), localeController: LocaleController()),
         ),
       );
 
-      expect(crearEntidadConfigs, hasLength(20));
-      for (final config in crearEntidadConfigs) {
+      expect(createEntityConfigs, hasLength(20));
+      for (final config in createEntityConfigs) {
         expect(
           find.text(config.title),
           findsOneWidget,
@@ -62,7 +62,7 @@ void main() {
     'con 1 entidad en la sesión, el resumen usa la forma singular y '
     'Finalizar lcp abre el diálogo de nombre',
     (tester) async {
-      final session = CrearSession()
+      final session = CreateSession()
         ..add(
           'manufacturers',
           const IManufacturerData(
@@ -95,7 +95,7 @@ void main() {
     'con varias entidades, el resumen usa la forma plural con el recuento '
     'total (sumando todos los contentKey, no solo uno)',
     (tester) async {
-      final session = CrearSession()
+      final session = CreateSession()
         ..add(
           'manufacturers',
           const IManufacturerData(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/gen/app_localizations.dart';
-import '../../forms/crear_entidad_configs.dart';
+import '../../forms/create_entity_configs.dart';
 import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
@@ -40,7 +40,7 @@ class EditEntityCardsScreen extends StatelessWidget {
     int index,
     Map<String, dynamic> raw,
   ) async {
-    final config = crearEntidadConfigsByContentKey[contentKey];
+    final config = createEntityConfigsByContentKey[contentKey];
     if (config == null) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
@@ -58,7 +58,7 @@ class EditEntityCardsScreen extends StatelessWidget {
   }
 
   Future<void> _crear(BuildContext context) async {
-    final config = crearEntidadConfigsByContentKey[contentKey];
+    final config = createEntityConfigsByContentKey[contentKey];
     if (config == null) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
@@ -99,7 +99,7 @@ class EditEntityCardsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     final locale = localeController.locale;
-    final config = crearEntidadConfigsByContentKey[contentKey];
+    final config = createEntityConfigsByContentKey[contentKey];
     final schema = config?.buildSchema() ?? const [];
     return Scaffold(
       appBar: AppBar(

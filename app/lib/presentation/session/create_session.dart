@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 /// `main.dart` y se pasa por la jerarquía de pantallas (`CreateMenuScreen`,
 /// `CreateEntityScreen`) — mismo criterio que ya se usa para no acoplar el
 /// motor genérico a ningún tipo de dominio concreto.
-class CrearSession extends ChangeNotifier {
+class CreateSession extends ChangeNotifier {
   final Map<String, List<Object>> _content = {};
 
   /// `contentKey` → entidades ya ensambladas de ese tipo. Misma forma que

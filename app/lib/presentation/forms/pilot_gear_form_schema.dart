@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IPilotGearData] (sección 11.3 del modelo de
@@ -207,7 +207,7 @@ IPilotGearData pilotGearFromFormValues(Map<String, dynamic> values) {
   }
 }
 
-final pilotGearCrearConfig = EntityCrearConfig(
+final pilotGearCreateConfig = EntityCreateConfig(
   title: 'Crear pilot gear',
   contentKey: 'pilot_gear',
   buildSchema: buildPilotGearFormSchema,

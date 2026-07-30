@@ -1,5 +1,5 @@
 import '../../domain/domain.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [IEnvironmentData] (sección 17.2 del modelo de
@@ -34,7 +34,7 @@ IEnvironmentData environmentFromFormValues(Map<String, dynamic> values) =>
       description: values['description'] as String,
     );
 
-final environmentCrearConfig = EntityCrearConfig(
+final environmentCreateConfig = EntityCreateConfig(
   title: 'Crear entorno',
   contentKey: 'environments',
   buildSchema: buildEnvironmentFormSchema,

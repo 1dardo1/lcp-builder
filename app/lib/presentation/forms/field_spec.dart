@@ -58,13 +58,13 @@ sealed class FieldSpec {
 class TextFieldSpec extends FieldSpec {
   final int maxLines;
 
-  /// `contentKey` (ver [EntityCrearConfig]) de la entidad que este campo
+  /// `contentKey` (ver [EntityCreateConfig]) de la entidad que este campo
   /// referencia por id (ej. `'manufacturers'` para `IWeaponData.source`).
   /// Si no es `null`, el motor pinta un botón "Crear `referenceLabel`" junto
   /// al campo — al pulsarlo, navega a crear esa entidad y, si el usuario la
   /// completa, rellena este campo con su id. `field_spec.dart` no conoce
-  /// `EntityCrearConfig` (evita el import circular con
-  /// `entity_crear_config.dart`) — la resolución real de qué pantalla abrir
+  /// `EntityCreateConfig` (evita el import circular con
+  /// `entity_create_config.dart`) — la resolución real de qué pantalla abrir
   /// vive en `CreateEntityScreen`, inyectada en `GenericFormView` como
   /// callback (`onCreateReference`).
   final String? referenceEntityKey;

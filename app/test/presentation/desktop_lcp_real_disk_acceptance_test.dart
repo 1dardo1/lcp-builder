@@ -8,7 +8,7 @@ import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_lcp_directory_lister.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_types_screen.dart';
@@ -50,7 +50,7 @@ void main() {
       // --- Genera un .lcp real con las 20 entidades (datos mínimos válidos,
       // ensamblados de verdad por cada esquema). ---
       final content = <String, List<Object>>{
-        for (final config in crearEntidadConfigs)
+        for (final config in createEntityConfigs)
           config.contentKey: [
             config.fromFormValues(minimalValidValues(config.buildSchema())),
           ],
@@ -94,12 +94,12 @@ void main() {
       final pack = ZipContentPackReader().read(reread!);
       expect(
         pack.contentByKey.keys,
-        containsAll(crearEntidadConfigs.map((c) => c.contentKey)),
+        containsAll(createEntityConfigs.map((c) => c.contentKey)),
       );
 
       // --- Abre la pantalla de Editar de cada entidad con lo releído. ---
       final session = EditSession()..load(path, pack);
-      for (final config in crearEntidadConfigs) {
+      for (final config in createEntityConfigs) {
         final raw = pack.contentByKey[config.contentKey]!.first;
         await tester.pumpWidget(
           wrapWithLocalization(
@@ -148,7 +148,7 @@ void main() {
     () async {
       // Genera un .lcp con las 20 entidades y escríbelo a disco real.
       final content = <String, List<Object>>{
-        for (final config in crearEntidadConfigs)
+        for (final config in createEntityConfigs)
           config.contentKey: [
             config.fromFormValues(minimalValidValues(config.buildSchema())),
           ],
@@ -193,7 +193,7 @@ void main() {
       // El resto de tipos siguen ahí: guardar no se comió nada.
       expect(
         reread.contentByKey.keys,
-        containsAll(crearEntidadConfigs.map((c) => c.contentKey)),
+        containsAll(createEntityConfigs.map((c) => c.contentKey)),
       );
     },
   );

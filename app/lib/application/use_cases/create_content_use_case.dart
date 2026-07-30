@@ -4,7 +4,7 @@ import '../../domain/ports/file_writer.dart';
 
 /// Create use case, generic for any domain entity (not just weapon) and for
 /// any number of them at once (a `.lcp` with several weapons and one frame,
-/// for example — see `CrearSession` in `presentation/`). It orchestrates
+/// for example — see `CreateSession` in `presentation/`). It orchestrates
 /// domain + ports — it doesn't know `infrastructure/` specifically, only the
 /// `domain/ports` interfaces, injected by whoever builds the use case
 /// (`presentation/` or, for now, `bin/` for the headless verification).

@@ -1,5 +1,5 @@
 import '../../domain/domain.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [ISitrepData] (sección 17.3 del modelo de
@@ -110,7 +110,7 @@ ISitrepData sitrepFromFormValues(Map<String, dynamic> values) => ISitrepData(
   noVictory: values['noVictory'] as String?,
 );
 
-final sitrepCrearConfig = EntityCrearConfig(
+final sitrepCreateConfig = EntityCreateConfig(
   title: 'Crear sitrep',
   contentKey: 'sitreps',
   buildSchema: buildSitrepFormSchema,

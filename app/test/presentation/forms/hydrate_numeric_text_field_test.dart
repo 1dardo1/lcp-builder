@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/infrastructure/lcp/domain_json_mapper.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/forms/form_values_from_json.dart';
 
 import '../../support/minimal_valid_values.dart';
@@ -16,7 +16,7 @@ import '../../support/minimal_valid_values.dart';
 void main() {
   test('un campo de texto con valor numérico en el .lcp (damage.val: int) se '
       'hidrata y se ensambla al Guardar sin reventar', () {
-    final config = crearEntidadConfigsByContentKey['weapons']!;
+    final config = createEntityConfigsByContentKey['weapons']!;
     final schema = config.buildSchema();
 
     // Un weapon válido cuyo `damage.val` es un número, como el .lcp real de

@@ -83,7 +83,7 @@ class GenericFormView extends StatelessWidget {
   /// Callback para el botón "Crear `referencia`" de un [TextFieldSpec] con
   /// `referenceEntityKey` — recibe ese key y devuelve el id de la entidad
   /// creada (o `null` si el usuario cancela). El motor no sabe qué pantalla
-  /// abrir ni qué es un `EntityCrearConfig`; solo pinta el botón y escribe
+  /// abrir ni qué es un `EntityCreateConfig`; solo pinta el botón y escribe
   /// el resultado en el campo — quien resuelve la navegación real es
   /// `CreateEntityScreen`, que sí conoce el registro de configs.
   final Future<String?> Function(String referenceEntityKey)? onCreateReference;

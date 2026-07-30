@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/create/create_entity_screen.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 
 import '../support/phone_metrics.dart';
 import '../support/test_app.dart';
@@ -15,7 +15,7 @@ import '../support/test_app.dart';
 /// `takeException()` recoge, así que un formulario que reviente al
 /// construirse en una pantalla pequeña hace fallar este test.
 void main() {
-  for (final config in crearEntidadConfigs) {
+  for (final config in createEntityConfigs) {
     testWidgets(
       '${config.title}: el formulario de Crear se construye sin fallos de '
       'layout a tamaño de móvil real',
@@ -25,7 +25,7 @@ void main() {
           wrapWithLocalization(
             CreateEntityScreen(
               config: config,
-              session: CrearSession(),
+              session: CreateSession(),
               localeController: LocaleController(),
             ),
           ),

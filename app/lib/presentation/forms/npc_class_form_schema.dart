@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [INpcClassData] (sección 15.1 del modelo de
@@ -133,7 +133,7 @@ INpcClassData npcClassFromFormValues(Map<String, dynamic> values) {
   );
 }
 
-final npcClassCrearConfig = EntityCrearConfig(
+final npcClassCreateConfig = EntityCreateConfig(
   title: 'Crear NPC class',
   contentKey: 'npc_classes',
   buildSchema: buildNpcClassFormSchema,

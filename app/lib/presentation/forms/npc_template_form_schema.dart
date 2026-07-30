@@ -1,6 +1,6 @@
 import '../../domain/domain.dart';
 import 'common_entity_fields.dart';
-import 'entity_crear_config.dart';
+import 'entity_create_config.dart';
 import 'field_spec.dart';
 
 /// Esquema de campos de [INpcTemplateData] (sección 15.1 del modelo de
@@ -91,7 +91,7 @@ INpcTemplateData npcTemplateFromFormValues(Map<String, dynamic> values) =>
       activeEffects: mapItems(values['activeEffects'], activeEffectFromGroup),
     );
 
-final npcTemplateCrearConfig = EntityCrearConfig(
+final npcTemplateCreateConfig = EntityCreateConfig(
   title: 'Crear NPC template',
   contentKey: 'npc_templates',
   buildSchema: buildNpcTemplateFormSchema,

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/infrastructure/lcp/domain_json_mapper.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/forms/generic_form_controller.dart';
 
 import '../../support/minimal_valid_values.dart';
@@ -12,7 +12,7 @@ import '../../support/minimal_valid_values.dart';
 void main() {
   test('recorta id/nombre de nivel superior y el id de un tag anidado en una '
       'lista, y el ensamblado sigue funcionando', () {
-    final config = crearEntidadConfigsByContentKey['weapons']!;
+    final config = createEntityConfigsByContentKey['weapons']!;
     final schema = config.buildSchema();
 
     final values = minimalValidValues(schema)

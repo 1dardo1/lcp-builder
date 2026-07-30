@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/create/create_entity_screen.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 
 import '../../../support/fill_required_fields.dart';
 import '../../../support/minimal_valid_values.dart';
 import '../../../support/test_app.dart';
 
 /// Camino feliz de "Crear" para las 20 entidades del registro
-/// (`crearEntidadConfigs`), con datos mínimos válidos rellenados vía
+/// (`createEntityConfigs`), con datos mínimos válidos rellenados vía
 /// interacción real de UI (`fillRequiredFields`, no inyectados
 /// directamente en el controller) — pulsar "Continuar" con esos datos no
 /// debe mostrar ningún "Requerido" y debe añadir la entidad a la sesión.
@@ -21,7 +21,7 @@ import '../../../support/test_app.dart';
 /// helper de relleno funciona aquí para las 20, en Android solo queda por
 /// demostrar la parte que este test NO cubre — la E/S real (SAF).
 void main() {
-  for (final config in crearEntidadConfigs) {
+  for (final config in createEntityConfigs) {
     testWidgets(
       '${config.title}: Continuar con datos mínimos válidos añade la '
       'entidad a la sesión sin mostrar "Requerido"',
@@ -36,7 +36,7 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
 
-        final session = CrearSession();
+        final session = CreateSession();
         await tester.pumpWidget(
           wrapWithLocalization(
             CreateEntityScreen(

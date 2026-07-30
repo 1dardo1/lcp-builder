@@ -9,7 +9,7 @@ import 'package:lcp_builder/application/use_cases/create_content_use_case.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/domain/ports/file_writer.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
-import 'package:lcp_builder/presentation/session/crear_session.dart';
+import 'package:lcp_builder/presentation/session/create_session.dart';
 import 'package:lcp_builder/presentation/session/finalizar_lcp.dart';
 
 import '../../support/fake_file_selector_platform.dart';
@@ -61,7 +61,7 @@ void main() {
 
   Future<void> pumpFinalizarButton(
     WidgetTester tester,
-    CrearSession session, {
+    CreateSession session, {
     String? pendingContentKey,
     Object? pendingContent,
   }) async {
@@ -101,7 +101,7 @@ void main() {
     'camino feliz: nombre + ubicación confirmados produce un .lcp válido, '
     'añade la entidad pendiente, limpia la sesión y avisa con un snackbar',
     (tester) async {
-      final session = CrearSession();
+      final session = CreateSession();
       const outputPath = '/fake/paquete.lcp';
       fakeFileSelector.nextSaveLocationPath = outputPath;
 
@@ -161,7 +161,7 @@ void main() {
     'cancelar el selector de ubicación (tras confirmar el nombre) no toca '
     'la sesión',
     (tester) async {
-      final session = CrearSession();
+      final session = CreateSession();
       fakeFileSelector.nextSaveLocationPath = null; // usuario cancela
 
       await pumpFinalizarButton(
@@ -188,7 +188,7 @@ void main() {
     'pendiente ya añadida a la sesión no se pierde (para poder reintentar '
     'sin volver a rellenar el formulario)',
     (tester) async {
-      final session = CrearSession();
+      final session = CreateSession();
       fakeFileSelector.nextSaveLocationPath = '/fake/paquete.lcp';
       fakeFileWriter.errorToThrow = const FileSystemException(
         'disco lleno (simulado)',

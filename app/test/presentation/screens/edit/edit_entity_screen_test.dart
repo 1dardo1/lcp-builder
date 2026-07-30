@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/domain/ports/content_pack_reader.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
 import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
@@ -55,7 +55,7 @@ void main() {
     await tester.pumpWidget(
       wrapWithLocalization(
         EditEntityScreen(
-          config: crearEntidadConfigsByContentKey['manufacturers']!,
+          config: createEntityConfigsByContentKey['manufacturers']!,
           session: session,
           lcpPath: 'paquete.lcp',
           contentKey: 'manufacturers',
@@ -87,7 +87,7 @@ void main() {
       await tester.pumpWidget(
         wrapWithLocalization(
           EditEntityScreen(
-            config: crearEntidadConfigsByContentKey['manufacturers']!,
+            config: createEntityConfigsByContentKey['manufacturers']!,
             session: session,
             lcpPath: 'paquete.lcp',
             contentKey: 'manufacturers',
@@ -133,7 +133,7 @@ void main() {
       await tester.pumpWidget(
         wrapWithLocalization(
           EditEntityScreen(
-            config: crearEntidadConfigsByContentKey['manufacturers']!,
+            config: createEntityConfigsByContentKey['manufacturers']!,
             session: session,
             lcpPath: 'paquete.lcp',
             contentKey: 'manufacturers',
@@ -163,7 +163,7 @@ void main() {
       await tester.pumpWidget(
         wrapWithLocalization(
           EditEntityScreen(
-            config: crearEntidadConfigsByContentKey['manufacturers']!,
+            config: createEntityConfigsByContentKey['manufacturers']!,
             session: session,
             lcpPath: 'paquete.lcp',
             contentKey: 'manufacturers',

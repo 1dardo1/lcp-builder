@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/gen/app_localizations.dart';
-import '../../forms/crear_entidad_configs.dart';
-import '../../forms/entity_crear_config.dart';
+import '../../forms/create_entity_configs.dart';
+import '../../forms/entity_create_config.dart';
 import '../../forms/generic_form_controller.dart';
 import '../../forms/generic_form_view.dart';
 import '../../forms/validate_and_scroll.dart';
 import '../../i18n/field_translations.dart';
 import '../../i18n/locale_controller.dart';
-import '../../session/crear_session.dart';
+import '../../session/create_session.dart';
 import '../../session/finalizar_lcp.dart';
 import '../../widgets/form_error_banner.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/page_body.dart';
 
 /// Pantalla Crear genérica: una sola implementación para las 24 entidades,
-/// parametrizada por [EntityCrearConfig].
+/// parametrizada por [EntityCreateConfig].
 ///
 /// Dos botones al final del formulario, ambos añaden la entidad ya
 /// ensamblada a [session] (no crean un `.lcp` por sí solos):
@@ -34,8 +34,8 @@ import '../../widgets/page_body.dart';
 ///   sesión acumulada (esta entidad y cualquier otra ya añadida antes) en
 ///   un único archivo — ver `finalizar_lcp.dart`.
 class CreateEntityScreen extends StatefulWidget {
-  final EntityCrearConfig config;
-  final CrearSession session;
+  final EntityCreateConfig config;
+  final CreateSession session;
   final LocaleController localeController;
 
   const CreateEntityScreen({
@@ -94,11 +94,11 @@ class _CreateEntityScreenState extends State<CreateEntityScreen> {
   }
 
   /// Callback que [GenericFormView] invoca cuando el usuario pulsa
-  /// "Crear `referencia`" en un campo — resuelve el `EntityCrearConfig` de
+  /// "Crear `referencia`" en un campo — resuelve el `EntityCreateConfig` de
   /// esa referencia y navega a crearla, esperando el resultado (el objeto
   /// de dominio ya ensamblado, o `null` si se canceló).
   Future<String?> _onCreateReference(String referenceEntityKey) async {
-    final refConfig = crearEntidadConfigsByContentKey[referenceEntityKey];
+    final refConfig = createEntityConfigsByContentKey[referenceEntityKey];
     if (refConfig == null) return null;
     final created = await Navigator.of(context).push<Object>(
       MaterialPageRoute(

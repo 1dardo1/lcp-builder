@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/infrastructure/lcp/domain_json_mapper.dart';
-import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
+import 'package:lcp_builder/presentation/forms/create_entity_configs.dart';
 import 'package:lcp_builder/presentation/forms/form_values_from_json.dart';
 
 import '../../support/minimal_valid_values.dart';
@@ -13,7 +13,7 @@ import '../../support/minimal_valid_values.dart';
 void main() {
   test('un tag con valor (Thrown 5) se ensambla, serializa y relee conservando '
       'el val', () {
-    final config = crearEntidadConfigsByContentKey['weapons']!;
+    final config = createEntityConfigsByContentKey['weapons']!;
     final schema = config.buildSchema();
 
     final values = minimalValidValues(schema)
@@ -38,7 +38,7 @@ void main() {
   test('un id de tag con espacios sobrantes se recorta al ensamblar', () {
     // Caso real: se guardó `"tg_thrown "` (con espacio) y COMP/CON, que compara
     // ids exactos, no reconocía el tag ni lo pintaba.
-    final config = crearEntidadConfigsByContentKey['weapons']!;
+    final config = createEntityConfigsByContentKey['weapons']!;
     final schema = config.buildSchema();
     final values = minimalValidValues(schema)
       ..['tags'] = [
