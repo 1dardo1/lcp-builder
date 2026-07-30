@@ -3,15 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/crear/crear_menu_screen.dart';
+import 'package:lcp_builder/presentation/screens/create/create_menu_screen.dart';
 import 'package:lcp_builder/presentation/session/crear_session.dart';
 
 import '../../../support/test_app.dart';
 
 /// `crear_multi_entidad_flow_test.dart` ya cubre el flujo de punta a punta
 /// arma+fabricante, pero solo ejercita 2 de las 20 entidades del menú y
-/// nunca pulsa el botón "Finalizar lcp" propio de `CrearMenuScreen` (el de
-/// la fila de resumen de sesión, distinto del de `CrearEntidadScreen` que sí
+/// nunca pulsa el botón "Finalizar lcp" propio de `CreateMenuScreen` (el de
+/// la fila de resumen de sesión, distinto del de `CreateEntityScreen` que sí
 /// tiene su propio test). Este archivo cubre lo que faltaba: que las 20
 /// entidades registradas aparecen en el menú, y el comportamiento de la
 /// fila de resumen (oculta con la sesión vacía, visible con el recuento
@@ -23,7 +23,7 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         wrapWithLocalization(
-          CrearMenuScreen(session: CrearSession(), localeController: LocaleController()),
+          CreateMenuScreen(session: CrearSession(), localeController: LocaleController()),
         ),
       );
 
@@ -43,7 +43,7 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          CrearMenuScreen(session: CrearSession(), localeController: LocaleController()),
+          CreateMenuScreen(session: CrearSession(), localeController: LocaleController()),
         ),
       );
 
@@ -77,7 +77,7 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          CrearMenuScreen(session: session, localeController: LocaleController()),
+          CreateMenuScreen(session: session, localeController: LocaleController()),
         ),
       );
 
@@ -114,7 +114,7 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          CrearMenuScreen(session: session, localeController: LocaleController()),
+          CreateMenuScreen(session: session, localeController: LocaleController()),
         ),
       );
 

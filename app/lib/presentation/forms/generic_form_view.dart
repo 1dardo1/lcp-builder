@@ -23,7 +23,7 @@ class _FieldContext {
   /// `range.val`, ambos con key local `'val'`) producirían dos widgets con
   /// la misma `ValueKey('val')` en el mismo árbol: Flutter no lo rechaza
   /// (no son hermanos directos), pero cualquier `find.byKey`/automatización
-  /// de test no puede distinguirlos (ver `crear_entidad_screen_all_configs_test.dart`,
+  /// de test no puede distinguirlos (ver `create_entity_screen_all_configs_test.dart`,
   /// que lo atrapó con weapon mod/frame). No se aplica todavía al mismo
   /// problema dentro de [ListFieldSpec] (ítems repetidos comparten key
   /// local igual) — fuera de alcance de este fix, ver nota en `_itemContext`.
@@ -64,7 +64,7 @@ class GenericFormView extends StatelessWidget {
   final GenericFormController controller;
 
   /// Clave del `Form` que envuelve el árbol de campos — quien construye
-  /// esta pantalla (`CrearEntidadScreen`/`EditarEntidadScreen`) la usa para
+  /// esta pantalla (`CreateEntityScreen`/`EditEntityScreen`) la usa para
   /// llamar a `formKey.currentState!.validate()` antes de ensamblar la
   /// entidad, y así los `validator` de los campos (antes sin efecto: no
   /// había ningún `Form` que los disparara) bloqueen de verdad el envío
@@ -85,7 +85,7 @@ class GenericFormView extends StatelessWidget {
   /// creada (o `null` si el usuario cancela). El motor no sabe qué pantalla
   /// abrir ni qué es un `EntityCrearConfig`; solo pinta el botón y escribe
   /// el resultado en el campo — quien resuelve la navegación real es
-  /// `CrearEntidadScreen`, que sí conoce el registro de configs.
+  /// `CreateEntityScreen`, que sí conoce el registro de configs.
   final Future<String?> Function(String referenceEntityKey)? onCreateReference;
 
   const GenericFormView({

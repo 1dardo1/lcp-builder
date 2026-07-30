@@ -10,9 +10,9 @@ import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
 import 'package:lcp_builder/l10n/gen/app_localizations.dart';
 import 'package:lcp_builder/presentation/forms/manufacturer_form_schema.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/crear/crear_entidad_screen.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entity_cards_screen.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_screen.dart';
+import 'package:lcp_builder/presentation/screens/create/create_entity_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_cards_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_types_screen.dart';
 import 'package:lcp_builder/presentation/session/crear_session.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
@@ -74,7 +74,7 @@ void main() {
       // el viewport + cache extent: botones como "Finalizar lcp", más
       // abajo del todo, quedarían fuera del árbol y find.text no los
       // encontraría (mismo problema ya resuelto en widget_test.dart /
-      // crear_entidad_screen_test.dart, nunca aplicado aquí).
+      // create_entity_screen_test.dart, nunca aplicado aquí).
       tester.view.physicalSize = const Size(1080, 4000);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -89,7 +89,7 @@ void main() {
       final crearSession = CrearSession();
       await tester.pumpWidget(
         _wrapWithLocalization(
-          CrearEntidadScreen(
+          CreateEntityScreen(
             config: manufacturerCrearConfig,
             session: crearSession,
             localeController: LocaleController(),
@@ -148,7 +148,7 @@ void main() {
       final editSession = EditSession();
       await tester.pumpWidget(
         _wrapWithLocalization(
-          EditarEntityTypesScreen(
+          EditEntityTypesScreen(
             session: editSession,
             lcpPath: lcpUri!,
             localeController: LocaleController(),
@@ -161,7 +161,7 @@ void main() {
 
       await tester.pumpWidget(
         _wrapWithLocalization(
-          EditarEntityCardsScreen(
+          EditEntityCardsScreen(
             session: editSession,
             lcpPath: lcpUri,
             contentKey: 'manufacturers',
@@ -187,7 +187,7 @@ void main() {
       // truncado explícito que arregló #39.
       await tester.pumpWidget(
         _wrapWithLocalization(
-          EditarEntityTypesScreen(
+          EditEntityTypesScreen(
             session: editSession,
             lcpPath: lcpUri,
             localeController: LocaleController(),

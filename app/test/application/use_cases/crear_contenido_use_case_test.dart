@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lcp_builder/application/use_cases/crear_contenido_use_case.dart';
+import 'package:lcp_builder/application/use_cases/create_content_use_case.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
@@ -20,7 +20,7 @@ void main() {
     final tempDir = await Directory.systemTemp.createTemp('lcp_builder_test');
     final outputPath = '${tempDir.path}/arma.lcp';
 
-    final useCase = CrearContenidoUseCase(
+    final useCase = CreateContentUseCase(
       exporter: ZipContentPackExporter(),
       fileWriter: LocalFileWriter(),
     );
@@ -112,7 +112,7 @@ void main() {
     final tempDir = await Directory.systemTemp.createTemp('lcp_builder_test');
     final outputPath = '${tempDir.path}/batch.lcp';
 
-    final useCase = CrearContenidoUseCase(
+    final useCase = CreateContentUseCase(
       exporter: ZipContentPackExporter(),
       fileWriter: LocalFileWriter(),
     );

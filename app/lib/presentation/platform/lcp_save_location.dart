@@ -7,7 +7,7 @@ import '../../infrastructure/file_system/android_saf_channel.dart';
 /// Adapter de "selector nativo" (ver ADR-002) para elegir dónde guardar un
 /// `.lcp`. Vive en `presentation/` a propósito, no en `infrastructure/`: es
 /// una interacción con el usuario/SO, no una operación de E/S pura — el
-/// dominio y los casos de uso (`CrearContenidoUseCase`) solo reciben la ruta ya
+/// dominio y los casos de uso (`CreateContentUseCase`) solo reciben la ruta ya
 /// resuelta, nunca saben que hubo un diálogo (ver "El dominio solo recibe
 /// rutas de archivo..." en `vault/Aprendizajes/Principios y decisiones
 /// clave.md`).

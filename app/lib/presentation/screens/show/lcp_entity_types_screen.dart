@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../application/use_cases/mostrar_contenido_use_case.dart';
+import '../../../application/use_cases/show_content_use_case.dart';
 import '../../../domain/ports/content_pack_reader.dart';
 import '../../../infrastructure/file_system/platform_file_reader.dart';
 import '../../../infrastructure/lcp/zip_content_pack_reader.dart';
@@ -22,7 +22,7 @@ class LcpEntityTypesScreen extends StatefulWidget {
 
   /// Inyectable solo para tests — mismo motivo que
   /// `LcpFolderScreen.listLcpFiles` (ver `finalizarLcp`). En producción
-  /// usa siempre `MostrarContenidoUseCase` con los adapters reales de la
+  /// usa siempre `ShowContentUseCase` con los adapters reales de la
   /// plataforma.
   final Future<ParsedContentPack> Function(String lcpPath)? loadContent;
 
@@ -45,7 +45,7 @@ class _LcpEntityTypesScreenState extends State<LcpEntityTypesScreen> {
     super.initState();
     final loadContent =
         widget.loadContent ??
-        MostrarContenidoUseCase(
+        ShowContentUseCase(
           fileReader: createPlatformFileReader(),
           contentPackReader: ZipContentPackReader(),
         ).call;

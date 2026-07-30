@@ -1,23 +1,22 @@
 import '../entities/lcp_manifest_data.dart';
 
-/// Puerto hexagonal, inverso de [ContentPackExporter]: interpreta los
-/// bytes de un `.lcp` ya existente para el flujo Mostrar.
+/// Hexagonal port, the inverse of [ContentPackExporter]: interprets the
+/// bytes of an existing `.lcp` for the Show flow.
 ///
-/// Deliberadamente NO reconstruye los 24 tipos de dominio de cada
-/// entidad — Mostrar solo necesita leer y pintar lo que hay, no operar
-/// sobre ello (a diferencia de Crear, que sí necesita el tipo real para
-/// poder ensamblarlo y volver a exportarlo), así que el contenido por
-/// tipo de entidad se queda en JSON crudo. El manifest sí se tipa
-/// completo — las pantallas de listado lo necesitan tal cual (nombre del
-/// paquete, autor...), y es un único tipo, no 24.
+/// Deliberately does NOT rebuild the 24 domain types of each entity — Show
+/// only needs to read and render what's there, not operate on it (unlike
+/// Create, which does need the real type to assemble it and export it
+/// again), so the per-entity-type content stays as raw JSON. The manifest is
+/// fully typed — the listing screens need it as-is (pack name, author...),
+/// and it's a single type, not 24.
 abstract class ContentPackReader {
   ParsedContentPack read(List<int> bytes);
 }
 
-/// Resultado de leer un `.lcp`: el manifest tipado, y el resto del
-/// contenido indexado por `contentKey` (mismo nombre que el archivo
-/// dentro del zip, sin `.json` — ej. `'weapons'`), cada entidad todavía
-/// como el `Map<String, dynamic>` tal cual venía en el JSON.
+/// Result of reading a `.lcp`: the typed manifest, and the rest of the
+/// content indexed by `contentKey` (same name as the file inside the zip,
+/// without `.json` — e.g. `'weapons'`), each entity still as the
+/// `Map<String, dynamic>` exactly as it came in the JSON.
 class ParsedContentPack {
   final ILcpManifestData manifest;
   final Map<String, List<Map<String, dynamic>>> contentByKey;

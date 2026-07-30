@@ -19,7 +19,7 @@ String _sampleForPattern(RegExp pattern) {
 
 /// Valores "mínimos válidos" para que un esquema completo pase la propia
 /// validación de [GenericFormView] (el `Form.validate()` que conectan
-/// `CrearEntidadScreen`/`EditarEntidadScreen`) y `fromFormValues()` no
+/// `CreateEntityScreen`/`EditEntityScreen`) y `fromFormValues()` no
 /// lance por falta de un campo obligatorio.
 ///
 /// Recorre los campos requeridos de nivel superior y de cualquier

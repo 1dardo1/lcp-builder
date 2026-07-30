@@ -24,16 +24,16 @@ import 'weapon_form_schema.dart';
 import 'weapon_mod_form_schema.dart';
 
 /// Registro de entidades disponibles en el flujo Crear — cada esquema
-/// aporta su propio [EntityCrearConfig]; ni `CrearMenuScreen` ni
-/// `CrearEntidadScreen` conocen ningún tipo de dominio concreto, solo esta
+/// aporta su propio [EntityCrearConfig]; ni `CreateMenuScreen` ni
+/// `CreateEntityScreen` conocen ningún tipo de dominio concreto, solo esta
 /// lista. Añadir una entidad nueva es añadir una línea aquí.
 ///
-/// Vive en su propio archivo (no en `crear_menu_screen.dart`, donde vivía
-/// antes) porque `CrearEntidadScreen` también lo necesita — para resolver
+/// Vive en su propio archivo (no en `create_menu_screen.dart`, donde vivía
+/// antes) porque `CreateEntityScreen` también lo necesita — para resolver
 /// a qué pantalla navegar cuando el usuario pulsa "Crear `referencia`" en
 /// un campo que referencia otra entidad (`TextFieldSpec.referenceEntityKey`,
-/// ver `generic_form_view.dart`) — y `crear_menu_screen.dart` ya importa
-/// `crear_entidad_screen.dart`, así que ponerlo ahí habría creado un import
+/// ver `generic_form_view.dart`) — y `create_menu_screen.dart` ya importa
+/// `create_entity_screen.dart`, así que ponerlo ahí habría creado un import
 /// circular entre las dos pantallas.
 final List<EntityCrearConfig> crearEntidadConfigs = [
   weaponCrearConfig,
@@ -58,7 +58,7 @@ final List<EntityCrearConfig> crearEntidadConfigs = [
   eidolonLayerCrearConfig,
 ];
 
-/// Mismo registro, indexado por `contentKey` — lo usa `CrearEntidadScreen`
+/// Mismo registro, indexado por `contentKey` — lo usa `CreateEntityScreen`
 /// para resolver el `EntityCrearConfig` de una referencia
 /// (`referenceEntityKey`) sin recorrer la lista cada vez.
 final Map<String, EntityCrearConfig> crearEntidadConfigsByContentKey = {

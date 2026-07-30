@@ -4,31 +4,32 @@ import '../../../domain/ports/content_pack_reader.dart';
 import '../../../infrastructure/file_system/platform_lcp_directory_lister.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../i18n/locale_controller.dart';
+import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/message_placeholder.dart';
 import '../../widgets/nav_option_card.dart';
 import '../../widgets/page_body.dart';
-import 'lcp_entity_types_screen.dart';
+import 'edit_entity_types_screen.dart';
 
-/// Lista los `.lcp` de la carpeta elegida en `MostrarMenuScreen` — un
-/// nivel intermedio que solo existe cuando el usuario eligió "carpeta" en
-/// vez de un `.lcp` suelto (que va directo a [LcpEntityTypesScreen]).
-class LcpFolderScreen extends StatefulWidget {
+/// Lista los `.lcp` de la carpeta elegida en `EditMenuScreen` — mismo
+/// rol que `LcpFolderScreen` de Mostrar, pero navegando a
+/// `EditEntityTypesScreen` con [session] para poder editar cualquiera
+/// de los `.lcp` de la carpeta en el mismo procedimiento.
+class EditFolderScreen extends StatefulWidget {
+  final EditSession session;
   final String directoryPath;
   final LocaleController localeController;
 
-  /// Inyectable solo para tests — evita el mismo problema de fiabilidad de
-  /// `dart:io` real dentro de `flutter test` ya resuelto en `finalizarLcp`
-  /// (ver `presentation/session/finalizar_lcp.dart`). En producción usa
-  /// siempre `createPlatformLcpDirectoryLister().listLcpFiles`.
+  /// Inyectable solo para tests — ver `LcpFolderScreen.listLcpFiles`.
   final Future<List<String>> Function(String directoryPath)? listLcpFiles;
 
-  /// Mismo motivo, reenviado a [LcpEntityTypesScreen] al navegar tras
+  /// Mismo motivo, reenviado a `EditEntityTypesScreen` al navegar tras
   /// elegir un `.lcp` de la lista — ver su propio `loadContent`.
   final Future<ParsedContentPack> Function(String lcpPath)? loadContent;
 
-  const LcpFolderScreen({
+  const EditFolderScreen({
     super.key,
+    required this.session,
     required this.directoryPath,
     required this.localeController,
     this.listLcpFiles,
@@ -36,10 +37,10 @@ class LcpFolderScreen extends StatefulWidget {
   });
 
   @override
-  State<LcpFolderScreen> createState() => _LcpFolderScreenState();
+  State<EditFolderScreen> createState() => _EditFolderScreenState();
 }
 
-class _LcpFolderScreenState extends State<LcpFolderScreen> {
+class _EditFolderScreenState extends State<EditFolderScreen> {
   late final Future<List<String>> _lcpFiles;
 
   @override
@@ -88,7 +89,8 @@ class _LcpFolderScreenState extends State<LcpFolderScreen> {
                 title: _displayName(files[i]),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => LcpEntityTypesScreen(
+                    builder: (_) => EditEntityTypesScreen(
+                      session: widget.session,
                       lcpPath: files[i],
                       localeController: widget.localeController,
                       loadContent: widget.loadContent,
@@ -104,12 +106,8 @@ class _LcpFolderScreenState extends State<LcpFolderScreen> {
   }
 }
 
-/// En escritorio (Linux/Windows/macOS) [path] ya es una ruta de archivo
-/// real; en Android es una URI `content://` con el nombre codificado en el
-/// último segmento tras decodificar (ver `AndroidSafDirectoryLister`). En
-/// todos los casos el nombre que le interesa al usuario es el último trozo
-/// entre separadores: `/` (POSIX/URI), `\` (Windows) o `:` (segmentos de
-/// URI SAF y letra de unidad en Windows).
+/// Mismo criterio que `lcp_folder_screen.dart` — ver ese archivo para el
+/// porqué de decodificar y trocear por `/`, `\` o `:`.
 String _displayName(String path) {
   final decoded = Uri.decodeComponent(path);
   final segments = decoded.split(RegExp(r'[/:\\]'))

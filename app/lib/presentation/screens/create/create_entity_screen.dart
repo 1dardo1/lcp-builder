@@ -22,7 +22,7 @@ import '../../widgets/page_body.dart';
 /// - **Continuar**: `Navigator.pop(context, entity)` — vuelve a la
 ///   pantalla anterior. Si esta pantalla se abrió desde el menú Crear
 ///   (creación de nivel superior), esa pantalla anterior es
-///   `CrearMenuScreen`, y el usuario puede elegir otra entidad para seguir
+///   `CreateMenuScreen`, y el usuario puede elegir otra entidad para seguir
 ///   añadiendo al mismo `.lcp`. Si se abrió como referencia desde OTRA
 ///   entidad (botón "Crear `referencia`" de un campo, ver
 ///   `generic_form_view.dart`), esa pantalla anterior es el formulario que
@@ -33,12 +33,12 @@ import '../../widgets/page_body.dart';
 /// - **Finalizar lcp**: además de añadir la entidad, exporta toda la
 ///   sesión acumulada (esta entidad y cualquier otra ya añadida antes) en
 ///   un único archivo — ver `finalizar_lcp.dart`.
-class CrearEntidadScreen extends StatefulWidget {
+class CreateEntityScreen extends StatefulWidget {
   final EntityCrearConfig config;
   final CrearSession session;
   final LocaleController localeController;
 
-  const CrearEntidadScreen({
+  const CreateEntityScreen({
     super.key,
     required this.config,
     required this.session,
@@ -46,10 +46,10 @@ class CrearEntidadScreen extends StatefulWidget {
   });
 
   @override
-  State<CrearEntidadScreen> createState() => _CrearEntidadScreenState();
+  State<CreateEntityScreen> createState() => _CreateEntityScreenState();
 }
 
-class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
+class _CreateEntityScreenState extends State<CreateEntityScreen> {
   final _controller = GenericFormController();
   final _formKey = GlobalKey<FormState>();
   late final _schema = widget.config.buildSchema();
@@ -102,7 +102,7 @@ class _CrearEntidadScreenState extends State<CrearEntidadScreen> {
     if (refConfig == null) return null;
     final created = await Navigator.of(context).push<Object>(
       MaterialPageRoute(
-        builder: (_) => CrearEntidadScreen(
+        builder: (_) => CreateEntityScreen(
           config: refConfig,
           session: widget.session,
           localeController: widget.localeController,

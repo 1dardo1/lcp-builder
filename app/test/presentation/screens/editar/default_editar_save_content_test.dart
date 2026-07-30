@@ -1,19 +1,19 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lcp_builder/application/use_cases/crear_contenido_use_case.dart';
-import 'package:lcp_builder/application/use_cases/mostrar_contenido_use_case.dart';
+import 'package:lcp_builder/application/use_cases/create_content_use_case.dart';
+import 'package:lcp_builder/application/use_cases/show_content_use_case.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_reader.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_types_screen.dart';
 
-/// Regresión: `EditarEntityTypesScreen._guardar()` construía su valor por
+/// Regresión: `EditEntityTypesScreen._guardar()` construía su valor por
 /// defecto de `saveContent` como `widget.saveContent ??
-/// EditarContenidoUseCase(...).call` sin anotar el tipo — como
-/// `EditarContenidoUseCase.call` usa parámetros nombrados y el campo
+/// EditContentUseCase(...).call` sin anotar el tipo — como
+/// `EditContentUseCase.call` usa parámetros nombrados y el campo
 /// `saveContent` espera una función posicional, Dart no encontraba un tipo
 /// de función común entre ambos lados del `??` e inferría el genérico
 /// `Function`, que acepta cualquier forma de llamada en tiempo de
@@ -25,11 +25,11 @@ import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_scre
 /// adapter extraído (con tipo estático explícito) que sustituye a ese
 /// fallback inline — este test lo ejercita de verdad, con E/S real a
 /// disco, sin montar ningún widget (evita el problema ya documentado en
-/// `editar_contenido_use_case_test.dart` de E/S real dentro de
+/// `edit_content_use_case_test.dart` de E/S real dentro de
 /// `pump`/`pumpAndSettle`, que no se resuelve de forma fiable).
 void main() {
   test(
-    'defaultEditarSaveContent() invoca EditarContenidoUseCase con la forma '
+    'defaultEditarSaveContent() invoca EditContentUseCase con la forma '
     'correcta y escribe de verdad en disco',
     () async {
       final tempDir = await Directory.systemTemp.createTemp(
@@ -38,7 +38,7 @@ void main() {
       final path = '${tempDir.path}/paquete.lcp';
 
       try {
-        await CrearContenidoUseCase(
+        await CreateContentUseCase(
           exporter: ZipContentPackExporter(),
           fileWriter: LocalFileWriter(),
         )(
@@ -63,16 +63,16 @@ void main() {
           outputPath: path,
         );
 
-        final mostrar = MostrarContenidoUseCase(
+        final mostrar = ShowContentUseCase(
           fileReader: LocalFileReader(),
           contentPackReader: ZipContentPackReader(),
         );
         final pack = await mostrar(path);
 
         // Llamada posicional, tal y como la hace
-        // `EditarEntityTypesScreen._guardar()` — si volviera a mezclarse
+        // `EditEntityTypesScreen._guardar()` — si volviera a mezclarse
         // con la firma de parámetros nombrados de
-        // `EditarContenidoUseCase.call`, esto lanzaría un
+        // `EditContentUseCase.call`, esto lanzaría un
         // NoSuchMethodError en tiempo de ejecución.
         await defaultEditarSaveContent()(pack, path);
 

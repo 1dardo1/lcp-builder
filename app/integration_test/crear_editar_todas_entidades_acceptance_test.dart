@@ -11,16 +11,16 @@ import 'package:lcp_builder/l10n/gen/app_localizations.dart';
 import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
 import 'package:lcp_builder/presentation/forms/entity_crear_config.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/crear/crear_entidad_screen.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entity_cards_screen.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_screen.dart';
+import 'package:lcp_builder/presentation/screens/create/create_entity_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_cards_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_types_screen.dart';
 import 'package:lcp_builder/presentation/session/crear_session.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 // A diferencia de `_wrapWithLocalization` en `editar_android_acceptance_test.dart`
 // (deliberadamente duplicado allí por ser un wrapper pequeño), estos dos SÍ
 // se importan de `test/support/`: son el algoritmo real que ya se verificó
-// contra las 20 entidades en el host (`crear_entidad_screen_all_configs_test.dart`,
+// contra las 20 entidades en el host (`create_entity_screen_all_configs_test.dart`,
 // ver PR "Fase 1 de tests de aceptación exhaustivos") — duplicarlos aquí
 // significaría mantener dos copias de la misma lógica, justo lo que el
 // principio del proyecto de "extraer con un segundo consumidor real" pide
@@ -80,7 +80,7 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   final schema = config.buildSchema();
   await tester.pumpWidget(
     _wrapWithLocalization(
-      CrearEntidadScreen(
+      CreateEntityScreen(
         config: config,
         session: crearSession,
         localeController: LocaleController(),
@@ -129,7 +129,7 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   final editSession = EditSession();
   await tester.pumpWidget(
     _wrapWithLocalization(
-      EditarEntityTypesScreen(
+      EditEntityTypesScreen(
         session: editSession,
         lcpPath: lcpUri!,
         localeController: LocaleController(),
@@ -140,7 +140,7 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
 
   await tester.pumpWidget(
     _wrapWithLocalization(
-      EditarEntityCardsScreen(
+      EditEntityCardsScreen(
         session: editSession,
         lcpPath: lcpUri,
         contentKey: config.contentKey,
@@ -201,7 +201,7 @@ Future<void> _cicloAceptacion(WidgetTester tester, EntityCrearConfig config) asy
   // explícito que arregló #39.
   await tester.pumpWidget(
     _wrapWithLocalization(
-      EditarEntityTypesScreen(
+      EditEntityTypesScreen(
         session: editSession,
         lcpPath: lcpUri,
         localeController: LocaleController(),

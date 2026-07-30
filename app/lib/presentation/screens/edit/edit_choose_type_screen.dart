@@ -7,22 +7,22 @@ import '../../i18n/locale_controller.dart';
 import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/page_body.dart';
-import 'editar_entidad_screen.dart';
+import 'edit_entity_screen.dart';
 
 /// Lista las 24 entidades registradas (mismo `crearEntidadConfigs` que
-/// `CrearMenuScreen`) para elegir de qué tipo crear la primera instancia
+/// `CreateMenuScreen`) para elegir de qué tipo crear la primera instancia
 /// dentro del `.lcp` de [lcpPath] — a diferencia del botón de crear que ya
-/// tiene `EditarEntityCardsScreen`, este no exige que el tipo tenga ya
-/// alguna entidad: `EditarEntityTypesScreen` solo lista tipos con
+/// tiene `EditEntityCardsScreen`, este no exige que el tipo tenga ya
+/// alguna entidad: `EditEntityTypesScreen` solo lista tipos con
 /// contenido existente, así que sin esta pantalla no habría forma de
 /// añadir el primer talento/tag/etc. a un `.lcp` que todavía no tenga
 /// ninguno de ese tipo.
-class EditarElegirTipoScreen extends StatelessWidget {
+class EditChooseTypeScreen extends StatelessWidget {
   final EditSession session;
   final String lcpPath;
   final LocaleController localeController;
 
-  const EditarElegirTipoScreen({
+  const EditChooseTypeScreen({
     super.key,
     required this.session,
     required this.lcpPath,
@@ -60,7 +60,7 @@ class EditarElegirTipoScreen extends StatelessWidget {
                       ),
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => EditarEntidadScreen(
+                          builder: (_) => EditEntityScreen(
                             config: crearEntidadConfigs[i],
                             session: session,
                             lcpPath: lcpPath,

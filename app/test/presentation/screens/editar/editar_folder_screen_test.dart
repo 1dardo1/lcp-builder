@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_folder_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_folder_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../../../support/test_app.dart';
@@ -11,7 +11,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarFolderScreen(
+        EditFolderScreen(
           session: EditSession(),
           directoryPath: '/carpeta',
           localeController: LocaleController(),
@@ -32,7 +32,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarFolderScreen(
+        EditFolderScreen(
           session: EditSession(),
           directoryPath: '/carpeta',
           localeController: LocaleController(),
@@ -55,12 +55,12 @@ void main() {
     final session = EditSession();
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarFolderScreen(
+        EditFolderScreen(
           session: session,
           directoryPath: '/carpeta',
           localeController: LocaleController(),
           listLcpFiles: (_) async => const ['/carpeta/paquete.lcp'],
-          // Se reenvía a EditarEntityTypesScreen al navegar — evita que el
+          // Se reenvía a EditEntityTypesScreen al navegar — evita que el
           // test dependa de dart:io real (poco fiable en flutter test, ver
           // finalizar_lcp_test.dart) para confirmar la navegación.
           loadContent: (_) async => throw Exception('fake'),

@@ -10,7 +10,7 @@ import 'package:lcp_builder/l10n/gen/app_localizations.dart';
 import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
 import 'package:lcp_builder/presentation/forms/entity_crear_config.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entidad_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../test/support/minimal_valid_values.dart';
@@ -70,7 +70,7 @@ Future<void> _montarEditar(
   final session = EditSession()..load('p.lcp', pack);
   await tester.pumpWidget(
     _wrap(
-      EditarEntidadScreen(
+      EditEntityScreen(
         config: config,
         session: session,
         lcpPath: 'p.lcp',

@@ -65,7 +65,7 @@ class TextFieldSpec extends FieldSpec {
   /// completa, rellena este campo con su id. `field_spec.dart` no conoce
   /// `EntityCrearConfig` (evita el import circular con
   /// `entity_crear_config.dart`) — la resolución real de qué pantalla abrir
-  /// vive en `CrearEntidadScreen`, inyectada en `GenericFormView` como
+  /// vive en `CreateEntityScreen`, inyectada en `GenericFormView` como
   /// callback (`onCreateReference`).
   final String? referenceEntityKey;
 

@@ -1,17 +1,17 @@
 import '../entities/lcp_manifest_data.dart';
 
-/// Puerto hexagonal: serializa contenido del dominio al formato `.lcp`
-/// (bytes de un zip de un solo nivel con `lcp_manifest.json` + un JSON por
-/// tipo de contenido, ver `infrastructure/lcp`). No es específico de
-/// plataforma — a diferencia de [FileWriter], no necesita un adapter
-/// distinto por plataforma, pero vive detrás de un puerto igualmente para
-/// que `application/use_cases` no dependa de `infrastructure/` en directo.
+/// Hexagonal port: serializes domain content to the `.lcp` format (bytes of
+/// a single-level zip with `lcp_manifest.json` + one JSON per content type,
+/// see `infrastructure/lcp`). It is not platform-specific — unlike
+/// [FileWriter], it doesn't need a different adapter per platform, but it
+/// still lives behind a port so that `application/use_cases` doesn't depend
+/// on `infrastructure/` directly.
 ///
-/// Deliberadamente agnóstico de entidad: `content` es un mapa de nombre de
-/// archivo (sin `.json`, ej. `'weapons'`, `'manufacturers'`) a la lista de
-/// objetos de dominio de ese tipo. El puerto no necesita conocer las 24
-/// entidades — quien sí las conoce (y sabe traducir cada una a JSON) es la
-/// implementación en `infrastructure/lcp/zip_content_pack_exporter.dart`.
+/// Deliberately entity-agnostic: `content` is a map from file name (without
+/// `.json`, e.g. `'weapons'`, `'manufacturers'`) to the list of domain
+/// objects of that type. The port doesn't need to know the 24 entities — the
+/// one that does (and knows how to translate each to JSON) is the
+/// implementation in `infrastructure/lcp/zip_content_pack_exporter.dart`.
 abstract class ContentPackExporter {
   List<int> export({
     required ILcpManifestData manifest,

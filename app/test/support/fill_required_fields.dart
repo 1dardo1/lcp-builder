@@ -10,7 +10,7 @@ import 'robust_interactions.dart';
 /// [GroupFieldSpec] anidado, nunca dentro de un [ListFieldSpec]).
 ///
 /// Deliberadamente NO existe un atajo para inyectar los valores
-/// directamente en el [GenericFormController] desde fuera (`CrearEntidadScreen`
+/// directamente en el [GenericFormController] desde fuera (`CreateEntityScreen`
 /// no expone ningún `initialValues`) — un test de *aceptación* debe ejercitar
 /// la interacción real (`enterText`/tocar un desplegable), igual que lo
 /// haría la persona usuaria, no solo la lógica de ensamblado.

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/crear/crear_entidad_screen.dart';
+import 'package:lcp_builder/presentation/screens/create/create_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/crear_session.dart';
 
 import '../../../support/fill_required_fields.dart';
@@ -39,7 +39,7 @@ void main() {
         final session = CrearSession();
         await tester.pumpWidget(
           wrapWithLocalization(
-            CrearEntidadScreen(
+            CreateEntityScreen(
               config: config,
               session: session,
               localeController: LocaleController(),
