@@ -1,0 +1,52 @@
+name: CI
+
+# The project's only automatic quality gate: it runs on every push to main
+# and on every pull request targeting main. All the other workflows in this
+# directory (per-OS release builds, Android-emulator / Linux acceptance runs)
+# stay workflow_dispatch (manual) on purpose, so keep this one lean and fast.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analyze-and-test:
+    name: Analyze & test (Ubuntu)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      # Installs Flutter 3.44.4 and caches the SDK (its bin/cache), so repeat
+      # runs skip re-downloading and re-building the toolchain.
+      - name: Set up Flutter 3.44 (SDK cached)
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+          cache: true
+
+      # Caches the resolved pub packages, keyed on the lockfile so the cache is
+      # reused until a dependency actually changes.
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: pub-${{ runner.os }}-${{ hashFiles('app/pubspec.lock') }}
+          restore-keys: |
+            pub-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # --fatal-infos makes even info-level lints fail the build, matching the
+      # strict-casts / flutter_lints bar the project holds itself to.
+      - name: Static analysis
+        run: flutter analyze --fatal-infos
+
+      - name: Run tests
+        run: flutter test
