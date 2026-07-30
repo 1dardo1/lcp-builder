@@ -6,6 +6,7 @@
 
 *Un editor visual de paquetes de contenido para Lancer — construido como pieza de estudio de arquitectura de software.*
 
+[![CI](https://github.com/1dardo1/lcp-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/1dardo1/lcp-builder/actions/workflows/ci.yml)
 ![Flutter](https://img.shields.io/badge/Flutter-3.44-02569B?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart&logoColor=white)
 ![Architecture](https://img.shields.io/badge/architecture-Clean%20%2F%20Hexagonal-6E56CF)
@@ -69,7 +70,7 @@ flowchart LR
 
 **Round-trip robustness, learned the hard way.** Real content exposed a class of bug where a value is a *number in a text field* (Lancer JSON is loose about this). The fix wasn't a patch at each end — it was coercing types **at the single hydration boundary** both display and save flow through, so fixing one direction couldn't silently break the other. That lesson is [written up in the vault](vault/Aprendizajes/).
 
-**A testing strategy, not just tests.** **380+ tests** across unit, widget and *real-disk acceptance* levels (the acceptance suite writes and re-reads actual `.lcp` files on disk, sidestepping the `FakeAsync`/`dart:io` trap that silently hangs naive widget tests). CI builds and acceptance-tests every OS target.
+**A testing strategy, not just tests.** **380+ tests** across unit, widget and *real-disk acceptance* levels (the acceptance suite writes and re-reads actual `.lcp` files on disk, sidestepping the `FakeAsync`/`dart:io` trap that silently hangs naive widget tests). An automatic CI gate runs `flutter analyze --fatal-infos` and the full test suite on every push and pull request; the per-OS release builds and the Android-emulator / Linux acceptance runs are separate on-demand (manual) workflows.
 
 ## Tech stack
 
@@ -79,7 +80,7 @@ flowchart LR
 | **Architecture** | Clean / Hexagonal — isolated domain, ports & adapters |
 | **Key packages** | `archive` (zip), `file_selector`, `intl` (l10n) |
 | **Quality gates** | `flutter_lints`, `strict-casts`, 380+ tests |
-| **CI** | GitHub Actions — per-OS builds + a combined 5-OS artifact, plus Android/Linux acceptance runs |
+| **CI** | GitHub Actions — automatic `analyze --fatal-infos` + test on every push/PR (Ubuntu); on-demand per-OS release builds (combined 5-OS artifact) and Android-emulator / Linux acceptance runs |
 
 ## Project structure
 
@@ -134,6 +135,8 @@ Active learning project. Core domain and the Create/Edit flows are implemented a
 
 ## 🇪🇸 Español
 
+[![CI](https://github.com/1dardo1/lcp-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/1dardo1/lcp-builder/actions/workflows/ci.yml)
+
 **LCP Builder** es una app multiplataforma (escritorio y móvil) que genera y edita archivos `.lcp` — el formato de paquetes de contenido que consume [**COMP/CON**](https://compcon.app), la herramienta digital del juego de rol de mesa [**Lancer**](https://massifpress.com/lancer). Permite que un máster **sin conocimientos técnicos** cree armas, frames, equipo de piloto, NPCs y más de 20 tipos de entidad a través de formularios visuales, y produce un `.lcp` listo para importar en COMP/CON.
 
 Un `.lcp` es un zip de ficheros JSON que COMP/CON valida contra el catálogo del Core de Lancer. Escribirlo a mano significa teclear JSON perfecto de esquema — justo la fricción que esta herramienta elimina.
@@ -148,11 +151,11 @@ Es un **proyecto de portfolio primero y herramienta útil después** — una pri
 - **Puertos y adaptadores que rentaron en 5 sistemas operativos.** El I/O de ficheros, el zip y la cámara viven tras *puertos* del dominio; cada plataforma trae su *adaptador* (Storage Access Framework en Android vs. `dart:io` en escritorio…). El resultado, [previsto en el ADR-002](vault/ADRs/): Windows, macOS e iOS se sumaron sobre el núcleo Android/Linux **con cambio de dominio prácticamente nulo**.
 - **Un motor de formularios genérico y guiado por datos.** En vez de programar 24 pantallas, la UI es un único motor que renderiza esquemas declarativos (`FieldSpec`) — sin generación de código ni reflexión. Añadir una entidad es escribir un esquema, no una pantalla.
 - **Robustez de round-trip aprendida a golpes.** El contenido real destapó un bug donde un valor es *un número en un campo de texto*. El arreglo no fue parchear cada extremo, sino coaccionar los tipos **en el único punto de hidratación** por el que pasan mostrar y guardar. La lección está [escrita en la bóveda](vault/Aprendizajes/).
-- **Una estrategia de tests, no solo tests.** **380+ tests** entre unitarios, de widget y de *aceptación contra disco real* (escriben y releen `.lcp` de verdad, esquivando la trampa `FakeAsync`/`dart:io` que cuelga los tests de widget ingenuos). CI compila y testea cada objetivo de SO.
+- **Una estrategia de tests, no solo tests.** **380+ tests** entre unitarios, de widget y de *aceptación contra disco real* (escriben y releen `.lcp` de verdad, esquivando la trampa `FakeAsync`/`dart:io` que cuelga los tests de widget ingenuos). Un gate de CI automático corre `flutter analyze --fatal-infos` y toda la suite en cada push y PR; las builds de release por SO y la aceptación en emulador Android / Linux son workflows aparte, a demanda (manuales).
 
 ### Stack
 
-Dart 3.12 · Flutter 3.44 (Material 3) · arquitectura Clean/Hexagonal · `archive`, `file_selector`, `intl` · `flutter_lints` + `strict-casts` · GitHub Actions (builds por-SO + artefacto combinado de los 5, y aceptación en Android/Linux).
+Dart 3.12 · Flutter 3.44 (Material 3) · arquitectura Clean/Hexagonal · `archive`, `file_selector`, `intl` · `flutter_lints` + `strict-casts` · GitHub Actions (analyze + test automáticos en cada push/PR sobre Ubuntu; builds por-SO con artefacto combinado y aceptación en emulador/Linux, a demanda).
 
 ### Estructura y cómo retomar
 
