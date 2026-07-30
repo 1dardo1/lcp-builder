@@ -26,7 +26,7 @@
 An `.lcp` is a zip archive of JSON files matched against Lancer's core catalog. Hand-authoring one means writing schema-perfect JSON by hand — exactly the friction this tool removes.
 
 <div align="center">
-<img src="docs/screenshots/create-frame.jpg" alt="Authoring a frame in LCP Builder" width="45%">
+<img src="docs/screenshots/create-frame-app.jpg" alt="Authoring a frame in LCP Builder" width="45%">
 &nbsp;&nbsp;
 <img src="docs/screenshots/compcon-frame.jpg" alt="The generated frame rendered as a card in COMP/CON" width="45%">
 <br>
