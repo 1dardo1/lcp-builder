@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../../l10n/gen/app_localizations.dart';
@@ -58,36 +59,82 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 14),
-            NavOptionCard(
-              icon: Icons.folder_open_outlined,
-              accent: scheme.secondary,
-              title: t.homeMostrar,
-              description: t.homeMostrarDesc,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) =>
-                      ShowMenuScreen(localeController: localeController),
-                ),
-              ),
-            ),
-            const SizedBox(height: 14),
-            NavOptionCard(
-              icon: Icons.edit_note_outlined,
-              accent: scheme.tertiary,
-              title: t.homeEditar,
-              description: t.homeEditarDesc,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => EditMenuScreen(
-                    session: editSession,
-                    localeController: localeController,
+            // Show and Edit need to open existing `.lcp` files from disk, which
+            // the web build doesn't wire (browsers have no file paths), so they
+            // are shown only on the native platforms.
+            if (!kIsWeb) ...[
+              const SizedBox(height: 14),
+              NavOptionCard(
+                icon: Icons.folder_open_outlined,
+                accent: scheme.secondary,
+                title: t.homeMostrar,
+                description: t.homeMostrarDesc,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        ShowMenuScreen(localeController: localeController),
                   ),
                 ),
               ),
-            ),
+              const SizedBox(height: 14),
+              NavOptionCard(
+                icon: Icons.edit_note_outlined,
+                accent: scheme.tertiary,
+                title: t.homeEditar,
+                description: t.homeEditarDesc,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => EditMenuScreen(
+                      session: editSession,
+                      localeController: localeController,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            if (kIsWeb) ...[
+              const SizedBox(height: 20),
+              const _WebDemoNote(),
+            ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Small note shown only on the web demo, where Show/Edit (which open files
+/// from disk) are hidden — points at the native apps for the full flow.
+class _WebDemoNote extends StatelessWidget {
+  const _WebDemoNote();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.public, size: 20, color: scheme.onSurfaceVariant),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'Web demo — the Create flow builds and downloads a .lcp. '
+              'Opening and editing existing packs is available in the '
+              'desktop and mobile apps.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

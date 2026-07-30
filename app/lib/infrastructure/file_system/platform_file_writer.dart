@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import '../../domain/ports/file_writer.dart';
-import 'android_saf_file_writer.dart';
-import 'local_file_writer.dart';
+import 'file_writer_factory_web.dart'
+    if (dart.library.io) 'file_writer_factory_io.dart';
 
-/// Elige el adapter de [FileWriter] real según la plataforma — vive aquí
-/// (junto a los adapters, no en `finalizar_lcp.dart`) para que ese punto
-/// de uso no necesite saber que existe una diferencia entre plataformas,
-/// igual que `createEntityConfigs` centraliza el registro de entidades en
-/// vez de que cada pantalla conozca las 24.
-FileWriter createPlatformFileWriter() =>
-    Platform.isAndroid ? AndroidSafFileWriter() : LocalFileWriter();
+/// Chooses the real [FileWriter] adapter for the current platform — native
+/// (`dart:io`: Android SAF / desktop local) vs web (browser download),
+/// resolved with a conditional import so the web build never pulls in
+/// `dart:io`. Kept here (next to the adapters) so the call site
+/// (`finalizarLcp`) doesn't need to know a platform difference exists.
+FileWriter createPlatformFileWriter() => makePlatformFileWriter();

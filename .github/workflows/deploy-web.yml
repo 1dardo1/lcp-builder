@@ -1,0 +1,70 @@
+name: Deploy web demo
+
+# Builds the Flutter web app and publishes it to GitHub Pages on every push to
+# main. The live demo covers the Create flow (build a .lcp and download it);
+# opening/editing existing packs is native-only (see HomeScreen).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Least-privilege permissions required by the GitHub Pages deployment.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one Pages deployment at a time; newer runs supersede in-flight ones.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter 3.44 (SDK cached)
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.4"
+          channel: stable
+          cache: true
+
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: pub-${{ runner.os }}-${{ hashFiles('app/pubspec.lock') }}
+          restore-keys: |
+            pub-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # base-href must match the project-page path (1dardo1.github.io/lcp-builder/).
+      - name: Build web
+        run: flutter build web --release --base-href "/lcp-builder/"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/build/web
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

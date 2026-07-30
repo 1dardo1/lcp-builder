@@ -1,39 +1,11 @@
-import 'dart:io';
+import 'lcp_save_location_web.dart'
+    if (dart.library.io) 'lcp_save_location_io.dart';
 
-import 'package:file_selector/file_selector.dart';
-
-import '../../infrastructure/file_system/android_saf_channel.dart';
-
-/// Adapter de "selector nativo" (ver ADR-002) para elegir dónde guardar un
-/// `.lcp`. Vive en `presentation/` a propósito, no en `infrastructure/`: es
-/// una interacción con el usuario/SO, no una operación de E/S pura — el
-/// dominio y los casos de uso (`CreateContentUseCase`) solo reciben la ruta ya
-/// resuelta, nunca saben que hubo un diálogo (ver "El dominio solo recibe
-/// rutas de archivo..." en `vault/Aprendizajes/Principios y decisiones
-/// clave.md`).
-///
-/// Devuelve `null` si el usuario cancela el diálogo.
-///
-/// En Android no se puede usar `file_selector` para esto: el paquete no
-/// implementa guardado en esa plataforma (`getSaveLocation` lanza
-/// `UnimplementedError` — comprobado leyendo su código, no documentado en
-/// ningún sitio visible). Ahí se habla directamente con el Storage Access
-/// Framework a través de un canal nativo mínimo (ver
-/// `android_saf_channel.dart` y `MainActivity.kt`): el valor que devuelve
-/// no es una ruta de archivo, es una URI `content://` — por eso la
-/// escritura real (`AndroidSafFileWriter`) tampoco puede usar `dart:io`.
-Future<String?> pickLcpSaveLocation(String suggestedName) async {
-  if (Platform.isAndroid) {
-    return androidSafChannel.invokeMethod<String>('createDocument', {
-      'suggestedName': suggestedName,
-    });
-  }
-
-  final location = await getSaveLocation(
-    suggestedName: suggestedName,
-    acceptedTypeGroups: const [
-      XTypeGroup(label: 'Lancer Content Pack', extensions: ['lcp']),
-    ],
-  );
-  return location?.path;
-}
+/// Picks where to save a `.lcp` (a user/OS interaction, so it lives in
+/// `presentation/` — the domain and use cases only ever receive the resolved
+/// path, never that a dialog happened). Native uses a real save dialog / the
+/// Android SAF; web has no dialog and returns the suggested name (the web
+/// `FileWriter` downloads under it). Resolved with a conditional import so the
+/// web build never pulls in `dart:io`. Returns `null` if the user cancels.
+Future<String?> pickLcpSaveLocation(String suggestedName) =>
+    pickLcpSaveLocationImpl(suggestedName);
