@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/domain/ports/content_pack_reader.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_elegir_tipo_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_choose_type_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../../../support/test_app.dart';
@@ -12,7 +12,7 @@ void main() {
   testWidgets('lista las 24 entidades registradas', (tester) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarElegirTipoScreen(
+        EditChooseTypeScreen(
           session: EditSession(),
           lcpPath: 'paquete.lcp',
           localeController: LocaleController(),
@@ -52,7 +52,7 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          EditarElegirTipoScreen(
+          EditChooseTypeScreen(
             session: session,
             lcpPath: 'paquete.lcp',
             localeController: LocaleController(),

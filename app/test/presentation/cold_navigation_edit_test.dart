@@ -4,7 +4,7 @@ import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/domain/ports/content_pack_reader.dart';
 import 'package:lcp_builder/infrastructure/lcp/domain_json_mapper.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_types_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../support/phone_metrics.dart';
@@ -42,7 +42,7 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          EditarEntityTypesScreen(
+          EditEntityTypesScreen(
             session: EditSession(),
             lcpPath: 'p.lcp',
             localeController: LocaleController(),

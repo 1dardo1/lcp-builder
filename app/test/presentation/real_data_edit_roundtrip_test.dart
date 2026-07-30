@@ -7,7 +7,7 @@ import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
 import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
 import 'package:lcp_builder/presentation/forms/entity_crear_config.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entidad_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../support/minimal_valid_values.dart';
@@ -43,7 +43,7 @@ Future<void> abrirEditarTrasDisco(
   final session = EditSession()..load('p.lcp', pack);
   await tester.pumpWidget(
     wrapWithLocalization(
-      EditarEntidadScreen(
+      EditEntityScreen(
         config: config,
         session: session,
         lcpPath: 'p.lcp',

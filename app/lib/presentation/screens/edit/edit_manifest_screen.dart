@@ -12,7 +12,7 @@ import '../../widgets/page_body.dart';
 /// nombre, autor, versión y descripción del paquete (los campos que un
 /// máster querría tocar), reusando [EditSession.replaceManifest]. El
 /// guardado a disco es la misma acción aparte que el resto de Editar
-/// (`EditarEntityTypesScreen`, botón "Guardar .lcp") — aquí solo se
+/// (`EditEntityTypesScreen`, botón "Guardar .lcp") — aquí solo se
 /// actualiza el estado en memoria y se marca el `.lcp` como modificado.
 ///
 /// Los campos que esta pantalla no expone (`imageUrl`, `website`,
@@ -20,12 +20,12 @@ import '../../widgets/page_body.dart';
 /// manifest original — editar el nombre nunca debe descartar, por
 /// ejemplo, las dependencias declaradas de un `.lcp` ajeno que se abrió
 /// para retocar.
-class EditarManifestScreen extends StatefulWidget {
+class EditManifestScreen extends StatefulWidget {
   final EditSession session;
   final String lcpPath;
   final LocaleController localeController;
 
-  const EditarManifestScreen({
+  const EditManifestScreen({
     super.key,
     required this.session,
     required this.lcpPath,
@@ -33,10 +33,10 @@ class EditarManifestScreen extends StatefulWidget {
   });
 
   @override
-  State<EditarManifestScreen> createState() => _EditarManifestScreenState();
+  State<EditManifestScreen> createState() => _EditManifestScreenState();
 }
 
-class _EditarManifestScreenState extends State<EditarManifestScreen> {
+class _EditManifestScreenState extends State<EditManifestScreen> {
   final _formKey = GlobalKey<FormState>();
   late final ILcpManifestData _original = widget.session
       .packFor(widget.lcpPath)!

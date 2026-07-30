@@ -24,13 +24,13 @@ import '../../widgets/page_body.dart';
 ///   "Guardar" sustituye esa misma entidad en [EditSession]
 ///   (`replaceEntity`).
 /// - **Crear** (ambos `null`): el controlador arranca vacío, como en
-///   `CrearEntidadScreen`, y "Guardar" añade una entidad nueva al final de
+///   `CreateEntityScreen`, y "Guardar" añade una entidad nueva al final de
 ///   la lista (`EditSession.addEntity`) en vez de sustituir nada.
 ///
 /// En ambos casos el cambio queda en memoria (`EditSession`), no en disco
 /// todavía — el guardado a disco es una acción aparte, ver
-/// `EditarEntityTypesScreen`.
-class EditarEntidadScreen extends StatefulWidget {
+/// `EditEntityTypesScreen`.
+class EditEntityScreen extends StatefulWidget {
   final EntityCrearConfig config;
   final EditSession session;
   final String lcpPath;
@@ -39,7 +39,7 @@ class EditarEntidadScreen extends StatefulWidget {
   final Map<String, dynamic>? rawEntity;
   final LocaleController localeController;
 
-  const EditarEntidadScreen({
+  const EditEntityScreen({
     super.key,
     required this.config,
     required this.session,
@@ -51,10 +51,10 @@ class EditarEntidadScreen extends StatefulWidget {
   });
 
   @override
-  State<EditarEntidadScreen> createState() => _EditarEntidadScreenState();
+  State<EditEntityScreen> createState() => _EditEntityScreenState();
 }
 
-class _EditarEntidadScreenState extends State<EditarEntidadScreen> {
+class _EditEntityScreenState extends State<EditEntityScreen> {
   late final _schema = widget.config.buildSchema();
   late final _controller = GenericFormController(
     initialValues: formValuesFromJson(_schema, widget.rawEntity ?? const {}),

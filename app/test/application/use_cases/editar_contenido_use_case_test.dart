@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lcp_builder/application/use_cases/crear_contenido_use_case.dart';
-import 'package:lcp_builder/application/use_cases/editar_contenido_use_case.dart';
-import 'package:lcp_builder/application/use_cases/mostrar_contenido_use_case.dart';
+import 'package:lcp_builder/application/use_cases/create_content_use_case.dart';
+import 'package:lcp_builder/application/use_cases/edit_content_use_case.dart';
+import 'package:lcp_builder/application/use_cases/show_content_use_case.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_reader.dart';
 import 'package:lcp_builder/infrastructure/file_system/local_file_writer.dart';
@@ -25,12 +25,12 @@ void main() {
     'edita el nombre de un arma sin perder el resto de campos ni las otras entidades',
     () async {
       final tempDir = await Directory.systemTemp.createTemp(
-        'editar_contenido_use_case_test',
+        'edit_content_use_case_test',
       );
       final path = '${tempDir.path}/paquete.lcp';
 
       try {
-        await CrearContenidoUseCase(
+        await CreateContentUseCase(
           exporter: ZipContentPackExporter(),
           fileWriter: LocalFileWriter(),
         )(
@@ -82,7 +82,7 @@ void main() {
           outputPath: path,
         );
 
-        final mostrar = MostrarContenidoUseCase(
+        final mostrar = ShowContentUseCase(
           fileReader: LocalFileReader(),
           contentPackReader: ZipContentPackReader(),
         );
@@ -102,7 +102,7 @@ void main() {
 
         expect(session.isDirty(path), isTrue);
 
-        await EditarContenidoUseCase(
+        await EditContentUseCase(
           exporter: ZipRawContentPackExporter(),
           fileWriter: LocalFileWriter(),
         )(pack: session.packFor(path)!, outputPath: path);

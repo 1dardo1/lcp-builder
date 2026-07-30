@@ -44,6 +44,14 @@ En cualquier documento formal (ADRs, documentación de arquitectura): referirse 
 
 Idioma preferido: español, registro informal ("a mi rollo").
 
+## Convenciones de código
+
+El repo es una pieza de portfolio para empresas remotas internacionales, así que el **código está en inglés**: identificadores (clases, funciones, variables), nombres de ficheros y rutas, y comentarios (incluidos los doc comments `///`). Los **mensajes de commit y las descripciones de PR también en inglés**.
+
+Esto NO cambia el idioma de la mentoría ni de la bóveda: la conversación con el equipo de desarrollo y los documentos de `vault/` (ADRs, aprendizajes, modelo de dominio) siguen en español informal. La regla del inglés aplica a lo que un revisor externo lee al abrir el código y el historial de git.
+
+Código heredado en español se traduce de forma incremental, no en un big-bang; cualquier código nuevo o tocado ya nace en inglés.
+
 ## Flujo de trabajo de desarrollo
 
 Ciclo estándar para cualquier tarea de código en este repo: Claude Code genera el cambio, hace commit y abre una PR (draft) contra `main`. El equipo de desarrollo revisa la PR y comunica los cambios necesarios como respuesta; Claude Code no mergea ni marca la PR como lista sin que el equipo de desarrollo lo indique. No repetir esta instrucción salvo que el equipo de desarrollo pida explícitamente un flujo distinto para una tarea puntual.

@@ -10,8 +10,8 @@ import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
 import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entidad_screen.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_types_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../support/minimal_valid_values.dart';
@@ -103,7 +103,7 @@ void main() {
         final raw = pack.contentByKey[config.contentKey]!.first;
         await tester.pumpWidget(
           wrapWithLocalization(
-            EditarEntidadScreen(
+            EditEntityScreen(
               config: config,
               session: session,
               lcpPath: path,
@@ -136,7 +136,7 @@ void main() {
   /// El análogo de escritorio de la aserción FUERTE del test de aceptación de
   /// Android (`editar_android_acceptance_test`): editar una entidad, GUARDAR
   /// por el camino de guardado REAL de la app (`defaultEditarSaveContent` →
-  /// `EditarContenidoUseCase` con el `LocalFileWriter` de escritorio) y releer
+  /// `EditContentUseCase` con el `LocalFileWriter` de escritorio) y releer
   /// los BYTES del disco para comprobar que el cambio persistió y el resto de
   /// entidades quedaron intactas. Cubre en escritorio lo que en Android cazó
   /// los bugs de guardado #37/#38/#39 (que ahí eran de truncado/SAF); es un

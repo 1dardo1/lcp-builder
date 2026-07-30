@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/domain/ports/content_pack_reader.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entity_types_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_types_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../../../support/test_app.dart';
@@ -32,7 +32,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarEntityTypesScreen(
+        EditEntityTypesScreen(
           session: EditSession(),
           lcpPath: 'irrelevante.lcp',
           localeController: LocaleController(),
@@ -53,7 +53,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarEntityTypesScreen(
+        EditEntityTypesScreen(
           session: EditSession(),
           lcpPath: 'irrelevante.lcp',
           localeController: LocaleController(),
@@ -78,7 +78,7 @@ void main() {
       var loadCalled = false;
       await tester.pumpWidget(
         wrapWithLocalization(
-          EditarEntityTypesScreen(
+          EditEntityTypesScreen(
             session: session,
             lcpPath: 'paquete.lcp',
             localeController: LocaleController(),
@@ -107,7 +107,7 @@ void main() {
       var savedPath = '';
       await tester.pumpWidget(
         wrapWithLocalization(
-          EditarEntityTypesScreen(
+          EditEntityTypesScreen(
             session: session,
             lcpPath: 'paquete.lcp',
             localeController: LocaleController(),
@@ -143,7 +143,7 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         wrapWithLocalization(
-          EditarEntityTypesScreen(
+          EditEntityTypesScreen(
             session: EditSession(),
             lcpPath: 'paquete.lcp',
             localeController: LocaleController(),

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/domain/ports/content_pack_reader.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entity_cards_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_cards_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 import 'package:lcp_builder/presentation/widgets/entity_display_card.dart';
 
@@ -46,7 +46,7 @@ void main() {
 
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarEntityCardsScreen(
+        EditEntityCardsScreen(
           session: session,
           lcpPath: 'paquete.lcp',
           contentKey: 'manufacturers',
@@ -82,7 +82,7 @@ void main() {
 
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarEntityCardsScreen(
+        EditEntityCardsScreen(
           session: session,
           lcpPath: 'paquete.lcp',
           contentKey: 'manufacturers',
@@ -103,7 +103,7 @@ void main() {
 
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarEntityCardsScreen(
+        EditEntityCardsScreen(
           session: session,
           lcpPath: 'paquete.lcp',
           contentKey: 'manufacturers',
@@ -158,7 +158,7 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          EditarEntityCardsScreen(
+          EditEntityCardsScreen(
             session: session,
             lcpPath: 'paquete.lcp',
             contentKey: 'manufacturers',

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../application/use_cases/crear_contenido_use_case.dart';
+import '../../application/use_cases/create_content_use_case.dart';
 import '../../domain/domain.dart';
 import '../../infrastructure/file_system/platform_file_writer.dart';
 import '../../infrastructure/lcp/zip_content_pack_exporter.dart';
@@ -10,12 +10,12 @@ import 'crear_session.dart';
 
 /// Pide el nombre del paquete, dónde guardarlo, y exporta todo el contenido
 /// acumulado en [session] como un único `.lcp`. Limpia la sesión y vuelve
-/// al menú de Crear al terminar con éxito. Común a `CrearMenuScreen` (botón
-/// "Finalizar lcp" con la sesión ya llena) y `CrearEntidadScreen` (mismo
+/// al menú de Crear al terminar con éxito. Común a `CreateMenuScreen` (botón
+/// "Finalizar lcp" con la sesión ya llena) y `CreateEntityScreen` (mismo
 /// botón, con la entidad que se estaba rellenando todavía sin añadir).
 ///
 /// [pendingContentKey]/[pendingContent] son la entidad que
-/// `CrearEntidadScreen` acaba de ensamblar pero aún no ha añadido a
+/// `CreateEntityScreen` acaba de ensamblar pero aún no ha añadido a
 /// [session] — se añade aquí, después de que el usuario confirme nombre y
 /// ubicación, no antes. Si se añadiera antes de esos dos diálogos
 /// cancelables, cancelar y volver a pulsar "Finalizar lcp" la duplicaría en
@@ -40,7 +40,7 @@ Future<void> finalizarLcp(
   CrearSession session, {
   String? pendingContentKey,
   Object? pendingContent,
-  CrearContenidoUseCase? useCase,
+  CreateContentUseCase? useCase,
 }) async {
   final t = AppLocalizations.of(context);
   final packName = await showDialog<String>(
@@ -67,7 +67,7 @@ Future<void> finalizarLcp(
 
   final resolvedUseCase =
       useCase ??
-      CrearContenidoUseCase(
+      CreateContentUseCase(
         exporter: ZipContentPackExporter(),
         fileWriter: createPlatformFileWriter(),
       );

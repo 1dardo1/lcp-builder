@@ -8,7 +8,7 @@ import '../../session/crear_session.dart';
 import '../../session/finalizar_lcp.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/page_body.dart';
-import 'crear_entidad_screen.dart';
+import 'create_entity_screen.dart';
 
 /// Pantalla de inicio del flujo Crear: el catálogo de tipos de entidad que
 /// se pueden crear, como lista de filas dentro de una tarjeta.
@@ -18,13 +18,13 @@ import 'crear_entidad_screen.dart';
 /// (de cualquier tipo) para el `.lcp` que se está montando, con un botón
 /// para finalizarlo. Escucha la sesión (`ListenableBuilder`) porque vuelve
 /// a esta pantalla cada vez que se completa una entidad (botón "Continuar"
-/// de `CrearEntidadScreen`), y el resumen debe reflejarlo sin reconstruir
+/// de `CreateEntityScreen`), y el resumen debe reflejarlo sin reconstruir
 /// la pantalla entera a mano.
-class CrearMenuScreen extends StatelessWidget {
+class CreateMenuScreen extends StatelessWidget {
   final CrearSession session;
   final LocaleController localeController;
 
-  const CrearMenuScreen({
+  const CreateMenuScreen({
     super.key,
     required this.session,
     required this.localeController,
@@ -73,7 +73,7 @@ class CrearMenuScreen extends StatelessWidget {
                         ),
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (_) => CrearEntidadScreen(
+                            builder: (_) => CreateEntityScreen(
                               config: crearEntidadConfigs[i],
                               session: session,
                               localeController: localeController,

@@ -8,26 +8,26 @@ import '../../session/edit_session.dart';
 import '../../widgets/entity_display_card.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/page_body.dart';
-import 'editar_entidad_screen.dart';
+import 'edit_entity_screen.dart';
 
 /// Lista de entidades de [contentKey] dentro del `.lcp` de [lcpPath], cada
 /// una con su [EntityDisplayCard] de solo lectura (misma pieza que
 /// Mostrar) más botones de editar/eliminar, y un botón arriba del todo
 /// para crear una entidad nueva de este mismo tipo — reutiliza
-/// `EditarEntidadScreen` en su modo "crear" (`index`/`rawEntity` sin
+/// `EditEntityScreen` en su modo "crear" (`index`/`rawEntity` sin
 /// pasar). Para crear la primera entidad de un tipo que el `.lcp`
-/// todavía no tiene ninguna, ver `EditarElegirTipoScreen` en su lugar
+/// todavía no tiene ninguna, ver `EditChooseTypeScreen` en su lugar
 /// (esta pantalla solo existe para tipos que ya tienen contenido).
 /// Escucha [session] (`ListenableBuilder`) porque editar, eliminar o
 /// crear una entidad cambia directamente el estado ahí, sin pasar por
 /// esta pantalla.
-class EditarEntityCardsScreen extends StatelessWidget {
+class EditEntityCardsScreen extends StatelessWidget {
   final EditSession session;
   final String lcpPath;
   final String contentKey;
   final LocaleController localeController;
 
-  const EditarEntityCardsScreen({
+  const EditEntityCardsScreen({
     super.key,
     required this.session,
     required this.lcpPath,
@@ -44,7 +44,7 @@ class EditarEntityCardsScreen extends StatelessWidget {
     if (config == null) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => EditarEntidadScreen(
+        builder: (_) => EditEntityScreen(
           config: config,
           session: session,
           lcpPath: lcpPath,
@@ -62,7 +62,7 @@ class EditarEntityCardsScreen extends StatelessWidget {
     if (config == null) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => EditarEntidadScreen(
+        builder: (_) => EditEntityScreen(
           config: config,
           session: session,
           lcpPath: lcpPath,

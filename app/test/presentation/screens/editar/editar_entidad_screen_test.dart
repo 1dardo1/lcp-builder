@@ -4,7 +4,7 @@ import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/domain/ports/content_pack_reader.dart';
 import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entidad_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../../../support/test_app.dart';
@@ -54,7 +54,7 @@ void main() {
 
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarEntidadScreen(
+        EditEntityScreen(
           config: crearEntidadConfigsByContentKey['manufacturers']!,
           session: session,
           lcpPath: 'paquete.lcp',
@@ -86,7 +86,7 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          EditarEntidadScreen(
+          EditEntityScreen(
             config: crearEntidadConfigsByContentKey['manufacturers']!,
             session: session,
             lcpPath: 'paquete.lcp',
@@ -132,7 +132,7 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          EditarEntidadScreen(
+          EditEntityScreen(
             config: crearEntidadConfigsByContentKey['manufacturers']!,
             session: session,
             lcpPath: 'paquete.lcp',
@@ -162,7 +162,7 @@ void main() {
 
       await tester.pumpWidget(
         wrapWithLocalization(
-          EditarEntidadScreen(
+          EditEntityScreen(
             config: crearEntidadConfigsByContentKey['manufacturers']!,
             session: session,
             lcpPath: 'paquete.lcp',

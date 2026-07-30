@@ -5,7 +5,7 @@ import 'package:archive/archive.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lcp_builder/application/use_cases/crear_contenido_use_case.dart';
+import 'package:lcp_builder/application/use_cases/create_content_use_case.dart';
 import 'package:lcp_builder/domain/domain.dart';
 import 'package:lcp_builder/domain/ports/file_writer.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_exporter.dart';
@@ -39,7 +39,7 @@ class _FakeFileWriter implements FileWriter {
 }
 
 /// `finalizar_lcp_test.dart` cubre el camino completo de `finalizarLcp` —
-/// hasta ahora solo se probaba (desde `crear_entidad_screen_test.dart`) que
+/// hasta ahora solo se probaba (desde `create_entity_screen_test.dart`) que
 /// cancelar el diálogo de nombre no añade nada a la sesión. Aquí se cubren
 /// los dos caminos que le faltaban: éxito (produce un .lcp válido en
 /// memoria, limpia la sesión y avisa) y error (la escritura falla y el
@@ -75,7 +75,7 @@ void main() {
                 session,
                 pendingContentKey: pendingContentKey,
                 pendingContent: pendingContent,
-                useCase: CrearContenidoUseCase(
+                useCase: CreateContentUseCase(
                   exporter: ZipContentPackExporter(),
                   fileWriter: fakeFileWriter,
                 ),

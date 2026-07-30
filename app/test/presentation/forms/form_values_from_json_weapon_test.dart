@@ -5,7 +5,7 @@ import 'package:lcp_builder/presentation/forms/form_values_from_json.dart';
 import 'package:lcp_builder/presentation/forms/weapon_form_schema.dart';
 
 /// Prueba de aceptación de la auditoría de `fromJsonValue`: convierte un
-/// arma real a JSON tal cual la escribiría `CrearContenidoUseCase` y
+/// arma real a JSON tal cual la escribiría `CreateContentUseCase` y
 /// comprueba que `formValuesFromJson` la reconstruye lista para precargar
 /// el formulario de Crear — no solo campos escalares, también los enum
 /// simples/múltiples que se acaban de auditar en `weapon_form_schema.dart`.

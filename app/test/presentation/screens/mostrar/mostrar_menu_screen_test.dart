@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/mostrar/mostrar_menu_screen.dart';
+import 'package:lcp_builder/presentation/screens/show/show_menu_screen.dart';
 
 import '../../../support/test_app.dart';
 
@@ -10,7 +10,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        MostrarMenuScreen(localeController: LocaleController()),
+        ShowMenuScreen(localeController: LocaleController()),
       ),
     );
 

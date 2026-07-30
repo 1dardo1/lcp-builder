@@ -5,14 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/infrastructure/lcp/zip_content_pack_reader.dart';
 import 'package:lcp_builder/presentation/forms/crear_entidad_configs.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_entidad_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../support/test_app.dart';
 
 /// Regresión del bug de la "pantalla gris al editar": un `.lcp` real
 /// (`test/fixtures/the_butlers_corp.lcp`, aportado por el perfil objetivo)
-/// hacía reventar `EditarEntidadScreen` al abrirlo — en release, una
+/// hacía reventar `EditEntityScreen` al abrirlo — en release, una
 /// excepción al construir un widget se pinta como `ErrorWidget` gris.
 ///
 /// Dos formas reales que el propio Crear serializa pero que el hidratador
@@ -47,7 +47,7 @@ void main() {
         final session = EditSession()..load('p.lcp', pack);
         await tester.pumpWidget(
           wrapWithLocalization(
-            EditarEntidadScreen(
+            EditEntityScreen(
               config: config,
               session: session,
               lcpPath: 'p.lcp',

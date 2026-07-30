@@ -14,10 +14,10 @@ import 'lcp_folder_screen.dart';
 /// suelto) funciona igual en Linux y Android — a diferencia de guardar,
 /// abrir no necesita ningún adapter nativo propio (ver
 /// `local_file_reader.dart`).
-class MostrarMenuScreen extends StatelessWidget {
+class ShowMenuScreen extends StatelessWidget {
   final LocaleController localeController;
 
-  const MostrarMenuScreen({super.key, required this.localeController});
+  const ShowMenuScreen({super.key, required this.localeController});
 
   Future<void> _abrirLcp(BuildContext context) async {
     final file = await openFile(

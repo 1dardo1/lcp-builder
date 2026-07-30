@@ -8,19 +8,19 @@ import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/nav_option_card.dart';
 import '../../widgets/page_body.dart';
-import 'editar_entity_types_screen.dart';
-import 'editar_folder_screen.dart';
+import 'edit_entity_types_screen.dart';
+import 'edit_folder_screen.dart';
 
 /// Punto de entrada del flujo Editar — mismo esquema que
-/// `MostrarMenuScreen` (elegir un `.lcp` suelto, o una carpeta con
+/// `ShowMenuScreen` (elegir un `.lcp` suelto, o una carpeta con
 /// varios), pero pasando [session] hacia abajo: una única instancia,
 /// creada en `main.dart`, que sobrevive mientras el usuario navegue entre
 /// varios `.lcp` sin perder los cambios que todavía no ha guardado.
-class EditarMenuScreen extends StatelessWidget {
+class EditMenuScreen extends StatelessWidget {
   final EditSession session;
   final LocaleController localeController;
 
-  const EditarMenuScreen({
+  const EditMenuScreen({
     super.key,
     required this.session,
     required this.localeController,
@@ -31,7 +31,7 @@ class EditarMenuScreen extends StatelessWidget {
     if (path == null || !context.mounted) return;
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => EditarEntityTypesScreen(
+        builder: (_) => EditEntityTypesScreen(
           session: session,
           lcpPath: path,
           localeController: localeController,
@@ -45,7 +45,7 @@ class EditarMenuScreen extends StatelessWidget {
     if (directoryPath == null || !context.mounted) return;
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => EditarFolderScreen(
+        builder: (_) => EditFolderScreen(
           session: session,
           directoryPath: directoryPath,
           localeController: localeController,

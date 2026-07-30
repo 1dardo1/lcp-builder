@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 ///
 /// Vive en `presentation/` a propósito: es estado de UI efímero de la
 /// sesión de edición, no del dominio. Se crea una única instancia en
-/// `main.dart` y se pasa por la jerarquía de pantallas (`CrearMenuScreen`,
-/// `CrearEntidadScreen`) — mismo criterio que ya se usa para no acoplar el
+/// `main.dart` y se pasa por la jerarquía de pantallas (`CreateMenuScreen`,
+/// `CreateEntityScreen`) — mismo criterio que ya se usa para no acoplar el
 /// motor genérico a ningún tipo de dominio concreto.
 class CrearSession extends ChangeNotifier {
   final Map<String, List<Object>> _content = {};

@@ -2,18 +2,17 @@ import '../../domain/ports/file_writer.dart';
 import '../../domain/ports/raw_content_pack_exporter.dart';
 import '../../domain/ports/content_pack_reader.dart';
 
-/// Caso de uso Editar: reexporta un [ParsedContentPack] ya editado
-/// (`EditSession`) a su [outputPath] original. A diferencia de
-/// [CrearContenidoUseCase], no reconstruye ningún objeto de dominio —
-/// [ParsedContentPack.contentByKey] ya es JSON crudo (las entidades
-/// editadas se convirtieron a JSON en el momento de guardar el
-/// formulario; las no tocadas nunca dejaron de serlo), así que solo hay
-/// que volver a comprimirlo.
-class EditarContenidoUseCase {
+/// Edit use case: re-exports an already-edited [ParsedContentPack]
+/// (`EditSession`) to its original [outputPath]. Unlike [CreateContentUseCase],
+/// it doesn't rebuild any domain object — [ParsedContentPack.contentByKey] is
+/// already raw JSON (the edited entities were converted to JSON when the form
+/// was saved; the untouched ones never stopped being JSON), so it only needs
+/// to be re-zipped.
+class EditContentUseCase {
   final RawContentPackExporter exporter;
   final FileWriter fileWriter;
 
-  const EditarContenidoUseCase({
+  const EditContentUseCase({
     required this.exporter,
     required this.fileWriter,
   });

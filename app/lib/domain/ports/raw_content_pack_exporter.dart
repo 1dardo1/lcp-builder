@@ -1,20 +1,19 @@
 import '../entities/lcp_manifest_data.dart';
 
-/// Puerto hexagonal para Editar, inverso de [ContentPackReader] en vez de
-/// [ContentPackExporter]: serializa contenido que ya viene en JSON crudo
-/// (`Map<String, dynamic>` por entidad, la misma forma que produce
-/// `ContentPackReader`), no objetos de dominio tipados.
+/// Hexagonal port for Edit, the inverse of [ContentPackReader] rather than
+/// [ContentPackExporter]: serializes content that already comes as raw JSON
+/// (`Map<String, dynamic>` per entity, the same shape [ContentPackReader]
+/// produces), not typed domain objects.
 ///
-/// Por qué no reutilizar [ContentPackExporter] tal cual: Editar guarda un
-/// `ParsedContentPack` donde solo la entidad que el usuario tocó se
-/// reconstruyó como objeto de dominio (vía `fromFormValues`, para poder
-/// reutilizar el mismo formulario de Crear) — el resto se queda en JSON
-/// crudo tal como se leyó, precisamente para no arriesgar perder
-/// información al forzar una reconstrucción tipada que nadie pidió. Un
-/// exportador que solo acepta objetos de dominio obligaría a "inventar"
-/// un objeto tipado para cada entidad no tocada, con el riesgo de que la
-/// reconstrucción no sea perfecta — este puerto evita ese problema de raíz:
-/// nunca reconstruye nada que no haya sido editado.
+/// Why not reuse [ContentPackExporter] as-is: Edit saves a
+/// `ParsedContentPack` where only the entity the user touched was rebuilt as
+/// a domain object (via `fromFormValues`, to reuse the same Create form) —
+/// the rest stays as raw JSON exactly as it was read, precisely so as not to
+/// risk losing information by forcing a typed reconstruction nobody asked
+/// for. An exporter that only accepts domain objects would force "inventing"
+/// a typed object for every untouched entity, with the risk that the
+/// reconstruction isn't perfect — this port avoids that problem at the root:
+/// it never rebuilds anything that wasn't edited.
 abstract class RawContentPackExporter {
   List<int> export({
     required ILcpManifestData manifest,

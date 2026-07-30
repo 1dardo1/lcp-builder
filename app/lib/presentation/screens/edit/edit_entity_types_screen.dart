@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../application/use_cases/editar_contenido_use_case.dart';
-import '../../../application/use_cases/mostrar_contenido_use_case.dart';
+import '../../../application/use_cases/edit_content_use_case.dart';
+import '../../../application/use_cases/show_content_use_case.dart';
 import '../../../domain/ports/content_pack_reader.dart';
 import '../../../infrastructure/file_system/platform_file_reader.dart';
 import '../../../infrastructure/file_system/platform_file_writer.dart';
@@ -15,21 +15,21 @@ import '../../widgets/count_badge.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/message_placeholder.dart';
 import '../../widgets/page_body.dart';
-import 'editar_elegir_tipo_screen.dart';
-import 'editar_entity_cards_screen.dart';
-import 'editar_manifest_screen.dart';
+import 'edit_choose_type_screen.dart';
+import 'edit_entity_cards_screen.dart';
+import 'edit_manifest_screen.dart';
 
-/// Adapter real por defecto de [EditarEntityTypesScreen.saveContent] —
+/// Adapter real por defecto de [EditEntityTypesScreen.saveContent] —
 /// extraído a función propia (en vez de vivir inline en `_guardar()`) para
 /// poder darle un tipo estático explícito y así poder probarlo sin montar
 /// el widget completo (evita el problema ya documentado de E/S real de
 /// `dart:io` dentro de un test de `pump`/`pumpAndSettle`, ver
-/// `editar_contenido_use_case_test.dart`). `EditarContenidoUseCase.call`
+/// `edit_content_use_case_test.dart`). `EditContentUseCase.call`
 /// usa parámetros nombrados; este adapter expone la forma posicional que
 /// pide el campo `saveContent` de la pantalla.
 Future<void> Function(ParsedContentPack pack, String outputPath)
 defaultEditarSaveContent() =>
-    (pack, outputPath) => EditarContenidoUseCase(
+    (pack, outputPath) => EditContentUseCase(
       exporter: ZipRawContentPackExporter(),
       fileWriter: createPlatformFileWriter(),
     ).call(pack: pack, outputPath: outputPath);
@@ -44,7 +44,7 @@ defaultEditarSaveContent() =>
 ///   de pérdida que Editar tiene que evitar.
 /// - muestra un botón "Guardar .lcp" cuando este `.lcp` tiene cambios
 ///   pendientes (`session.isDirty`), que reexporta a la misma ruta.
-class EditarEntityTypesScreen extends StatefulWidget {
+class EditEntityTypesScreen extends StatefulWidget {
   final EditSession session;
   final String lcpPath;
   final LocaleController localeController;
@@ -55,7 +55,7 @@ class EditarEntityTypesScreen extends StatefulWidget {
   final Future<void> Function(ParsedContentPack pack, String outputPath)?
   saveContent;
 
-  const EditarEntityTypesScreen({
+  const EditEntityTypesScreen({
     super.key,
     required this.session,
     required this.lcpPath,
@@ -65,18 +65,18 @@ class EditarEntityTypesScreen extends StatefulWidget {
   });
 
   @override
-  State<EditarEntityTypesScreen> createState() =>
-      _EditarEntityTypesScreenState();
+  State<EditEntityTypesScreen> createState() =>
+      _EditEntityTypesScreenState();
 }
 
-class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
+class _EditEntityTypesScreenState extends State<EditEntityTypesScreen> {
   late final Future<void> _ensureLoaded = _load();
 
   Future<void> _load() async {
     if (widget.session.packFor(widget.lcpPath) != null) return;
     final loadContent =
         widget.loadContent ??
-        MostrarContenidoUseCase(
+        ShowContentUseCase(
           fileReader: createPlatformFileReader(),
           contentPackReader: ZipContentPackReader(),
         ).call;
@@ -151,7 +151,7 @@ class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
                           tooltip: t.editarPaquete,
                           onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => EditarManifestScreen(
+                              builder: (_) => EditManifestScreen(
                                 session: widget.session,
                                 lcpPath: widget.lcpPath,
                                 localeController: widget.localeController,
@@ -176,7 +176,7 @@ class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
                     OutlinedButton.icon(
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => EditarElegirTipoScreen(
+                          builder: (_) => EditChooseTypeScreen(
                             session: widget.session,
                             lcpPath: widget.lcpPath,
                             localeController: widget.localeController,
@@ -201,7 +201,7 @@ class _EditarEntityTypesScreenState extends State<EditarEntityTypesScreen> {
                               ),
                               onTap: () => Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => EditarEntityCardsScreen(
+                                  builder: (_) => EditEntityCardsScreen(
                                     session: widget.session,
                                     lcpPath: widget.lcpPath,
                                     contentKey: entries[i].key,

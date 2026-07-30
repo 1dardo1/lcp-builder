@@ -7,9 +7,9 @@ import '../../session/edit_session.dart';
 import '../../widgets/language_switcher.dart';
 import '../../widgets/nav_option_card.dart';
 import '../../widgets/page_body.dart';
-import '../crear/crear_menu_screen.dart';
-import '../editar/editar_menu_screen.dart';
-import '../mostrar/mostrar_menu_screen.dart';
+import '../create/create_menu_screen.dart';
+import '../edit/edit_menu_screen.dart';
+import '../show/show_menu_screen.dart';
 
 /// Pantalla de inicio: el punto de entrada del máster (perfil objetivo) al
 /// abrir la app. Presenta las 3 fases del plan (ver ADR-003 — Crear →
@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
               description: t.homeCrearDesc,
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => CrearMenuScreen(
+                  builder: (_) => CreateMenuScreen(
                     session: session,
                     localeController: localeController,
                   ),
@@ -67,7 +67,7 @@ class HomeScreen extends StatelessWidget {
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) =>
-                      MostrarMenuScreen(localeController: localeController),
+                      ShowMenuScreen(localeController: localeController),
                 ),
               ),
             ),
@@ -79,7 +79,7 @@ class HomeScreen extends StatelessWidget {
               description: t.homeEditarDesc,
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => EditarMenuScreen(
+                  builder: (_) => EditMenuScreen(
                     session: editSession,
                     localeController: localeController,
                   ),

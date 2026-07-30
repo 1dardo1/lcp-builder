@@ -1,6 +1,6 @@
 import 'field_spec.dart';
 
-/// Describe cómo el motor genérico de "Crear" (`CrearEntidadScreen`) debe
+/// Describe cómo el motor genérico de "Crear" (`CreateEntityScreen`) debe
 /// tratar una entidad concreta, sin que el motor necesite conocer sus 24
 /// tipos de dominio. Cada esquema de entidad (`weapon_form_schema.dart`,
 /// `manufacturer_form_schema.dart`...) expone una instancia de esta clase.

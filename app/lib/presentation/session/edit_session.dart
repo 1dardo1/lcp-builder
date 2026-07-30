@@ -22,7 +22,7 @@ class EditSession extends ChangeNotifier {
   final Set<String> _dirtyPaths = {};
 
   /// Registra (o sustituye) el paquete asociado a [path] — la primera vez
-  /// que se abre un `.lcp`, tal cual lo devolvió `MostrarContenidoUseCase`.
+  /// que se abre un `.lcp`, tal cual lo devolvió `ShowContentUseCase`.
   /// No marca el paquete como modificado.
   void load(String path, ParsedContentPack pack) {
     _packs[path] = pack;
@@ -113,7 +113,7 @@ class EditSession extends ChangeNotifier {
   }
 
   /// Marca [path] como guardado — llamarlo tras exportar con éxito
-  /// (`EditarContenidoUseCase`), nunca antes.
+  /// (`EditContentUseCase`), nunca antes.
   void markSaved(String path) {
     _dirtyPaths.remove(path);
     notifyListeners();

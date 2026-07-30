@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/forms/manufacturer_form_schema.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/crear/crear_entidad_screen.dart';
+import 'package:lcp_builder/presentation/screens/create/create_entity_screen.dart';
 import 'package:lcp_builder/presentation/session/crear_session.dart';
 
 import '../../../support/test_app.dart';
 
-/// Prueba que `CrearEntidadScreen` es genuinamente genérica: renderiza el
+/// Prueba que `CreateEntityScreen` es genuinamente genérica: renderiza el
 /// esquema de una entidad *distinta* de arma (fabricante) sin ningún
 /// código específico de esa entidad en la pantalla.
 void main() {
-  testWidgets('CrearEntidadScreen renderiza el esquema de la config recibida', (
+  testWidgets('CreateEntityScreen renderiza el esquema de la config recibida', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1080, 4000);
@@ -21,7 +21,7 @@ void main() {
 
     await tester.pumpWidget(
       wrapWithLocalization(
-        CrearEntidadScreen(
+        CreateEntityScreen(
           config: manufacturerCrearConfig,
           session: CrearSession(),
           localeController: LocaleController(),
@@ -48,7 +48,7 @@ void main() {
       final session = CrearSession();
       await tester.pumpWidget(
         wrapWithLocalization(
-          CrearEntidadScreen(
+          CreateEntityScreen(
             config: manufacturerCrearConfig,
             session: session,
             localeController: LocaleController(),
@@ -112,7 +112,7 @@ void main() {
       final session = CrearSession();
       await tester.pumpWidget(
         wrapWithLocalization(
-          CrearEntidadScreen(
+          CreateEntityScreen(
             config: manufacturerCrearConfig,
             session: session,
             localeController: LocaleController(),

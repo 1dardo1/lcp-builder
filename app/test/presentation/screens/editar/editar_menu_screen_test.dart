@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lcp_builder/presentation/i18n/locale_controller.dart';
-import 'package:lcp_builder/presentation/screens/editar/editar_menu_screen.dart';
+import 'package:lcp_builder/presentation/screens/edit/edit_menu_screen.dart';
 import 'package:lcp_builder/presentation/session/edit_session.dart';
 
 import '../../../support/test_app.dart';
@@ -11,7 +11,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWithLocalization(
-        EditarMenuScreen(
+        EditMenuScreen(
           session: EditSession(),
           localeController: LocaleController(),
         ),
