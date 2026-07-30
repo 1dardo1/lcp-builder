@@ -26,11 +26,11 @@
 An `.lcp` is a zip archive of JSON files matched against Lancer's core catalog. Hand-authoring one means writing schema-perfect JSON by hand — exactly the friction this tool removes.
 
 <div align="center">
-<img src="docs/screenshots/create-frame.jpg" alt="Authoring a frame's stats in LCP Builder" width="45%">
+<img src="docs/screenshots/create-frame.jpg" alt="Authoring a frame in LCP Builder" width="45%">
 &nbsp;&nbsp;
-<img src="docs/screenshots/compcon-frame.jpg" alt="The same stats rendered in COMP/CON after importing the .lcp" width="45%">
+<img src="docs/screenshots/compcon-frame.jpg" alt="The generated frame rendered as a card in COMP/CON" width="45%">
 <br>
-<em>Left: filling in a frame's stats in LCP Builder. Right: the exact same stats rendered in COMP/CON after importing the generated <code>.lcp</code>.</em>
+<em>Left: authoring a frame in LCP Builder. Right: the generated <code>.lcp</code> rendered as a frame card in COMP/CON.</em>
 </div>
 
 ## Why it exists (the honest version)
