@@ -39,6 +39,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   archive: ^4.0.9
   file_selector: ^1.1.0
+  # Web-only: used by the browser-download FileWriter adapter (web build).
+  web: ^1.1.0
 
 dev_dependencies:
   flutter_test:
